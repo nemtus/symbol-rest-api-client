@@ -7,26 +7,28 @@
 #     typosquats, protestware, license issues). This file ONLY takes effect once an
 #     org owner installs the Socket App on this repo via the GitHub Marketplace
 #     (one-time, no token, no cost).
-#   - Layer B (.github/workflows/ci-nodejs.yml `build` job): Socket Firewall Free
-#     (`sfw`) blocks confirmed-malicious packages at install time in CI. It needs no
-#     account and is independent of this file.
+#   - Layer B (.github/workflows/ci-typescript-*.yml): Socket Firewall Free (`sfw`)
+#     blocks confirmed-malicious packages at install time in CI. It needs no account
+#     and is independent of this file.
 #
 # This complements, and does not replace, the existing hardening: `npm audit` (known
-# CVEs), `min-release-age=7` + `ignore-scripts=true` (.npmrc), and pinact (SHA-pinned
-# Actions).
+# CVEs), `min-release-age=7` + `ignore-scripts=true` (each client's .npmrc), and
+# pinact (SHA-pinned Actions).
 version: 2
 
-# Only re-scan when a dependency manifest actually changes. This repo is NOT an npm
-# workspace: the root plus the three consumer test suites each have their own manifest.
+# Build outputs / generated code are not dependency manifests — skip them.
+projectIgnorePaths:
+  - clients/*/dist
+  - clients/*/src/api
+
+# Only re-scan when a dependency manifest actually changes. This is a polyglot
+# monorepo, NOT an npm workspace: each client under clients/<generator>/ plus its
+# consumer test suites carry their own manifests.
 triggerPaths:
-  - 'package.json'
-  - 'package-lock.json'
-  - 'tests/nodejs-javascript/package.json'
-  - 'tests/nodejs-javascript/package-lock.json'
-  - 'tests/nodejs-typescript/package.json'
-  - 'tests/nodejs-typescript/package-lock.json'
-  - 'tests/browser-cdn/package.json'
-  - 'tests/browser-cdn/package-lock.json'
+  - clients/*/package.json
+  - clients/*/package-lock.json
+  - clients/*/tests/**/package.json
+  - clients/*/tests/**/package-lock.json
 
 githubApp:
   enabled: true
