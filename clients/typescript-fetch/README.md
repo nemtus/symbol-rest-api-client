@@ -1,21 +1,25 @@
-# symbol-sdk-openapi-generator-typescript-fetch
+# @nemtus/symbol-rest-api-client-fetch
 
-Symbol SDK for TypeScript with OpenAPI Generator typescript-fetch
+Symbol REST API client for TypeScript, generated with OpenAPI Generator (`typescript-fetch`). No runtime dependencies — uses the native Fetch API.
+
+Part of the [`nemtus/symbol-rest-api-client`](https://github.com/nemtus/symbol-rest-api-client) monorepo (this package lives in `clients/typescript-fetch`). The sister package [`@nemtus/symbol-rest-api-client-axios`](https://www.npmjs.com/package/@nemtus/symbol-rest-api-client-axios) provides an axios-based variant.
+
+> Formerly published as `@nemtus/symbol-sdk-openapi-generator-typescript-fetch` (now deprecated). This client targets the [`@nemtus/symbol-openapi`](https://www.npmjs.com/package/@nemtus/symbol-openapi) spec `1.0.5`.
 
 Note: Currently, This is a very experimental level.
 
 | Type | Status/Link |
 | --------- | -------------------- |
-| CI status | [![CI Node.js](https://github.com/nemtus/symbol-sdk-openapi-generator-typescript-fetch/actions/workflows/ci-nodejs.yml/badge.svg)](https://github.com/nemtus/symbol-sdk-openapi-generator-typescript-fetch/actions/workflows/ci-nodejs.yml) |
-| Latest npm publish status | [![CD Publish to npm](https://github.com/nemtus/symbol-sdk-openapi-generator-typescript-fetch/actions/workflows/cd-publish-to-npm.yml/badge.svg)](https://github.com/nemtus/symbol-sdk-openapi-generator-typescript-fetch/actions/workflows/cd-publish-to-npm.yml) |
-| npm package link | [https://www.npmjs.com/package/@nemtus/symbol-sdk-openapi-generator-typescript-fetch](https://www.npmjs.com/package/@nemtus/symbol-sdk-openapi-generator-typescript-fetch) |
+| CI status | [![CI typescript-fetch](https://github.com/nemtus/symbol-rest-api-client/actions/workflows/ci-typescript-fetch.yml/badge.svg)](https://github.com/nemtus/symbol-rest-api-client/actions/workflows/ci-typescript-fetch.yml) |
+| Latest npm publish status | [![CD typescript-fetch](https://github.com/nemtus/symbol-rest-api-client/actions/workflows/cd-typescript-fetch.yml/badge.svg)](https://github.com/nemtus/symbol-rest-api-client/actions/workflows/cd-typescript-fetch.yml) |
+| npm package link | [https://www.npmjs.com/package/@nemtus/symbol-rest-api-client-fetch](https://www.npmjs.com/package/@nemtus/symbol-rest-api-client-fetch) |
 
 ## For package users
 
 ### Install
 
 ```bash
-npm install @nemtus/symbol-sdk-openapi-generator-typescript-fetch
+npm install @nemtus/symbol-rest-api-client-fetch
 ```
 
 ### Usage
@@ -28,7 +32,7 @@ import {
   ConfigurationParameters,
   NodeInfoDTO,
   NodeRoutesApi,
-} from '@nemtus/symbol-sdk-openapi-generator-typescript-fetch';
+} from '@nemtus/symbol-rest-api-client-fetch';
 
 const configurationParameters: ConfigurationParameters = {
   basePath: 'https://symbol-main-1.nemtus.com:3001',
@@ -61,7 +65,7 @@ import {
   AccountRoutesApiGetAccountInfoRequest,
   Configuration,
   ConfigurationParameters,
-} from '@nemtus/symbol-sdk-openapi-generator-typescript-fetch';
+} from '@nemtus/symbol-rest-api-client-fetch';
 
 const configurationParameters: ConfigurationParameters = {
   basePath: 'https://symbol-main-1.nemtus.com:3001',
@@ -148,7 +152,7 @@ Example with CDN
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
     <!-- Load from CDN or a single file bundled with webpack -->
-    <script src="https://cdn.jsdelivr.net/npm/@nemtus/symbol-sdk-openapi-generator-typescript-fetch@0.2.1/index.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@nemtus/symbol-rest-api-client-fetch@1.0.0/index.min.js"></script>
   </head>
   <body>
     <script>
@@ -179,17 +183,21 @@ Example with CDN
 
 ### 0. Prerequisite
 
-- Clone the repository
+- Clone the monorepo and change into this client's directory
 
 ```bash
-git clone git@github.com:nemtus/symbol-sdk-openapi-generator-typescript-fetch.git
+git clone git@github.com:nemtus/symbol-rest-api-client.git
+cd symbol-rest-api-client/clients/typescript-fetch
 ```
 
 or
 
 ```bash
-git clone https://github.com/nemtus/symbol-sdk-openapi-generator-typescript-fetch.git
+git clone https://github.com/nemtus/symbol-rest-api-client.git
+cd symbol-rest-api-client/clients/typescript-fetch
 ```
+
+All commands below are run from this client directory (`clients/typescript-fetch`); there is no root `package.json`.
 
 - Install Java
 

@@ -1,21 +1,25 @@
-# symbol-sdk-openapi-generator-typescript-axios
+# @nemtus/symbol-rest-api-client-axios
 
-Symbol SDK for TypeScript with OpenAPI Generator typescript-axios
+Symbol REST API client for TypeScript, generated with OpenAPI Generator (`typescript-axios`). Ships `axios` as a runtime dependency.
+
+Part of the [`nemtus/symbol-rest-api-client`](https://github.com/nemtus/symbol-rest-api-client) monorepo (this package lives in `clients/typescript-axios`). The sister package [`@nemtus/symbol-rest-api-client-fetch`](https://www.npmjs.com/package/@nemtus/symbol-rest-api-client-fetch) provides a dependency-free, native-fetch variant.
+
+> Formerly published as `@nemtus/symbol-sdk-openapi-generator-typescript-axios` (now deprecated). This client targets the [`@nemtus/symbol-openapi`](https://www.npmjs.com/package/@nemtus/symbol-openapi) spec `1.0.5`.
 
 Note: Currently, This is a very experimental level.
 
 | Type | Status/Link |
 | --------- | -------------------- |
-| CI status | [![CI Node.js](https://github.com/nemtus/symbol-sdk-openapi-generator-typescript-axios/actions/workflows/ci-nodejs.yml/badge.svg)](https://github.com/nemtus/symbol-sdk-openapi-generator-typescript-axios/actions/workflows/ci-nodejs.yml) |
-| Latest npm publish status | [![CD Publish to npm](https://github.com/nemtus/symbol-sdk-openapi-generator-typescript-axios/actions/workflows/cd-publish-to-npm.yml/badge.svg)](https://github.com/nemtus/symbol-sdk-openapi-generator-typescript-axios/actions/workflows/cd-publish-to-npm.yml) |
-| npm package link | [https://www.npmjs.com/package/@nemtus/symbol-sdk-openapi-generator-typescript-axios](https://www.npmjs.com/package/@nemtus/symbol-sdk-openapi-generator-typescript-axios) |
+| CI status | [![CI typescript-axios](https://github.com/nemtus/symbol-rest-api-client/actions/workflows/ci-typescript-axios.yml/badge.svg)](https://github.com/nemtus/symbol-rest-api-client/actions/workflows/ci-typescript-axios.yml) |
+| Latest npm publish status | [![CD typescript-axios](https://github.com/nemtus/symbol-rest-api-client/actions/workflows/cd-typescript-axios.yml/badge.svg)](https://github.com/nemtus/symbol-rest-api-client/actions/workflows/cd-typescript-axios.yml) |
+| npm package link | [https://www.npmjs.com/package/@nemtus/symbol-rest-api-client-axios](https://www.npmjs.com/package/@nemtus/symbol-rest-api-client-axios) |
 
 ## For package users
 
 ### Install
 
 ```bash
-npm install @nemtus/symbol-sdk-openapi-generator-typescript-axios
+npm install @nemtus/symbol-rest-api-client-axios
 ```
 
 ### Usage
@@ -28,7 +32,7 @@ import {
   ConfigurationParameters,
   NodeInfoDTO,
   NodeRoutesApi,
-} from '@nemtus/symbol-sdk-openapi-generator-typescript-axios';
+} from '@nemtus/symbol-rest-api-client-axios';
 
 const configurationParameters: ConfigurationParameters = {
   basePath: 'https://symbol-sakura-16.next-web-technology.com:3001',
@@ -64,7 +68,7 @@ import {
   AccountRoutesApiGetAccountInfoRequest,
   Configuration,
   ConfigurationParameters,
-} from '@nemtus/symbol-sdk-openapi-generator-typescript-axios';
+} from '@nemtus/symbol-rest-api-client-axios';
 
 const configurationParameters: ConfigurationParameters = {
   basePath: 'https://symbol-sakura-16.next-web-technology.com:3001',
@@ -154,7 +158,7 @@ Example with CDN
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
     <!-- Load from CDN or a single file bundled with webpack -->
-    <script src="https://cdn.jsdelivr.net/npm/@nemtus/symbol-sdk-openapi-generator-typescript-axios@0.1.0/index.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@nemtus/symbol-rest-api-client-axios@1.0.0/index.min.js"></script>
   </head>
   <body>
     <script>
@@ -189,11 +193,14 @@ Example with CDN
 
 ### 0. Prerequisite
 
-- Clone the repository
+- Clone the monorepo and change into this client's directory
 
 ```bash
-git clone https://github.com/nemtus/symbol-sdk-openapi-generator-typescript-axios.git
+git clone https://github.com/nemtus/symbol-rest-api-client.git
+cd symbol-rest-api-client/clients/typescript-axios
 ```
+
+All commands below are run from this client directory (`clients/typescript-axios`); there is no root `package.json`.
 
 - Install Java
 
