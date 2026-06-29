@@ -4,7 +4,7 @@ import {
   AccountRoutesApiGetAccountInfoRequest,
   Configuration,
   ConfigurationParameters,
-} from '@nemtus/symbol-sdk-openapi-generator-typescript-axios';
+} from '@nemtus/symbol-rest-api-client-axios';
 import { test, expect, describe } from 'vitest';
 import * as fixtures from '../../../_shared/fixtures.cjs';
 

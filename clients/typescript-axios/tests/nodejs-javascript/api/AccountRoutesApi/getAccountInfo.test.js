@@ -1,6 +1,6 @@
 import { describe, test, expect } from 'vitest';
 
-const symbolSdk = require('@nemtus/symbol-sdk-openapi-generator-typescript-axios');
+const symbolSdk = require('@nemtus/symbol-rest-api-client-axios');
 const { assertAccountInfo } = require('../../../_shared/fixtures.cjs');
 
 describe('getAccountInfo', () => {

@@ -4,7 +4,7 @@ import {
   Configuration,
   ConfigurationParameters,
   GetAccountInfoRequest,
-} from '@nemtus/symbol-sdk-openapi-generator-typescript-fetch';
+} from '@nemtus/symbol-rest-api-client-fetch';
 import { test, expect, describe } from 'vitest';
 import * as fixtures from '../../../_shared/fixtures.cjs';
 

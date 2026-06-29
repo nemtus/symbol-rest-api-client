@@ -15,7 +15,7 @@
     "vitest": "^4.1.8"
   },
   "dependencies": {
-    "@nemtus/symbol-sdk-openapi-generator-typescript-axios": "../../dist"
+    "@nemtus/symbol-rest-api-client-axios": "../../dist"
   },
   "overrides": {
     "form-data": ">=4.0.6",

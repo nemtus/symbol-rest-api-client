@@ -1,6 +1,6 @@
 import { describe, test, expect } from 'vitest';
 
-const symbolSdk = require('@nemtus/symbol-sdk-openapi-generator-typescript-fetch');
+const symbolSdk = require('@nemtus/symbol-rest-api-client-fetch');
 const { assertNodeInfo } = require('../../../_shared/fixtures.cjs');
 
 describe('getNodeInfo', () => {

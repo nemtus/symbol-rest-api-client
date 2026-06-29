@@ -15,6 +15,6 @@
     "vitest": "^4.1.8"
   },
   "dependencies": {
-    "@nemtus/symbol-sdk-openapi-generator-typescript-fetch": "../../dist"
+    "@nemtus/symbol-rest-api-client-fetch": "../../dist"
   }
 }
