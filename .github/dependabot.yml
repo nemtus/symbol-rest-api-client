@@ -1,0 +1,54 @@
+# Dependabot for the polyglot monorepo.
+# https://docs.github.com/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
+#
+# Each TypeScript client under clients/<generator>/ is its own npm project (root +
+# three consumer test suites under tests/), and they are NOT an npm workspace — every
+# manifest needs its own update stream. We use glob `directories` so both current
+# clients (and any future ones) are covered without per-directory duplication.
+# All entries: check daily (security updates are exempt from cooldown and surface
+# immediately) with a 7-day cooldown on regular bumps, grouping non-major updates.
+
+version: 2
+updates:
+  # ---- each client's own package.json (clients/typescript-fetch, typescript-axios, …) ----
+  - package-ecosystem: 'npm'
+    directories:
+      - '/clients/*'
+    schedule:
+      interval: 'daily'
+    cooldown:
+      default-days: 7
+    groups:
+      npm-minor-and-patch:
+        applies-to: version-updates
+        update-types:
+          - minor
+          - patch
+
+  # ---- each client's consumer test suites (tests/nodejs-javascript|typescript|browser-cdn) ----
+  # `@playwright/test` / `playwright` are NOT ignored: ignoring them would also suppress
+  # security-update PRs. The npm package is coupled to the Playwright CONTAINER tag
+  # (mcr.microsoft.com/playwright:vX.Y.Z-noble) in each client's ci-/cd-<generator>.yml,
+  # which the `detect-playwright-version` job derives from the locked `playwright` version
+  # so the container auto-syncs to whatever Dependabot bumps — no manual tag edit.
+  - package-ecosystem: 'npm'
+    directories:
+      - '/clients/*/tests/*'
+    schedule:
+      interval: 'daily'
+    cooldown:
+      default-days: 7
+    groups:
+      npm-minor-and-patch:
+        applies-to: version-updates
+        update-types:
+          - minor
+          - patch
+
+  # ---- github actions (root .github/workflows) ----
+  - package-ecosystem: 'github-actions'
+    directory: '/'
+    schedule:
+      interval: 'daily'
+    cooldown:
+      default-days: 7
