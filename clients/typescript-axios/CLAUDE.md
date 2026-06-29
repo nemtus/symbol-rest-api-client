@@ -2,6 +2,20 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+> **Monorepo note (read first).** This package now lives at `clients/typescript-axios/`
+> in the [`nemtus/symbol-rest-api-client`](https://github.com/nemtus/symbol-rest-api-client)
+> polyglot monorepo and is published as **`@nemtus/symbol-rest-api-client-axios`** (was
+> `@nemtus/symbol-sdk-openapi-generator-typescript-axios`). Where the text below says "root
+> directory", it means **this client directory** (`clients/typescript-axios`) — there is no
+> root `package.json`. Shared tooling (`.editorconfig`, `.prettierrc`, `cspell.json`,
+> `.coderabbit.yaml`, `socket.yml`, `.pinact.yaml`, and the Claude/Gemini/VS Code configs
+> incl. `.claude/` hooks) is hoisted to the **repo root**, not per-client. CI/CD are the
+> root workflows **`ci-typescript-axios.yml` / `cd-typescript-axios.yml`** (not
+> `ci-nodejs.yml` / `cd-publish-to-npm.yml`). Release tags are prefixed
+> **`typescript-axios-vX.Y.Z`** (set via this client's `.npmrc` `tag-version-prefix`), and
+> versions track the spec at MAJOR.MINOR with PATCH as this client's own lane. The axios
+> runtime-dependency security notes below still apply.
+
 ## Project Overview
 
 This is the Symbol SDK for TypeScript with OpenAPI Generator typescript-axios. It generates a TypeScript client library for the Symbol blockchain REST API using OpenAPI specifications.

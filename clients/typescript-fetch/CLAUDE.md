@@ -2,6 +2,19 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+> **Monorepo note (read first).** This package now lives at `clients/typescript-fetch/`
+> in the [`nemtus/symbol-rest-api-client`](https://github.com/nemtus/symbol-rest-api-client)
+> polyglot monorepo and is published as **`@nemtus/symbol-rest-api-client-fetch`** (was
+> `@nemtus/symbol-sdk-openapi-generator-typescript-fetch`). Where the text below says "root
+> directory", it means **this client directory** (`clients/typescript-fetch`) — there is no
+> root `package.json`. Shared tooling (`.editorconfig`, `.prettierrc`, `cspell.json`,
+> `.coderabbit.yaml`, `socket.yml`, `.pinact.yaml`, and the Claude/Gemini/VS Code configs
+> incl. `.claude/` hooks) is hoisted to the **repo root**, not per-client. CI/CD are the
+> root workflows **`ci-typescript-fetch.yml` / `cd-typescript-fetch.yml`** (not
+> `ci-nodejs.yml` / `cd-publish-to-npm.yml`). Release tags are prefixed
+> **`typescript-fetch-vX.Y.Z`** (set via this client's `.npmrc` `tag-version-prefix`), and
+> versions track the spec at MAJOR.MINOR with PATCH as this client's own lane.
+
 ## Project Overview
 
 This is the Symbol SDK for TypeScript with OpenAPI Generator typescript-fetch. It generates a TypeScript client library for the Symbol blockchain REST API using OpenAPI specifications.
