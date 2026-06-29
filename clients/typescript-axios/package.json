@@ -1,7 +1,8 @@
 {
-  "name": "@nemtus/symbol-sdk-openapi-generator-typescript-axios",
-  "version": "0.5.0",
-  "description": "Symbol SDK for TypeScript with OpenAPI Generator typescript-axios",
+  "name": "@nemtus/symbol-rest-api-client-axios",
+  "version": "1.0.0",
+  "description": "Symbol REST API client for TypeScript (OpenAPI Generator typescript-axios)",
+  "symbolOpenapiVersion": "1.0.5",
   "main": "./cjs/index.js",
   "module": "./esm/index.js",
   "scripts": {
@@ -23,7 +24,8 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/nemtus/symbol-sdk-openapi-generator-typescript-axios.git"
+    "url": "git+https://github.com/nemtus/symbol-rest-api-client.git",
+    "directory": "clients/typescript-axios"
   },
   "keywords": [
     "blockchain",
@@ -35,9 +37,9 @@
   "author": "nemtus",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/nemtus/symbol-sdk-openapi-generator-typescript-axios/issues"
+    "url": "https://github.com/nemtus/symbol-rest-api-client/issues"
   },
-  "homepage": "https://github.com/nemtus/symbol-sdk-openapi-generator-typescript-axios#readme",
+  "homepage": "https://github.com/nemtus/symbol-rest-api-client/tree/main/clients/typescript-axios#readme",
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@nemtus/symbol-openapi": "1.0.5",
