@@ -1,0 +1,9 @@
+node_modules
+dist
+lib
+cdn
+coverage
+src/api
+tests/*/node_modules
+**/*.min.js
+package-lock.json
