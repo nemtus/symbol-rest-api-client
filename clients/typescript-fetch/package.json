@@ -1,0 +1,62 @@
+{
+  "name": "@nemtus/symbol-sdk-openapi-generator-typescript-fetch",
+  "version": "0.6.0",
+  "description": "Symbol SDK for TypeScript with OpenAPI Generator typescript-fetch",
+  "main": "./cjs/index.js",
+  "module": "./esm/index.js",
+  "scripts": {
+    "openapi:set:version": "npx @openapitools/openapi-generator-cli version-manager set 7.14.0",
+    "openapi:clean": "node clean-generated-api.js",
+    "openapi:generate": "npm run openapi:clean && npx @openapitools/openapi-generator-cli generate -i ./node_modules/@nemtus/symbol-openapi/openapi3.yml -g typescript-fetch -o ./src/api -c ./openapi-generator-config.yml",
+    "build": "npm run build:cjs && npm run build:esm && npm run build:cdn && node bundle",
+    "build:cjs": "node pre-build-cjs && tsc --build --clean && tsc --target es2015 --module commonjs && node post-build-cjs",
+    "build:esm": "node pre-build-esm && tsc --build --clean && tsc --target esnext --module esnext && node post-build-esm",
+    "build:cdn": "node pre-build-cdn && tsc --build --clean && tsc --target esnext --module esnext && webpack && node post-build-cdn",
+    "test": "vitest run",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write \"**/*.{ts,mts,cts,js,cjs,mjs}\"",
+    "format:check": "prettier --check \"**/*.{ts,mts,cts,js,cjs,mjs}\"",
+    "type:check": "tsc --noEmit",
+    "release:patch": "npm version patch && git push --follow-tags",
+    "release:minor": "npm version minor && git push --follow-tags",
+    "release:major": "npm version major && git push --follow-tags"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nemtus/symbol-sdk-openapi-generator-typescript-fetch.git"
+  },
+  "keywords": [
+    "blockchain",
+    "symbol",
+    "sdk",
+    "typescript"
+  ],
+  "author": "nemtus",
+  "license": "MIT",
+  "overrides": {
+    "shell-quote": "^1.8.4",
+    "form-data": "^4.0.6"
+  },
+  "bugs": {
+    "url": "https://github.com/nemtus/symbol-sdk-openapi-generator-typescript-fetch/issues"
+  },
+  "homepage": "https://github.com/nemtus/symbol-sdk-openapi-generator-typescript-fetch#readme",
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@nemtus/symbol-openapi": "1.0.5",
+    "@openapitools/openapi-generator-cli": "^2.22.0",
+    "@vitest/coverage-v8": "^4.1.8",
+    "eslint": "^10.4.1",
+    "eslint-config-prettier": "^10.1.8",
+    "fs-extra": "^11.3.5",
+    "globals": "^17.6.0",
+    "prettier": "^3.8.3",
+    "ts-loader": "^9.3.1",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.60.1",
+    "vitest": "^4.1.8",
+    "webpack": "^5.74.0",
+    "webpack-cli": "^7.0.3"
+  }
+}
