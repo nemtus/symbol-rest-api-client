@@ -44,7 +44,8 @@ This is the Symbol SDK for TypeScript with OpenAPI Generator typescript-fetch. I
 
 ### Initial Setup
 ```bash
-git clone git@github.com:nemtus/symbol-sdk-openapi-generator-typescript-fetch.git
+git clone git@github.com:nemtus/symbol-rest-api-client.git
+cd symbol-rest-api-client/clients/typescript-fetch
 ```
 
 ### Build Commands

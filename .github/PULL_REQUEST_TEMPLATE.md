@@ -1,6 +1,6 @@
 ## Link to ticket
 
-* https://github.com/nemtus/symbol-sdk-openapi-generator-typescript-fetch/issues
+* https://github.com/nemtus/symbol-rest-api-client/issues
 
 ## What you did
 
