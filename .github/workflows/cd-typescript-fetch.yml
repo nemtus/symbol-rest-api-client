@@ -127,9 +127,9 @@ jobs:
   test-nodejs-javascript:
     needs: build
     runs-on: ubuntu-latest
-    # Hits a live mainnet node; deterministic coverage is in test-unit, so don't
-    # let external flakiness block publishing.
-    continue-on-error: true
+    # Hits a live mainnet node. This integration suite is expected to pass, so it gates
+    # the run (no continue-on-error). If the public node is transiently unavailable,
+    # re-run the job rather than ignoring the failure.
 
     strategy:
       matrix:
@@ -168,9 +168,9 @@ jobs:
   test-nodejs-typescript:
     needs: build
     runs-on: ubuntu-latest
-    # Hits a live mainnet node; deterministic coverage is in test-unit, so don't
-    # let external flakiness block publishing.
-    continue-on-error: true
+    # Hits a live mainnet node. This integration suite is expected to pass, so it gates
+    # the run (no continue-on-error). If the public node is transiently unavailable,
+    # re-run the job rather than ignoring the failure.
 
     strategy:
       matrix:
@@ -228,9 +228,9 @@ jobs:
   test-browser-cdn:
     needs: [build, detect-playwright-version]
     runs-on: ubuntu-latest
-    # Hits a live mainnet node; deterministic coverage is in test-unit, so don't
-    # let external flakiness block publishing.
-    continue-on-error: true
+    # Hits a live mainnet node. This integration suite is expected to pass, so it gates
+    # the run (no continue-on-error). If the public node is transiently unavailable,
+    # re-run the job rather than ignoring the failure.
     container:
       # Auto-synced to the locked playwright version by detect-playwright-version.
       image: mcr.microsoft.com/playwright:v${{ needs.detect-playwright-version.outputs.version }}-noble

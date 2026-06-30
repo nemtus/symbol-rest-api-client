@@ -51,10 +51,12 @@ Copy the closest existing pair and rename:
 
 When adapting (the TS workflows are the reference):
 
-- **CI `paths:`** filter → `clients/<generator>/**` and the workflow file itself.
+- **CI triggers**: run on every PR and every push to `main` — **no `paths:` filter**. A client can be broken by a change to repo-wide shared config (`.prettierrc`, `cspell.json`, `.claude/hooks`, …) that a per-client path filter would miss, and always-running keeps the gate check (below) reliable for branch protection. (At large client counts, revisit with a change-detection matrix that runs only affected clients plus all-on-shared-config-change.)
+- **All jobs gate.** The live-mainnet integration suites (consumer + browser-cdn) are expected to pass, so they do **not** use `continue-on-error` — a real failure should block. (If a public node is transiently down, re-run the job.)
+- **`ci-<generator>-gate`** job: a final aggregator with `needs:` **every** job in the workflow and `if: always()`, which fails if any job didn't succeed. This is the single check to require in the `main` ruleset (the per-workflow job names like `build` / `lint` collide across clients). Don't checkout in it; override its step `working-directory` to `${{ github.workspace }}`.
 - **`defaults.run.working-directory`** → `clients/<generator>` so bare `run:` steps execute in the client.
 - Inputs that are **workspace-relative and do NOT inherit `working-directory`** must be written in full: `hashFiles('clients/<generator>/...')`, artifact upload/download `path:`, per-sub-suite `working-directory:`, and any publish/pack directory.
-- **CD trigger** → `tags: ['<generator>-v*']`; keep the per-workflow `concurrency` group.
+- **CD trigger** → `tags: ['<generator>-v*']`; keep the per-workflow `concurrency` group. Add `<generator>-v*` to the `release tags` ruleset's target patterns so the new client's release tags are protected (restrict updates/deletions).
 - Keep the supply-chain layers (Socket Firewall, `npm audit` / ecosystem equivalent, `pinact` SHA-pinning) and **pin every action to a full commit SHA**.
 - **Publishing**: prefer the registry's OIDC/trusted-publishing flow gated by a **per-registry GitHub Environment** named `<registry>-production` (e.g. `npm-production` for the TypeScript clients, `pypi-production` for a Python client, `crates-production`, …). All clients of the same registry share one environment; you only add a new environment when you add a new registry. Avoid long-lived tokens where the registry supports OIDC.
 

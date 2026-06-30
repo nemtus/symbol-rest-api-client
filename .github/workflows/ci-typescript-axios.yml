@@ -1,20 +1,18 @@
 name: CI typescript-axios
 
 # Monorepo client: clients/typescript-axios (@nemtus/symbol-rest-api-client-axios).
-# Only runs when this client (or this workflow) changes. All `run:` steps default to
-# the client directory; action inputs that take paths (hashFiles, artifact path) are
+# Runs on every PR and every push to main — intentionally NOT path-filtered. A change to
+# repo-wide shared config (.prettierrc, cspell.json, .claude/hooks, …) can break this
+# client, and a per-client path filter would miss that. Running always also lets the
+# `ci-axios-gate` job below be a reliable required status check (a filtered check that
+# never runs would hang branch protection). All `run:` steps default to the client
+# directory; action inputs that take paths (hashFiles, artifact path) are
 # workspace-relative and so are written out in full.
 on:
   pull_request:
-    paths:
-      - 'clients/typescript-axios/**'
-      - '.github/workflows/ci-typescript-axios.yml'
   push:
     branches:
       - main
-    paths:
-      - 'clients/typescript-axios/**'
-      - '.github/workflows/ci-typescript-axios.yml'
   workflow_dispatch:
 
 permissions:
@@ -139,9 +137,9 @@ jobs:
   test-nodejs-javascript:
     needs: build
     runs-on: ubuntu-latest
-    # Hits a live mainnet node; deterministic coverage is in test-unit, so don't
-    # let external flakiness gate CI.
-    continue-on-error: true
+    # Hits a live mainnet node. This integration suite is expected to pass, so it gates
+    # the run (no continue-on-error). If the public node is transiently unavailable,
+    # re-run the job rather than ignoring the failure.
 
     strategy:
       fail-fast: false
@@ -181,9 +179,9 @@ jobs:
   test-nodejs-typescript:
     needs: build
     runs-on: ubuntu-latest
-    # Hits a live mainnet node; deterministic coverage is in test-unit, so don't
-    # let external flakiness gate CI.
-    continue-on-error: true
+    # Hits a live mainnet node. This integration suite is expected to pass, so it gates
+    # the run (no continue-on-error). If the public node is transiently unavailable,
+    # re-run the job rather than ignoring the failure.
 
     strategy:
       fail-fast: false
@@ -243,9 +241,9 @@ jobs:
   test-browser-cdn:
     needs: [build, detect-playwright-version]
     runs-on: ubuntu-latest
-    # Hits a live mainnet node; deterministic coverage is in test-unit, so don't
-    # let external flakiness gate CI.
-    continue-on-error: true
+    # Hits a live mainnet node. This integration suite is expected to pass, so it gates
+    # the run (no continue-on-error). If the public node is transiently unavailable,
+    # re-run the job rather than ignoring the failure.
     container:
       # Auto-synced to the locked playwright version by detect-playwright-version.
       image: mcr.microsoft.com/playwright:v${{ needs.detect-playwright-version.outputs.version }}-noble
@@ -289,8 +287,8 @@ jobs:
   dry-run-publish:
     # Only needs the build artifact — `npm pack` validates packaging, independent of
     # test outcomes — so run it in parallel with the test jobs instead of after them.
-    # (Gating it behind the live-node suites added latency but no safety: those are
-    # continue-on-error, and packaging validity doesn't depend on any test result.)
+    # (Gating it behind the test suites would add latency but no safety: packaging
+    # validity does not depend on any test result.)
     needs: build
     # Run on every event (PRs, main pushes, manual) so the publishable ./dist artifact
     # is validated before merge, not only after. It only downloads the artifact and runs
@@ -358,3 +356,29 @@ jobs:
       - uses: suzuki-shunsuke/pinact-action@896d595f299e71d65b9d28349d6956abe144390a # v3.0.0
         with:
           fix: 'false'
+
+  # Single aggregated check to require in branch protection (the per-workflow job names
+  # like `build` / `lint` collide between the two clients' CI). It depends on ALL jobs in
+  # this workflow — including the live-mainnet integration suites, which now gate (no
+  # continue-on-error). `if: always()` ensures this job runs even when a dependency fails,
+  # so a failure surfaces as a failed check rather than a skipped (and thus "passing")
+  # one. Require `ci-axios-gate` in the `main` ruleset.
+  ci-axios-gate:
+    needs: [build, test-unit, test-nodejs-javascript, test-nodejs-typescript, detect-playwright-version, test-browser-cdn, dry-run-publish, lint, pinact]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verify all gating jobs succeeded
+        # This job does not checkout, so override the workflow-default working-directory
+        # (clients/typescript-axios) which would not exist here.
+        working-directory: ${{ github.workspace }}
+        run: |
+          results='${{ join(needs.*.result, ' ') }}'
+          echo "gating job results: ${results}"
+          for r in ${results}; do
+            if [ "${r}" != "success" ]; then
+              echo "::error::A gating job did not succeed (one result was '${r}')."
+              exit 1
+            fi
+          done
+          echo "All gating jobs succeeded."
