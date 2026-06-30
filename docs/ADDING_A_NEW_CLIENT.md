@@ -38,7 +38,7 @@ Track the `@nemtus/symbol-openapi` spec at **MAJOR.MINOR**; use **PATCH** as thi
 
 ## 3. Release tagging
 
-Configure the client so its release bumps create a **prefixed tag** `<generator>-vX.Y.Z` (for npm clients, set `tag-version-prefix=<generator>-v` in the client's `.npmrc`). This is what the client's CD workflow triggers on, and it keeps tags from colliding across clients.
+Wire the client's `release:*` scripts to `npm version <type> --no-git-tag-version && node ../../scripts/release.mjs`. The shared `scripts/release.mjs` commits the bump, creates the **prefixed tag** `<generator>-vX.Y.Z` (derived from the client directory name), and pushes — which is what the client's CD workflow triggers on, and keeps tags from colliding across clients. (Plain `npm version` does **not** create the git commit/tag when run from a monorepo subdirectory, so don't rely on `.npmrc` `tag-version-prefix`.)
 
 ## 4. CI/CD workflows
 

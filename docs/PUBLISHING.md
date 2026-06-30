@@ -128,10 +128,12 @@ cd clients/typescript-fetch     # or clients/typescript-axios
 npm run release:patch           # or release:minor / release:major
 ```
 
-`npm version` bumps `package.json` + lockfile, commits, and tags using the client's
-`.npmrc` `tag-version-prefix` → `typescript-fetch-vX.Y.Z`. `git push --follow-tags` pushes
-the tag, which triggers `cd-typescript-fetch.yml`. The pipeline builds and tests, then the
-`publish` job **waits for approval** in the `npm-production` environment:
+`release:patch` bumps the version with `npm version patch --no-git-tag-version`, then the
+shared `scripts/release.mjs` commits the bump, creates the tag `typescript-fetch-vX.Y.Z`,
+and pushes (plain `npm version` does **not** create the commit/tag when run from a monorepo
+subdirectory, so the script does it from the repo root). The pushed tag triggers
+`cd-typescript-fetch.yml`; the pipeline builds and tests, then the `publish` job **waits for
+approval** in the `npm-production` environment:
 
 - GitHub → **Actions** → the CD run → **Review deployments** → select `npm-production` → **Approve and deploy**.
 
