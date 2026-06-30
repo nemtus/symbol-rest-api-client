@@ -5,7 +5,7 @@ on:
   # Automated release: pushing a `typescript-fetch-vX.Y.Z` tag (created by
   # `npm run release:*` in clients/typescript-fetch, whose .npmrc sets the matching
   # tag-version-prefix) triggers the pipeline. The `publish` job still waits on the
-  # `release` Environment approval gate before anything is published.
+  # `npm-production` Environment approval gate before anything is published.
   push:
     tags:
       - 'typescript-fetch-v*'
@@ -273,10 +273,10 @@ jobs:
   publish:
     needs: [test-unit, test-nodejs-javascript, test-nodejs-typescript, test-browser-cdn]
     runs-on: ubuntu-latest
-    # Manual approval gate: configure the `release` environment with required reviewers
+    # Manual approval gate: configure the `npm-production` environment with required reviewers
     # in GitHub repo settings. Also set this same environment name in the npm Trusted
     # Publisher config so only runs that passed this gate can publish.
-    environment: release
+    environment: npm-production
     permissions:
       contents: read
       id-token: write # Required for npm Trusted Publishing (OIDC). No NPM_TOKEN needed.

@@ -102,7 +102,7 @@ The project uses GitHub Actions. Both workflows run on a single unified runtime:
 - **CD** (`cd-publish-to-npm.yml`) - Tag-triggered (`push` of a `v*` tag, created by `npm run release:*`)
   with a `workflow_dispatch` fallback: builds, tests, then publishes to npm via **OIDC Trusted Publishing**
   (no `NPM_TOKEN`; provenance attached). The whole pipeline is serialized via a `concurrency` group, and the
-  `publish` job is gated by the `release` GitHub Environment (manual approval).
+  `publish` job is gated by the `npm-production` GitHub Environment (manual approval).
 
 Releasing is one action: `npm run release:minor` (or `:patch` / `:major`) bumps the version, creates the
 `vX.Y.Z` tag, and pushes it — which triggers CD.

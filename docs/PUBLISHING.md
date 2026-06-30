@@ -2,7 +2,7 @@
 
 How to publish each client to its registry and run releases. The TypeScript clients
 (`@nemtus/symbol-rest-api-client-fetch` / `-axios`) publish to npm via **OIDC Trusted
-Publishing** (no long-lived token), gated by the `release` GitHub Environment.
+Publishing** (no long-lived token), gated by the `npm-production` GitHub Environment.
 
 ## Versioning recap
 
@@ -71,17 +71,17 @@ Publisher** → **GitHub Actions**, and set:
 | Organization or user | `nemtus` | `nemtus` |
 | Repository | `symbol-rest-api-client` | `symbol-rest-api-client` |
 | Workflow filename (name only, no path) | `cd-typescript-fetch.yml` | `cd-typescript-axios.yml` |
-| Environment name | `release` | `release` |
+| Environment name | `npm-production` | `npm-production` |
 | Allowed actions | `npm publish` | `npm publish` |
 
 There is no CLI for this — npm Trusted Publisher config is GUI-only.
 
-## Step 3 — Create the `release` GitHub Environment (approval gate)
+## Step 3 — Create the `npm-production` GitHub Environment (approval gate)
 
-The CD `publish` job declares `environment: release`; this name must match the Trusted
+The CD `publish` job declares `environment: npm-production`; this name must match the Trusted
 Publisher's "Environment name".
 
-**GUI:** repo → **Settings** → **Environments** → **New environment** → name `release` →
+**GUI:** repo → **Settings** → **Environments** → **New environment** → name `npm-production` →
 **Configure** → enable **Required reviewers** (add yourself / a team) → optionally set
 **Deployment branches and tags** to *Selected* and allow only `typescript-fetch-v*` /
 `typescript-axios-v*` → **Save protection rules**.
@@ -89,9 +89,9 @@ Publisher's "Environment name".
 **CLI (if your token has the rights; a scoped PAT may 403 — then use the GUI):**
 
 ```bash
-gh api -X PUT repos/nemtus/symbol-rest-api-client/environments/release
+gh api -X PUT repos/nemtus/symbol-rest-api-client/environments/npm-production
 MYID=$(gh api users/YasunoriMATSUOKA --jq .id)
-gh api -X PUT repos/nemtus/symbol-rest-api-client/environments/release \
+gh api -X PUT repos/nemtus/symbol-rest-api-client/environments/npm-production \
   -F "reviewers[][type]=User" -F "reviewers[][id]=$MYID"
 ```
 
@@ -107,9 +107,9 @@ npm run release:patch           # or release:minor / release:major
 `npm version` bumps `package.json` + lockfile, commits, and tags using the client's
 `.npmrc` `tag-version-prefix` → `typescript-fetch-vX.Y.Z`. `git push --follow-tags` pushes
 the tag, which triggers `cd-typescript-fetch.yml`. The pipeline builds and tests, then the
-`publish` job **waits for approval** in the `release` environment:
+`publish` job **waits for approval** in the `npm-production` environment:
 
-- GitHub → **Actions** → the CD run → **Review deployments** → select `release` → **Approve and deploy**.
+- GitHub → **Actions** → the CD run → **Review deployments** → select `npm-production` → **Approve and deploy**.
 
 On approval, npm exchanges the GitHub OIDC token for a short-lived credential and publishes
 with `--provenance` (no `NPM_TOKEN`).
@@ -144,7 +144,7 @@ first):
 ## Checklist
 
 1. ☐ `npm login` (MFA) → publish `1.0.0` from each client's `dist/` (`--access public`, `--otp` if prompted) → `npm logout`
-2. ☐ Configure the npm Trusted Publisher for both packages (workflow filename differs; Environment = `release`)
-3. ☐ Create the `release` GitHub Environment with required reviewers
+2. ☐ Configure the npm Trusted Publisher for both packages (workflow filename differs; Environment = `npm-production`)
+3. ☐ Create the `npm-production` GitHub Environment with required reviewers
 4. ☐ `npm run release:patch` → approve the CD run → confirm `1.0.1` published with provenance
 5. ☐ `npm deprecate` both old packages → archive both old repos

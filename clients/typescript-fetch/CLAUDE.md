@@ -100,7 +100,7 @@ checks run on Stop.
 The project uses GitHub Actions. Both workflows run on a single unified runtime: **Java 21** and **Node.js 24.x**.
 
 - **CI** (`ci-nodejs.yml`) - On pull requests and pushes to `main`: builds the client, runs all test suites in parallel (unit, nodejs-javascript, nodejs-typescript, browser-cdn), plus a `dry-run-publish` and a `pinact` job that verifies every action is SHA-pinned. **Every** `npm ci` (in both CI and CD, all jobs including the privileged `publish` job) is wrapped with **Socket Firewall Free** (`sfw`, `SocketDev/action` in `firewall-free` mode — no account/token, SHA-pinned) to block confirmed-malicious packages, including transitive deps, at install time — coverage `npm audit` (known CVEs only) does not provide. Each install is a code-execution surface, so all are firewalled, not just the build gate.
-- **CD** (`cd-publish-to-npm.yml`) - Triggered by pushing a `vX.Y.Z` tag (use `npm run release:patch|minor|major`, which runs `npm version` + `git push --follow-tags`); also runnable manually via `workflow_dispatch`. Builds, tests, then publishes to npm via **OIDC Trusted Publishing** (no `NPM_TOKEN`; provenance attached). The `publish` job is gated by the `release` GitHub Environment (manual approval), so a tag push starts the pipeline but still waits for approval before publishing.
+- **CD** (`cd-publish-to-npm.yml`) - Triggered by pushing a `vX.Y.Z` tag (use `npm run release:patch|minor|major`, which runs `npm version` + `git push --follow-tags`); also runnable manually via `workflow_dispatch`. Builds, tests, then publishes to npm via **OIDC Trusted Publishing** (no `NPM_TOKEN`; provenance attached). The `publish` job is gated by the `npm-production` GitHub Environment (manual approval), so a tag push starts the pipeline but still waits for approval before publishing.
 
 Both workflows:
 1. Build once and share `dist/` via a uniquely-named artifact (`dist-{run_id}-{run_attempt}-{java_version}-{node_version}`); test jobs download it instead of rebuilding.
@@ -121,7 +121,7 @@ npm run release:major   # 0.2.1 -> 1.0.0   (breaking changes)
 Each script runs `npm version <type>` (bumps `package.json` + `package-lock.json`,
 commits, and creates a `vX.Y.Z` tag) then `git push --follow-tags`. The pushed tag
 triggers the CD workflow (`on: push: tags: ['v*']`), which builds, tests, and then
-waits on the `release` Environment approval before publishing. `npm version`
+waits on the `npm-production` Environment approval before publishing. `npm version`
 requires a clean working tree, so commit or stash first.
 
 ## Important Notes

@@ -54,7 +54,7 @@ independently per language. The exact spec version a client targets is pinned vi
 Per-client, via tag prefixes: `typescript-fetch-v*` / `typescript-axios-v*` (each client's
 `.npmrc` sets the matching `tag-version-prefix`, so `npm run release:*` tags correctly).
 Each client has its own `ci-<generator>.yml` / `cd-<generator>.yml` workflow; publishing
-uses npm OIDC Trusted Publishing (no token), gated by the `release` environment.
+uses npm OIDC Trusted Publishing (no token), gated by the `npm-production` environment.
 
 ## AI assistant configuration
 

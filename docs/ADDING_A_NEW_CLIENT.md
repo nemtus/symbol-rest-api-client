@@ -56,11 +56,11 @@ When adapting (the TS workflows are the reference):
 - Inputs that are **workspace-relative and do NOT inherit `working-directory`** must be written in full: `hashFiles('clients/<generator>/...')`, artifact upload/download `path:`, per-sub-suite `working-directory:`, and any publish/pack directory.
 - **CD trigger** → `tags: ['<generator>-v*']`; keep the per-workflow `concurrency` group.
 - Keep the supply-chain layers (Socket Firewall, `npm audit` / ecosystem equivalent, `pinact` SHA-pinning) and **pin every action to a full commit SHA**.
-- **Publishing**: prefer the registry's OIDC/trusted-publishing flow gated by the `release` environment. Avoid long-lived tokens where the registry supports OIDC.
+- **Publishing**: prefer the registry's OIDC/trusted-publishing flow gated by a **per-registry GitHub Environment** named `<registry>-production` (e.g. `npm-production` for the TypeScript clients, `pypi-production` for a Python client, `crates-production`, …). All clients of the same registry share one environment; you only add a new environment when you add a new registry. Avoid long-lived tokens where the registry supports OIDC.
 
 ## 5. Registry-side setup (manual, before first publish)
 
-Most trusted-publishing schemes bind **package → repo + workflow filename + environment**, so configure the publisher on the registry for the new package pointing at `nemtus/symbol-rest-api-client`, workflow `cd-<generator>.yml`, environment `release`. Create/confirm the `release` GitHub Environment (required reviewers). Publishing before this is configured will fail.
+Most trusted-publishing schemes bind **package → repo + workflow filename + environment**, so configure the publisher on the registry for the new package pointing at `nemtus/symbol-rest-api-client`, workflow `cd-<generator>.yml`, environment `<registry>-production` (e.g. `npm-production`). Create/confirm that GitHub Environment (required reviewers). For npm specifically, note the package must be bootstrap-published once before its trusted publisher can be configured (see [PUBLISHING.md](PUBLISHING.md)). Publishing before this is configured will fail.
 
 ## 6. Wire it into the repo
 

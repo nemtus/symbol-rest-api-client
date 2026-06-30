@@ -236,7 +236,7 @@ Do not edit `src/api` manually.
 ### 3. Release
 
 Releasing is a single action — bump the version, create the `vX.Y.Z` tag, and push it, which triggers the
-tag-driven CD workflow (npm publish via OIDC Trusted Publishing, gated by the `release` Environment):
+tag-driven CD workflow (npm publish via OIDC Trusted Publishing, gated by the `npm-production` Environment):
 
 ```bash
 npm run release:minor   # or release:patch / release:major
