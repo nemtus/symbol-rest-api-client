@@ -95,6 +95,30 @@ gh api -X PUT repos/nemtus/symbol-rest-api-client/environments/npm-production \
   -F "reviewers[][type]=User" -F "reviewers[][id]=$MYID"
 ```
 
+## Step 3b — Branch & tag protection (GitHub rulesets)
+
+One-time repo settings under **Settings → Rules → Rulesets**. These back the release
+pipeline (immutable release tags) and keep `main` reviewed/tested.
+
+**`main protection`** (branch ruleset, target = default branch):
+
+- Restrict deletions ✅, Block force pushes ✅
+- Require a pull request before merging ✅ (Required approvals: 1, Require review from Code Owners ✅ — see `.github/CODEOWNERS`)
+- Require status checks to pass ✅ → add **`ci-fetch-gate`** and **`ci-axios-gate`** (optionally `CodeQL`). These are the per-workflow aggregator jobs; because CI is **not** path-filtered they always run, so requiring them never hangs. "Require branches to be up to date" is optional (off = lower friction).
+
+**`release tags`** (tag ruleset) — makes published release tags immutable:
+
+- Target tags (Include by pattern): `typescript-fetch-v*`, `typescript-axios-v*`
+- Restrict updates ✅, Restrict deletions ✅ (Restrict creations left off so `npm run release:*` can push the tag; if you turn it on, add the release maintainers to the bypass list).
+
+**`legacy tags (frozen)`** (tag ruleset) — freezes the imported pre-migration history markers:
+
+- Target tags (Include by pattern): `typescript-fetch-legacy-v*`, `typescript-axios-legacy-v*`
+- Restrict updates ✅, Restrict deletions ✅
+
+> Adding a new client: add `<generator>-v*` to the **`release tags`** ruleset's include
+> patterns, and add **`ci-<generator>-gate`** to **`main protection`**'s required checks.
+
 ## Step 4 — Releases (CD / OIDC, with provenance)
 
 After Step 1 published `1.0.0`, the next release is `1.0.1`. From the client directory:
@@ -146,5 +170,6 @@ first):
 1. ☐ `npm login` (MFA) → publish `1.0.0` from each client's `dist/` (`--access public`, `--otp` if prompted) → `npm logout`
 2. ☐ Configure the npm Trusted Publisher for both packages (workflow filename differs; Environment = `npm-production`)
 3. ☐ Create the `npm-production` GitHub Environment with required reviewers
-4. ☐ `npm run release:patch` → approve the CD run → confirm `1.0.1` published with provenance
-5. ☐ `npm deprecate` both old packages → archive both old repos
+4. ☐ Rulesets: `main protection` (require `ci-fetch-gate` / `ci-axios-gate`), `release tags`, `legacy tags (frozen)`
+5. ☐ `npm run release:patch` → approve the CD run → confirm `1.0.1` published with provenance
+6. ☐ `npm deprecate` both old packages → archive both old repos
