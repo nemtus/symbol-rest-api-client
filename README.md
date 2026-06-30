@@ -22,7 +22,7 @@ More languages (Python, Go, C#, PHP, Rust, Dart, Kotlin, Java, …) are planned 
 
 ## Repository layout
 
-```
+```text
 clients/
   typescript-fetch/   # @nemtus/symbol-rest-api-client-fetch
   typescript-axios/   # @nemtus/symbol-rest-api-client-axios
