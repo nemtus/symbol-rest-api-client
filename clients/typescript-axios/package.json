@@ -1,6 +1,6 @@
 {
   "name": "@nemtus/symbol-rest-api-client-axios",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Symbol REST API client for TypeScript (OpenAPI Generator typescript-axios)",
   "symbolOpenapiVersion": "1.0.5",
   "main": "./cjs/index.js",
