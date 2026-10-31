@@ -396,12 +396,29 @@ jobs:
             exit 0
           fi
 
-          # Previous release of THIS client only. Both clients live in one repo and are
-          # released on independent PATCH lanes, so the newest release overall is often
-          # the other one — which would produce a changelog spanning the wrong package.
-          prev="$(gh release list --repo "${GITHUB_REPOSITORY}" -L 200 --json tagName -q '.[].tagName' \
-            | grep -F "${TAG_PREFIX}" | grep -vxF "${TAG}" | head -n1 || true)"
-          echo "previous ${PKG} release: ${prev:-<none>}"
+          # Previous version of THIS client, resolved from TAGS — not from Releases.
+          #
+          # Both clients live in one repo and advance on independent PATCH lanes, so the
+          # newest release overall is often the OTHER one; scoping per client is the whole
+          # point of this block. Tags are the authoritative coordinate for that:
+          # scripts/release.mjs pushes them, and Releases only started existing at 1.0.2.
+          # Scoping on Releases therefore came up EMPTY on its first ever run, which
+          # silently handed the choice back to GitHub — and GitHub defaults to the
+          # chronologically previous tag. That is exactly how typescript-axios-v1.0.2's
+          # notes were generated against `typescript-fetch-v1.0.2`: the sibling client,
+          # tagged 16 seconds earlier. It must not be possible to fall out of the scoping
+          # while a same-client predecessor exists.
+          #
+          # `^${TAG_PREFIX}[0-9]` also keeps the pre-monorepo `*-legacy-v*` tags out: they
+          # read `typescript-<gen>-legacy-v…`, which never matches `typescript-<gen>-v<digit>`.
+          # `sort -V | tail -n1`, not `head -n1`: the refs API returns tags alphabetically,
+          # where `v1.0.10` sorts BEFORE `v1.0.2`.
+          prev="$(gh api "repos/${GITHUB_REPOSITORY}/git/refs/tags" --paginate --jq '.[].ref' 2>/dev/null \
+            | sed 's|^refs/tags/||' \
+            | grep -E "^${TAG_PREFIX}[0-9]" \
+            | grep -vxF "${TAG}" \
+            | sort -V | tail -n1 || true)"
+          echo "previous ${PKG} version: ${prev:-<none>}"
 
           # The spec version this client targets, read through the API at the released
           # tag. Deliberately not via checkout: this job stays code-free. Best-effort —
