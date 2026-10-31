@@ -5,8 +5,16 @@
 # three consumer test suites under tests/), and they are NOT an npm workspace — every
 # manifest needs its own update stream. We use glob `directories` so both current
 # clients (and any future ones) are covered without per-directory duplication.
-# All entries: check daily (security updates are exempt from cooldown and surface
-# immediately) with a 7-day cooldown on regular bumps, grouping non-major updates.
+# All THREE entries (both npm streams and github-actions): check daily (security updates
+# are exempt from cooldown and surface immediately) with a 7-day cooldown on regular bumps,
+# and group non-major version updates into one PR per stream. Majors are never grouped —
+# each deserves its own review.
+#
+# Exactly one `ignore` exists in this file: `typescript` semver-MAJOR, which cannot be
+# installed at all right now (typescript-eslint's peer range). It is scoped to majors so
+# typescript security updates still surface — see the comment on the entry itself, which
+# also says when to remove it. Do not add a bare `- dependency-name: x` ignore: that form
+# suppresses security PRs for x too.
 
 version: 2
 updates:
@@ -24,6 +32,28 @@ updates:
         update-types:
           - minor
           - patch
+    ignore:
+      # TypeScript 7 is currently UNINSTALLABLE here, so a major bump PR cannot ever go
+      # green: `typescript-eslint` declares `typescript: ">=4.8.4 <6.1.0"` even in its
+      # newest release, so `npm ci` dies with
+      #   npm error code ERESOLVE
+      #   npm error Could not resolve dependency:
+      #   npm error peer typescript@">=4.8.4 <6.1.0" from typescript-eslint@…
+      # Only --force / --legacy-peer-deps gets past it, which would make CI's clean
+      # `npm ci` a lie. (TypeScript 7.0 is also the native Go port, shipped as
+      # platform-specific binaries, and `ts-loader` drives the compiler through a JS API
+      # the port does not fully provide — an independent second blocker for the webpack
+      # CDN build.)
+      #
+      # Scoped to semver-major ONLY, deliberately: minor/patch and SECURITY updates for
+      # typescript keep flowing. A bare `- dependency-name: typescript` would also
+      # suppress its security PRs, which is exactly the trap this file warns about for
+      # Playwright below.
+      #
+      # REMOVE THIS once typescript-eslint widens its peer range past 6.1.0 — check with
+      # `npm view typescript-eslint peerDependencies`.
+      - dependency-name: 'typescript'
+        update-types: ['version-update:semver-major']
 
   # ---- each client's consumer test suites (tests/nodejs-javascript|typescript|browser-cdn) ----
   # `@playwright/test` / `playwright` are NOT ignored: ignoring them would also suppress
@@ -44,11 +74,28 @@ updates:
         update-types:
           - minor
           - patch
+    ignore:
+      # Same reason as the client entry above — the two `tests/nodejs-typescript` suites
+      # also carry `typescript` as a devDependency. Major only; security updates still
+      # surface. Remove together with the entry above.
+      - dependency-name: 'typescript'
+        update-types: ['version-update:semver-major']
 
   # ---- github actions (root .github/workflows) ----
+  # Grouped like the npm entries, which this previously was not: every action bump opened
+  # its own PR, and with 11 pinned actions across 6 workflows that is a lot of noise for
+  # changes that are reviewed identically (pinact verifies the SHA/comment pair either
+  # way). Majors stay individual — `actions/cache` v5->v6, `setup-java` v5->v6 and
+  # `setup-node` v6->v7 are each worth reading on their own.
   - package-ecosystem: 'github-actions'
     directory: '/'
     schedule:
       interval: 'daily'
     cooldown:
       default-days: 7
+    groups:
+      actions-minor-and-patch:
+        applies-to: version-updates
+        update-types:
+          - minor
+          - patch
