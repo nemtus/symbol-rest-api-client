@@ -28,7 +28,7 @@ injection; they read the DTO from `response.data`.
 
 **How `../../dist` is consumed (do not change back to a `file:` dependency).** The
 `nodejs-*` projects import the SDK by its published name
-(`@nemtus/symbol-rest-api-client-axios`); `scripts/link-dist.mjs` symlinks `../../dist`
+(`@nemtus/symbol-rest-api-client-axios`); `scripts/link-dist.mjs` COPIES `../../dist`
 into the project's `node_modules` under that name, and each project's `test` script runs
 it before vitest. It must run after `npm ci` (which wipes `node_modules`) — the `test`
 script ordering guarantees that locally and in CI, so no workflow step is needed.
@@ -40,10 +40,22 @@ globs, silently blocked every npm update in this repo (security updates included
 2026-08 to 2026-10.
 
 **`axios` is declared by the nodejs projects themselves.** The SDK ships `axios` as a
-runtime dependency, and a symlinked `dist` cannot resolve it from the project tree on its
-own. Each `nodejs-*` project therefore lists `axios` in its own `package.json`, with **the
-same range as the client's `package.json`** — keep the two in sync when that range
-changes. This also keeps `axios` lockfile-pinned, under the `npm audit --package-lock-only`
+runtime dependency, so the copied `dist` has to be able to resolve it from inside this
+project's tree. Each `nodejs-*` project therefore lists `axios` in its own `package.json`,
+with **the same range as the client's `package.json`** — keep the two in sync when that
+range changes.
+
+This is also why `link-dist.mjs` copies instead of symlinking, and **must not be
+"optimised" back to a symlink.** Node resolves a module to its REAL path before walking up
+for `node_modules`, so a symlinked package searches `clients/typescript-axios/dist/…` ->
+`clients/typescript-axios/node_modules` -> `clients/node_modules` -> repo root, and never
+looks in `tests/<suite>/node_modules`. The suite's own locked axios is then invisible and
+the import dies with `Cannot find module 'axios'` (require stack rooted at
+`clients/typescript-axios/dist/cjs/api/api.js`). It *appears* to work locally because
+`clients/typescript-axios/node_modules` is usually populated by the client's own `npm ci`
+and quietly satisfies the lookup — the CI test jobs have no such tree, so only CI catches
+it. Copying is precisely what npm's `install-links=true` did for the old `file:`
+dependency. This also keeps `axios` lockfile-pinned, under the `npm audit --package-lock-only`
 gate, and visible to Dependabot, none of which held when it arrived only as a transitive
 of the path dependency. (This supersedes the old `install-links=true` setting in those
 projects' `.npmrc`, which only mattered for `file:` deps.) The `browser-cdn` project loads

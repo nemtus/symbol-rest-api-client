@@ -22,7 +22,7 @@ running them.
 
 **How `../../dist` is consumed (do not change back to a `file:` dependency).** The
 `nodejs-*` projects import the SDK by its published name
-(`@nemtus/symbol-rest-api-client-fetch`); `scripts/link-dist.mjs` symlinks `../../dist`
+(`@nemtus/symbol-rest-api-client-fetch`); `scripts/link-dist.mjs` COPIES `../../dist`
 into the project's `node_modules` under that name, and each project's `test` script runs
 it before vitest. It must run after `npm ci` (which wipes `node_modules`) — the `test`
 script ordering guarantees that locally and in CI, so no workflow step is needed.

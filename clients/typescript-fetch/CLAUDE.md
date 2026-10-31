@@ -88,9 +88,9 @@ npm run test
 
 The `nodejs-*` suites import the package by its **published name**
 (`@nemtus/symbol-rest-api-client-fetch`) to exercise it exactly as a consumer does. The
-built `./dist` is linked into the suite's `node_modules` under that name by
+built `./dist` is copied into the suite's `node_modules` under that name by
 `scripts/link-dist.mjs`, which each suite's `test` script runs before vitest — so the
-build must exist first, and the link must be (re)created after every `npm ci` (which
+build must exist first, and the copy must be refreshed after every `npm ci` (which
 wipes `node_modules`).
 
 **Do not** reintroduce this as a `"@nemtus/symbol-rest-api-client-fetch": "../../dist"`

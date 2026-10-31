@@ -85,12 +85,14 @@ cd tests/browser-cdn && npm ci && npx playwright install chromium && npm run tes
 
 The `nodejs-*` suites import the package by its **published name**
 (`@nemtus/symbol-rest-api-client-axios`) to exercise it exactly as a consumer does. The
-built `./dist` is linked into the suite's `node_modules` under that name by
+built `./dist` is copied into the suite's `node_modules` under that name by
 `scripts/link-dist.mjs`, which each suite's `test` script runs before vitest — so the
-build must exist first, and the link must be (re)created after every `npm ci` (which
-wipes `node_modules`). Because the linked `dist` declares `axios` as a runtime
+build must exist first, and the copy must be refreshed after every `npm ci` (which
+wipes `node_modules`). Because the copied `dist` declares `axios` as a runtime
 dependency, each `nodejs-*` suite also declares `axios` itself, with **the same range as
-the client's `package.json`** — keep the two in sync when that range changes.
+the client's `package.json`** — keep the two in sync when that range changes. It is a
+copy and not a symlink for a reason Node's resolver makes non-negotiable; see
+`tests/CLAUDE.md` before changing it.
 
 **Do not** reintroduce this as a `"@nemtus/symbol-rest-api-client-axios": "../../dist"`
 dependency in a suite's `package.json`. `./dist` is an uncommitted build artifact, so
@@ -183,7 +185,7 @@ known CVE — but not a routine bump — from the cooldown is the policy
 - **Single source of truth**: the `axios` range and the `overrides` block in the root `package.json`. The
   published `package.json` is the hand-managed root one (`bundle.js` copies it into `dist/`), so the axios
   pin lives there — not in generator output. The two `tests/nodejs-*` consumer projects declare `axios`
-  with **the same range**, because they consume a symlinked `dist` that cannot resolve its own runtime
+  with **the same range**, because they consume a COPIED `dist` that must resolve its own runtime
   dependency; keep them in sync.
 - **Floor**: `axios ^1.20.0`. 1.20.0 is the first release patching twelve advisories (seven high) covering
   prototype-pollution gadgets, HTTP/2 DNS/proxy bypass, ReDoS, header injection, and `maxRedirects: 0` not
