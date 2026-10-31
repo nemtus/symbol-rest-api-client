@@ -54,7 +54,7 @@ jobs:
           node-version: ${{ matrix.node-version }}
           registry-url: 'https://registry.npmjs.org'
       - run: java -version
-      - uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         id: cache-root
         with:
           path: ${{ github.workspace }}/.npm
@@ -117,7 +117,7 @@ jobs:
         with:
           name: dist-axios-${{ github.run_id }}-${{ github.run_attempt }}
           path: clients/typescript-axios/dist/
-      - uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         id: cache-root-test
         with:
           path: ${{ github.workspace }}/.npm
@@ -166,7 +166,7 @@ jobs:
         with:
           name: dist-axios-${{ github.run_id }}-${{ github.run_attempt }}
           path: clients/typescript-axios/dist/
-      - uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         id: cache-nodejs-javascript
         with:
           path: ${{ github.workspace }}/.npm
@@ -208,7 +208,7 @@ jobs:
         with:
           name: dist-axios-${{ github.run_id }}-${{ github.run_attempt }}
           path: clients/typescript-axios/dist/
-      - uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         id: cache-nodejs-typescript
         with:
           path: ${{ github.workspace }}/.npm
@@ -274,7 +274,7 @@ jobs:
         with:
           name: dist-axios-${{ github.run_id }}-${{ github.run_attempt }}
           path: clients/typescript-axios/dist/
-      - uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         id: cache-browser-cdn
         with:
           path: ${{ github.workspace }}/.npm
@@ -336,7 +336,7 @@ jobs:
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: 26.x
-      - uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         id: cache-lint
         with:
           path: ${{ github.workspace }}/.npm
