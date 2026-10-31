@@ -23,50 +23,28 @@ import { mapValues } from '../runtime';
 export interface MosaicNetworkPropertiesDTO {
     /**
      * Maximum number of mosaics that an account can own.
-     * @type {string}
-     * @memberof MosaicNetworkPropertiesDTO
      */
     maxMosaicsPerAccount?: string;
     /**
      * Maximum mosaic duration (BlockSpan format, e.g. `3650d` for 3650 days).
-     * @type {string}
-     * @memberof MosaicNetworkPropertiesDTO
      */
     maxMosaicDuration?: string;
     /**
      * Maximum mosaic divisibility.
-     * @type {string}
-     * @memberof MosaicNetworkPropertiesDTO
      */
     maxMosaicDivisibility?: string;
     /**
-     * Represents a unique account address in Base32 format. The first character indicates the network
-     * (`T` for testnet, `N` for mainnet). Addresses are 39 characters long, Base32-encoded,
-     * and include an embedded 3-byte checksum. The node validates this checksum, so an address
-     * with even a single altered character will be rejected.
+     * Legacy address (in Base32 format) of the mosaic rental fee sink.
+     * Used before treasury reissuance fork. May be absent on newer networks.
      * 
-     * @type {string}
-     * @memberof MosaicNetworkPropertiesDTO
      */
     mosaicRentalFeeSinkAddressV1?: string;
     /**
-     * Represents a unique account address in Base32 format. The first character indicates the network
-     * (`T` for testnet, `N` for mainnet). Addresses are 39 characters long, Base32-encoded,
-     * and include an embedded 3-byte checksum. The node validates this checksum, so an address
-     * with even a single altered character will be rejected.
-     * 
-     * @type {string}
-     * @memberof MosaicNetworkPropertiesDTO
+     * Address of the mosaic rental fee sink account (receives fees for mosaic creation).
      */
     mosaicRentalFeeSinkAddress?: string;
     /**
-     * Absolute amount expressed in the mosaic's smallest (atomic) unit, with no decimal point.
-     * For example, an amount of `123456789` for a mosaic with divisibility 6 represents
-     * `123.456789` whole units. Encoded as a string to preserve precision, since the value
-     * is an unsigned 64-bit integer.
-     * 
-     * @type {string}
-     * @memberof MosaicNetworkPropertiesDTO
+     * Mosaic rental fee in atomic units (paid to create a new mosaic).
      */
     mosaicRentalFee?: string;
 }
@@ -74,7 +52,7 @@ export interface MosaicNetworkPropertiesDTO {
 /**
  * Check if a given object implements the MosaicNetworkPropertiesDTO interface.
  */
-export function instanceOfMosaicNetworkPropertiesDTO(value: Record<string, any>): value is MosaicNetworkPropertiesDTO {
+export function instanceOfMosaicNetworkPropertiesDTO(value: object): value is MosaicNetworkPropertiesDTO {
     return true;
 }
 

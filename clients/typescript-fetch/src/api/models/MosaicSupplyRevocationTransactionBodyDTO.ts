@@ -24,8 +24,6 @@ export interface MosaicSupplyRevocationTransactionBodyDTO {
      * If bit 0 of byte 0 is not set, the value represents a regular address.
      * Otherwise, it represents a namespace ID alias encoded as an unresolved address.
      * 
-     * @type {string}
-     * @memberof MosaicSupplyRevocationTransactionBodyDTO
      */
     sourceAddress: string;
     /**
@@ -33,8 +31,6 @@ export interface MosaicSupplyRevocationTransactionBodyDTO {
      * If the most significant bit of byte 0 is set, the value contains a namespace ID alias
      * instead of a concrete mosaic ID.
      * 
-     * @type {string}
-     * @memberof MosaicSupplyRevocationTransactionBodyDTO
      */
     mosaicId: string;
     /**
@@ -43,8 +39,6 @@ export interface MosaicSupplyRevocationTransactionBodyDTO {
      * `123.456789` whole units. Encoded as a string to preserve precision, since the value
      * is an unsigned 64-bit integer.
      * 
-     * @type {string}
-     * @memberof MosaicSupplyRevocationTransactionBodyDTO
      */
     amount: string;
 }
@@ -52,7 +46,7 @@ export interface MosaicSupplyRevocationTransactionBodyDTO {
 /**
  * Check if a given object implements the MosaicSupplyRevocationTransactionBodyDTO interface.
  */
-export function instanceOfMosaicSupplyRevocationTransactionBodyDTO(value: Record<string, any>): value is MosaicSupplyRevocationTransactionBodyDTO {
+export function instanceOfMosaicSupplyRevocationTransactionBodyDTO(value: object): value is MosaicSupplyRevocationTransactionBodyDTO {
     if (!('sourceAddress' in value) || value['sourceAddress'] === undefined) return false;
     if (!('mosaicId' in value) || value['mosaicId'] === undefined) return false;
     if (!('amount' in value) || value['amount'] === undefined) return false;

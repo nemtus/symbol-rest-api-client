@@ -31,14 +31,10 @@ export interface MosaicInfoDTO {
      * Unique identifier of the object in the node's database (MongoDB ObjectId).
      * Used as the `offset` parameter value for cursor-based pagination.
      * 
-     * @type {string}
-     * @memberof MosaicInfoDTO
      */
     id: string;
     /**
      * 
-     * @type {MosaicDTO}
-     * @memberof MosaicInfoDTO
      */
     mosaic: MosaicDTO;
 }
@@ -46,7 +42,7 @@ export interface MosaicInfoDTO {
 /**
  * Check if a given object implements the MosaicInfoDTO interface.
  */
-export function instanceOfMosaicInfoDTO(value: Record<string, any>): value is MosaicInfoDTO {
+export function instanceOfMosaicInfoDTO(value: object): value is MosaicInfoDTO {
     if (!('id' in value) || value['id'] === undefined) return false;
     if (!('mosaic' in value) || value['mosaic'] === undefined) return false;
     return true;

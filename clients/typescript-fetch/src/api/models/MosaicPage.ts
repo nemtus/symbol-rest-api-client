@@ -36,14 +36,10 @@ import {
 export interface MosaicPage {
     /**
      * Array of mosaic information objects.
-     * @type {Array<MosaicInfoDTO>}
-     * @memberof MosaicPage
      */
     data: Array<MosaicInfoDTO>;
     /**
      * 
-     * @type {Pagination}
-     * @memberof MosaicPage
      */
     pagination: Pagination;
 }
@@ -51,7 +47,7 @@ export interface MosaicPage {
 /**
  * Check if a given object implements the MosaicPage interface.
  */
-export function instanceOfMosaicPage(value: Record<string, any>): value is MosaicPage {
+export function instanceOfMosaicPage(value: object): value is MosaicPage {
     if (!('data' in value) || value['data'] === undefined) return false;
     if (!('pagination' in value) || value['pagination'] === undefined) return false;
     return true;

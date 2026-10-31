@@ -20,29 +20,13 @@ import { mapValues } from '../runtime';
  */
 export interface TransactionBodyDTO {
     /**
-     * Absolute amount expressed in the mosaic's smallest (atomic) unit, with no decimal point.
-     * For example, an amount of `123456789` for a mosaic with divisibility 6 represents
-     * `123.456789` whole units. Encoded as a string to preserve precision, since the value
-     * is an unsigned 64-bit integer.
-     * 
-     * @type {string}
-     * @memberof TransactionBodyDTO
+     * Maximum fee the signer is willing to pay for this transaction, in smallest (atomic) units.
      */
     maxFee: string;
     /**
-     * Network timestamp in **milliseconds** since the creation of the nemesis (first) block.
-     * Used for block timestamps, transaction deadlines, and time synchronization.
+     * Latest network time at which the transaction can still be included in a block, expressed in milliseconds
+     * since the creation of the nemesis (first) block.
      * 
-     * **Finding the nemesis block time:** The `epochAdjustment` field returned by the
-     * [`/network/properties`] endpoint gives the nemesis block creation time in seconds since the
-     * [UNIX epoch](https://en.wikipedia.org/wiki/Unix_time). For Symbol MAINNET this is
-     * always `1615853185` (15 March 2021, 00:06:25 UTC).
-     * 
-     * **Converting to real time:** Add this timestamp (ms) to `epochAdjustment × 1000` (ms), then use standard date functions.
-     * Note: `epochAdjustment` may be returned as a string like `"1615853185s"`; use the numeric part.
-     * 
-     * @type {string}
-     * @memberof TransactionBodyDTO
      */
     deadline: string;
 }
@@ -50,7 +34,7 @@ export interface TransactionBodyDTO {
 /**
  * Check if a given object implements the TransactionBodyDTO interface.
  */
-export function instanceOfTransactionBodyDTO(value: Record<string, any>): value is TransactionBodyDTO {
+export function instanceOfTransactionBodyDTO(value: object): value is TransactionBodyDTO {
     if (!('maxFee' in value) || value['maxFee'] === undefined) return false;
     if (!('deadline' in value) || value['deadline'] === undefined) return false;
     return true;

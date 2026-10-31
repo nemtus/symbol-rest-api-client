@@ -29,8 +29,6 @@ import {
 export interface AccountLinkVotingKeysDTO {
     /**
      * Array of voting key link entries.
-     * @type {Array<AccountLinkVotingKeyDTO>}
-     * @memberof AccountLinkVotingKeysDTO
      */
     publicKeys: Array<AccountLinkVotingKeyDTO>;
 }
@@ -38,7 +36,7 @@ export interface AccountLinkVotingKeysDTO {
 /**
  * Check if a given object implements the AccountLinkVotingKeysDTO interface.
  */
-export function instanceOfAccountLinkVotingKeysDTO(value: Record<string, any>): value is AccountLinkVotingKeysDTO {
+export function instanceOfAccountLinkVotingKeysDTO(value: object): value is AccountLinkVotingKeysDTO {
     if (!('publicKeys' in value) || value['publicKeys'] === undefined) return false;
     return true;
 }

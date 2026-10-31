@@ -24,44 +24,28 @@ export interface MultisigDTO {
      * schema of the entity changes (e.g. new fields are added), allowing the node to
      * deserialize entries written under earlier formats.
      * 
-     * @type {number}
-     * @memberof MultisigDTO
      */
     version: number;
     /**
      * Address encoded as a 48-character hexadecimal string (24 bytes).
      * The REST API returns addresses in this format. For Base32-encoded addresses (39 chars) see `Address`.
      * 
-     * @type {string}
-     * @memberof MultisigDTO
      */
     accountAddress: string;
     /**
-     * Unsigned 32-bit integer.
-     * Represented as integer since it fits in JSON number precision.
-     * 
-     * @type {number}
-     * @memberof MultisigDTO
+     * Minimum number of cosignatory approvals required to approve a transaction for the multisig account.
      */
     minApproval: number;
     /**
-     * Unsigned 32-bit integer.
-     * Represented as integer since it fits in JSON number precision.
-     * 
-     * @type {number}
-     * @memberof MultisigDTO
+     * Minimum number of cosignatory approvals required to remove a cosignatory from the multisig account.
      */
     minRemoval: number;
     /**
      * Direct cosignatory addresses that manage this multisig account.
-     * @type {Array<string>}
-     * @memberof MultisigDTO
      */
     cosignatoryAddresses: Array<string>;
     /**
      * Multisig account addresses where this account acts as a cosignatory.
-     * @type {Array<string>}
-     * @memberof MultisigDTO
      */
     multisigAddresses: Array<string>;
 }
@@ -69,7 +53,7 @@ export interface MultisigDTO {
 /**
  * Check if a given object implements the MultisigDTO interface.
  */
-export function instanceOfMultisigDTO(value: Record<string, any>): value is MultisigDTO {
+export function instanceOfMultisigDTO(value: object): value is MultisigDTO {
     if (!('version' in value) || value['version'] === undefined) return false;
     if (!('accountAddress' in value) || value['accountAddress'] === undefined) return false;
     if (!('minApproval' in value) || value['minApproval'] === undefined) return false;

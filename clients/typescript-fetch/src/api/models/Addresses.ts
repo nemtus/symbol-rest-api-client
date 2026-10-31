@@ -21,8 +21,6 @@ import { mapValues } from '../runtime';
 export interface Addresses {
     /**
      * Array of addresses.
-     * @type {Array<string>}
-     * @memberof Addresses
      */
     addresses?: Array<string>;
 }
@@ -30,7 +28,7 @@ export interface Addresses {
 /**
  * Check if a given object implements the Addresses interface.
  */
-export function instanceOfAddresses(value: Record<string, any>): value is Addresses {
+export function instanceOfAddresses(value: object): value is Addresses {
     return true;
 }
 

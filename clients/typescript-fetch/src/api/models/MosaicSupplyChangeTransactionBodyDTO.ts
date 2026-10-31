@@ -32,8 +32,6 @@ export interface MosaicSupplyChangeTransactionBodyDTO {
      * If the most significant bit of byte 0 is set, the value contains a namespace ID alias
      * instead of a concrete mosaic ID.
      * 
-     * @type {string}
-     * @memberof MosaicSupplyChangeTransactionBodyDTO
      */
     mosaicId: string;
     /**
@@ -42,14 +40,10 @@ export interface MosaicSupplyChangeTransactionBodyDTO {
      * `123.456789` whole units. Encoded as a string to preserve precision, since the value
      * is an unsigned 64-bit integer.
      * 
-     * @type {string}
-     * @memberof MosaicSupplyChangeTransactionBodyDTO
      */
     delta: string;
     /**
      * 
-     * @type {MosaicSupplyChangeActionEnum}
-     * @memberof MosaicSupplyChangeTransactionBodyDTO
      */
     action: MosaicSupplyChangeActionEnum;
 }
@@ -59,7 +53,7 @@ export interface MosaicSupplyChangeTransactionBodyDTO {
 /**
  * Check if a given object implements the MosaicSupplyChangeTransactionBodyDTO interface.
  */
-export function instanceOfMosaicSupplyChangeTransactionBodyDTO(value: Record<string, any>): value is MosaicSupplyChangeTransactionBodyDTO {
+export function instanceOfMosaicSupplyChangeTransactionBodyDTO(value: object): value is MosaicSupplyChangeTransactionBodyDTO {
     if (!('mosaicId' in value) || value['mosaicId'] === undefined) return false;
     if (!('delta' in value) || value['delta'] === undefined) return false;
     if (!('action' in value) || value['action'] === undefined) return false;

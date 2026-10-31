@@ -24,22 +24,16 @@ export interface CosignatureDTO {
      * over the serialized entity payload. Can be verified with the signer's public key (`signerPublicKey`).
      * Used for blocks, transactions, and cosignatures.
      * 
-     * @type {string}
-     * @memberof CosignatureDTO
      */
     signature: string;
     /**
      * Version of a detached cosignature attached to an aggregate bonded transaction.
      * Returned and submitted as a string because the value is encoded as an unsigned integer.
      * 
-     * @type {string}
-     * @memberof CosignatureDTO
      */
     version: string;
     /**
      * 256-bit public key encoded as a hexadecimal string (64 hex characters).
-     * @type {string}
-     * @memberof CosignatureDTO
      */
     signerPublicKey: string;
 }
@@ -47,7 +41,7 @@ export interface CosignatureDTO {
 /**
  * Check if a given object implements the CosignatureDTO interface.
  */
-export function instanceOfCosignatureDTO(value: Record<string, any>): value is CosignatureDTO {
+export function instanceOfCosignatureDTO(value: object): value is CosignatureDTO {
     if (!('signature' in value) || value['signature'] === undefined) return false;
     if (!('version' in value) || value['version'] === undefined) return false;
     if (!('signerPublicKey' in value) || value['signerPublicKey'] === undefined) return false;

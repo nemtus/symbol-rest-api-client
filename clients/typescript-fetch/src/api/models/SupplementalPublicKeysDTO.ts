@@ -38,26 +38,18 @@ import {
 export interface SupplementalPublicKeysDTO {
     /**
      * 
-     * @type {AccountLinkPublicKeyDTO}
-     * @memberof SupplementalPublicKeysDTO
      */
     linked?: AccountLinkPublicKeyDTO;
     /**
      * 
-     * @type {AccountLinkPublicKeyDTO}
-     * @memberof SupplementalPublicKeysDTO
      */
     node?: AccountLinkPublicKeyDTO;
     /**
      * 
-     * @type {AccountLinkPublicKeyDTO}
-     * @memberof SupplementalPublicKeysDTO
      */
     vrf?: AccountLinkPublicKeyDTO;
     /**
      * 
-     * @type {AccountLinkVotingKeysDTO}
-     * @memberof SupplementalPublicKeysDTO
      */
     voting?: AccountLinkVotingKeysDTO;
 }
@@ -65,7 +57,7 @@ export interface SupplementalPublicKeysDTO {
 /**
  * Check if a given object implements the SupplementalPublicKeysDTO interface.
  */
-export function instanceOfSupplementalPublicKeysDTO(value: Record<string, any>): value is SupplementalPublicKeysDTO {
+export function instanceOfSupplementalPublicKeysDTO(value: object): value is SupplementalPublicKeysDTO {
     return true;
 }
 

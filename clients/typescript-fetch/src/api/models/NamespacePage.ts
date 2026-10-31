@@ -36,14 +36,10 @@ import {
 export interface NamespacePage {
     /**
      * Array of namespace information entries.
-     * @type {Array<NamespaceInfoDTO>}
-     * @memberof NamespacePage
      */
     data: Array<NamespaceInfoDTO>;
     /**
      * 
-     * @type {Pagination}
-     * @memberof NamespacePage
      */
     pagination: Pagination;
 }
@@ -51,7 +47,7 @@ export interface NamespacePage {
 /**
  * Check if a given object implements the NamespacePage interface.
  */
-export function instanceOfNamespacePage(value: Record<string, any>): value is NamespacePage {
+export function instanceOfNamespacePage(value: object): value is NamespacePage {
     if (!('data' in value) || value['data'] === undefined) return false;
     if (!('pagination' in value) || value['pagination'] === undefined) return false;
     return true;

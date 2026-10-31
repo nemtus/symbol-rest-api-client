@@ -31,14 +31,10 @@ export interface SecretLockInfoDTO {
      * Unique identifier of the object in the node's database (MongoDB ObjectId).
      * Used as the `offset` parameter value for cursor-based pagination.
      * 
-     * @type {string}
-     * @memberof SecretLockInfoDTO
      */
     id: string;
     /**
      * 
-     * @type {SecretLockEntryDTO}
-     * @memberof SecretLockInfoDTO
      */
     lock: SecretLockEntryDTO;
 }
@@ -46,7 +42,7 @@ export interface SecretLockInfoDTO {
 /**
  * Check if a given object implements the SecretLockInfoDTO interface.
  */
-export function instanceOfSecretLockInfoDTO(value: Record<string, any>): value is SecretLockInfoDTO {
+export function instanceOfSecretLockInfoDTO(value: object): value is SecretLockInfoDTO {
     if (!('id' in value) || value['id'] === undefined) return false;
     if (!('lock' in value) || value['lock'] === undefined) return false;
     return true;

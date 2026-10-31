@@ -39,48 +39,34 @@ export interface MetadataEntryDTO {
      * schema of the entity changes (e.g. new fields are added), allowing the node to
      * deserialize entries written under earlier formats.
      * 
-     * @type {number}
-     * @memberof MetadataEntryDTO
      */
     version: number;
     /**
-     * 256-bit hash encoded as a 64-character hexadecimal string.
-     * @type {string}
-     * @memberof MetadataEntryDTO
+     * Composite hash derived from sourceAddress, targetAddress, scopedMetadataKey, targetId, and metadataType.
+     * It uniquely identifies the metadata entry.
+     * 
      */
     compositeHash: string;
     /**
-     * Address encoded as a 48-character hexadecimal string (24 bytes).
-     * The REST API returns addresses in this format. For Base32-encoded addresses (39 chars) see `Address`.
-     * 
-     * @type {string}
-     * @memberof MetadataEntryDTO
+     * Hex-encoded address of the account that created the metadata entry.
      */
     sourceAddress: string;
     /**
-     * Address encoded as a 48-character hexadecimal string (24 bytes).
-     * The REST API returns addresses in this format. For Base32-encoded addresses (39 chars) see `Address`.
+     * Hex-encoded address of the target account.
+     * For mosaic metadata and namespace metadata, this is the address of the resource owner.
      * 
-     * @type {string}
-     * @memberof MetadataEntryDTO
      */
     targetAddress: string;
     /**
      * 64-bit key assigned by the metadata creator to identify the metadata entry within the source and target context.
-     * @type {string}
-     * @memberof MetadataEntryDTO
      */
     scopedMetadataKey: string;
     /**
      * 
-     * @type {MetadataEntryDTOTargetId}
-     * @memberof MetadataEntryDTO
      */
     targetId?: MetadataEntryDTOTargetId;
     /**
      * 
-     * @type {MetadataTypeEnum}
-     * @memberof MetadataEntryDTO
      */
     metadataType: MetadataTypeEnum;
     /**
@@ -89,8 +75,6 @@ export interface MetadataEntryDTO {
      * value size after applying the update. When the value shrinks, this is the previous stored value size
      * before truncation.
      * 
-     * @type {number}
-     * @memberof MetadataEntryDTO
      */
     valueSize: number;
     /**
@@ -99,8 +83,6 @@ export interface MetadataEntryDTO {
      * When no previous value exists, it contains the new value.
      * When updating existing metadata, it contains the byte-wise XOR of the previous value and the new value.
      * 
-     * @type {string}
-     * @memberof MetadataEntryDTO
      */
     value: string;
 }
@@ -110,7 +92,7 @@ export interface MetadataEntryDTO {
 /**
  * Check if a given object implements the MetadataEntryDTO interface.
  */
-export function instanceOfMetadataEntryDTO(value: Record<string, any>): value is MetadataEntryDTO {
+export function instanceOfMetadataEntryDTO(value: object): value is MetadataEntryDTO {
     if (!('version' in value) || value['version'] === undefined) return false;
     if (!('compositeHash' in value) || value['compositeHash'] === undefined) return false;
     if (!('sourceAddress' in value) || value['sourceAddress'] === undefined) return false;

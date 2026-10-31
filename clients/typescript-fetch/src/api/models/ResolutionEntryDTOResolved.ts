@@ -24,7 +24,7 @@ export interface ResolutionEntryDTOResolved {
 /**
  * Check if a given object implements the ResolutionEntryDTOResolved interface.
  */
-export function instanceOfResolutionEntryDTOResolved(value: Record<string, any>): value is ResolutionEntryDTOResolved {
+export function instanceOfResolutionEntryDTOResolved(value: object): value is ResolutionEntryDTOResolved {
     return true;
 }
 

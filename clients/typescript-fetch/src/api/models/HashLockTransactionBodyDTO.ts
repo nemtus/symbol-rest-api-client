@@ -24,8 +24,6 @@ export interface HashLockTransactionBodyDTO {
      * If the most significant bit of byte 0 is set, the value contains a namespace ID alias
      * instead of a concrete mosaic ID.
      * 
-     * @type {string}
-     * @memberof HashLockTransactionBodyDTO
      */
     mosaicId: string;
     /**
@@ -34,20 +32,14 @@ export interface HashLockTransactionBodyDTO {
      * `123.456789` whole units. Encoded as a string to preserve precision, since the value
      * is an unsigned 64-bit integer.
      * 
-     * @type {string}
-     * @memberof HashLockTransactionBodyDTO
      */
     amount: string;
     /**
      * Duration expressed in number of blocks.
-     * @type {string}
-     * @memberof HashLockTransactionBodyDTO
      */
     duration: string;
     /**
      * 256-bit hash encoded as a 64-character hexadecimal string.
-     * @type {string}
-     * @memberof HashLockTransactionBodyDTO
      */
     hash: string;
 }
@@ -55,7 +47,7 @@ export interface HashLockTransactionBodyDTO {
 /**
  * Check if a given object implements the HashLockTransactionBodyDTO interface.
  */
-export function instanceOfHashLockTransactionBodyDTO(value: Record<string, any>): value is HashLockTransactionBodyDTO {
+export function instanceOfHashLockTransactionBodyDTO(value: object): value is HashLockTransactionBodyDTO {
     if (!('mosaicId' in value) || value['mosaicId'] === undefined) return false;
     if (!('amount' in value) || value['amount'] === undefined) return false;
     if (!('duration' in value) || value['duration'] === undefined) return false;

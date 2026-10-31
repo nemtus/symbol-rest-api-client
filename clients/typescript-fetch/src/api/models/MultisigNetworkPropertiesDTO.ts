@@ -25,20 +25,14 @@ export interface MultisigNetworkPropertiesDTO {
      * If one of its cosignatories is itself a multisig account, the depth becomes `2`; one more
      * nested multisig level makes it `3`.
      * 
-     * @type {string}
-     * @memberof MultisigNetworkPropertiesDTO
      */
     maxMultisigDepth?: string;
     /**
      * Maximum number of cosignatories that can directly manage a single multisig account.
-     * @type {string}
-     * @memberof MultisigNetworkPropertiesDTO
      */
     maxCosignatoriesPerAccount?: string;
     /**
      * Maximum number of multisig accounts that a single account can cosign.
-     * @type {string}
-     * @memberof MultisigNetworkPropertiesDTO
      */
     maxCosignedAccountsPerAccount?: string;
 }
@@ -46,7 +40,7 @@ export interface MultisigNetworkPropertiesDTO {
 /**
  * Check if a given object implements the MultisigNetworkPropertiesDTO interface.
  */
-export function instanceOfMultisigNetworkPropertiesDTO(value: Record<string, any>): value is MultisigNetworkPropertiesDTO {
+export function instanceOfMultisigNetworkPropertiesDTO(value: object): value is MultisigNetworkPropertiesDTO {
     return true;
 }
 

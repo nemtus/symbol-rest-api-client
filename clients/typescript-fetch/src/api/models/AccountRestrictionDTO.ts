@@ -36,16 +36,12 @@ import {
 export interface AccountRestrictionDTO {
     /**
      * 
-     * @type {AccountRestrictionFlagsEnum}
-     * @memberof AccountRestrictionDTO
      */
     restrictionFlags: AccountRestrictionFlagsEnum;
     /**
      * Restricted values matched by this rule.
      * The value type depends on `restrictionFlags` and can be an address, mosaic ID, or transaction type.
      * 
-     * @type {Array<AccountRestrictionDTOValuesInner>}
-     * @memberof AccountRestrictionDTO
      */
     values: Array<AccountRestrictionDTOValuesInner>;
 }
@@ -55,7 +51,7 @@ export interface AccountRestrictionDTO {
 /**
  * Check if a given object implements the AccountRestrictionDTO interface.
  */
-export function instanceOfAccountRestrictionDTO(value: Record<string, any>): value is AccountRestrictionDTO {
+export function instanceOfAccountRestrictionDTO(value: object): value is AccountRestrictionDTO {
     if (!('restrictionFlags' in value) || value['restrictionFlags'] === undefined) return false;
     if (!('values' in value) || value['values'] === undefined) return false;
     return true;

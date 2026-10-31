@@ -31,14 +31,10 @@ import {
 export interface AggregateTransactionBodyDTO {
     /**
      * 256-bit hash encoded as a 64-character hexadecimal string.
-     * @type {string}
-     * @memberof AggregateTransactionBodyDTO
      */
     transactionsHash: string;
     /**
      * Array of transaction cosignatures.
-     * @type {Array<CosignatureDTO>}
-     * @memberof AggregateTransactionBodyDTO
      */
     cosignatures: Array<CosignatureDTO>;
 }
@@ -46,7 +42,7 @@ export interface AggregateTransactionBodyDTO {
 /**
  * Check if a given object implements the AggregateTransactionBodyDTO interface.
  */
-export function instanceOfAggregateTransactionBodyDTO(value: Record<string, any>): value is AggregateTransactionBodyDTO {
+export function instanceOfAggregateTransactionBodyDTO(value: object): value is AggregateTransactionBodyDTO {
     if (!('transactionsHash' in value) || value['transactionsHash'] === undefined) return false;
     if (!('cosignatures' in value) || value['cosignatures'] === undefined) return false;
     return true;

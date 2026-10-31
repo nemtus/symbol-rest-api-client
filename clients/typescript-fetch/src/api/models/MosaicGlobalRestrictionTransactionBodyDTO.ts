@@ -32,8 +32,6 @@ export interface MosaicGlobalRestrictionTransactionBodyDTO {
      * If the most significant bit of byte 0 is set, the value contains a namespace ID alias
      * instead of a concrete mosaic ID.
      * 
-     * @type {string}
-     * @memberof MosaicGlobalRestrictionTransactionBodyDTO
      */
     mosaicId: string;
     /**
@@ -41,14 +39,10 @@ export interface MosaicGlobalRestrictionTransactionBodyDTO {
      * If the most significant bit of byte 0 is set, the value contains a namespace ID alias
      * instead of a concrete mosaic ID.
      * 
-     * @type {string}
-     * @memberof MosaicGlobalRestrictionTransactionBodyDTO
      */
     referenceMosaicId: string;
     /**
      * Restriction key represented as a 64-bit hexadecimal value.
-     * @type {string}
-     * @memberof MosaicGlobalRestrictionTransactionBodyDTO
      */
     restrictionKey: string;
     /**
@@ -56,8 +50,6 @@ export interface MosaicGlobalRestrictionTransactionBodyDTO {
      * For address restrictions, it is the value assigned to the target address;
      * for global restrictions, it is the threshold evaluated with the restriction type.
      * 
-     * @type {string}
-     * @memberof MosaicGlobalRestrictionTransactionBodyDTO
      */
     previousRestrictionValue: string;
     /**
@@ -65,20 +57,14 @@ export interface MosaicGlobalRestrictionTransactionBodyDTO {
      * For address restrictions, it is the value assigned to the target address;
      * for global restrictions, it is the threshold evaluated with the restriction type.
      * 
-     * @type {string}
-     * @memberof MosaicGlobalRestrictionTransactionBodyDTO
      */
     newRestrictionValue: string;
     /**
      * 
-     * @type {MosaicRestrictionTypeEnum}
-     * @memberof MosaicGlobalRestrictionTransactionBodyDTO
      */
     previousRestrictionType: MosaicRestrictionTypeEnum;
     /**
      * 
-     * @type {MosaicRestrictionTypeEnum}
-     * @memberof MosaicGlobalRestrictionTransactionBodyDTO
      */
     newRestrictionType: MosaicRestrictionTypeEnum;
 }
@@ -88,7 +74,7 @@ export interface MosaicGlobalRestrictionTransactionBodyDTO {
 /**
  * Check if a given object implements the MosaicGlobalRestrictionTransactionBodyDTO interface.
  */
-export function instanceOfMosaicGlobalRestrictionTransactionBodyDTO(value: Record<string, any>): value is MosaicGlobalRestrictionTransactionBodyDTO {
+export function instanceOfMosaicGlobalRestrictionTransactionBodyDTO(value: object): value is MosaicGlobalRestrictionTransactionBodyDTO {
     if (!('mosaicId' in value) || value['mosaicId'] === undefined) return false;
     if (!('referenceMosaicId' in value) || value['referenceMosaicId'] === undefined) return false;
     if (!('restrictionKey' in value) || value['restrictionKey'] === undefined) return false;

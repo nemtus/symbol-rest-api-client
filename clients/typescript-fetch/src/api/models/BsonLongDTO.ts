@@ -22,20 +22,14 @@ import { mapValues } from '../runtime';
 export interface BsonLongDTO {
     /**
      * Low 32 bits (signed 32-bit integer in the BSON representation).
-     * @type {number}
-     * @memberof BsonLongDTO
      */
     low: number;
     /**
      * High 32 bits (signed 32-bit integer in the BSON representation).
-     * @type {number}
-     * @memberof BsonLongDTO
      */
     high: number;
     /**
      * Whether the Long is treated as unsigned in the driver.
-     * @type {boolean}
-     * @memberof BsonLongDTO
      */
     unsigned: boolean;
 }
@@ -43,7 +37,7 @@ export interface BsonLongDTO {
 /**
  * Check if a given object implements the BsonLongDTO interface.
  */
-export function instanceOfBsonLongDTO(value: Record<string, any>): value is BsonLongDTO {
+export function instanceOfBsonLongDTO(value: object): value is BsonLongDTO {
     if (!('low' in value) || value['low'] === undefined) return false;
     if (!('high' in value) || value['high'] === undefined) return false;
     if (!('unsigned' in value) || value['unsigned'] === undefined) return false;

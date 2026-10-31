@@ -24,7 +24,7 @@ export interface ResolutionStatementDTOUnresolved {
 /**
  * Check if a given object implements the ResolutionStatementDTOUnresolved interface.
  */
-export function instanceOfResolutionStatementDTOUnresolved(value: Record<string, any>): value is ResolutionStatementDTOUnresolved {
+export function instanceOfResolutionStatementDTOUnresolved(value: object): value is ResolutionStatementDTOUnresolved {
     return true;
 }
 

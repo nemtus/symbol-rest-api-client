@@ -22,7 +22,7 @@
  */
 export const NetworkTypeEnum = {
     NUMBER_104: 104,
-    NUMBER_152: 152
+    NUMBER_152: 152,
 } as const;
 export type NetworkTypeEnum = typeof NetworkTypeEnum[keyof typeof NetworkTypeEnum];
 

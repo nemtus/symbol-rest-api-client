@@ -21,26 +21,14 @@ import { mapValues } from '../runtime';
 export interface AccountLinkVotingKeyDTO {
     /**
      * 256-bit public key encoded as a hexadecimal string (64 hex characters).
-     * @type {string}
-     * @memberof AccountLinkVotingKeyDTO
      */
     publicKey: string;
     /**
-     * [Finalization epoch](https://docs.symbol.dev/concepts/block.html#finalization) is a sequential
-     * integer. Each epoch groups a set of blocks for finalization voting; the interval is defined
-     * by the `votingSetGrouping` network property (e.g. 1440 blocks, ~12h on mainnet).
-     * 
-     * @type {number}
-     * @memberof AccountLinkVotingKeyDTO
+     * First finalization epoch for which this key is valid.
      */
     startEpoch: number;
     /**
-     * [Finalization epoch](https://docs.symbol.dev/concepts/block.html#finalization) is a sequential
-     * integer. Each epoch groups a set of blocks for finalization voting; the interval is defined
-     * by the `votingSetGrouping` network property (e.g. 1440 blocks, ~12h on mainnet).
-     * 
-     * @type {number}
-     * @memberof AccountLinkVotingKeyDTO
+     * Last finalization epoch for which this key is valid.
      */
     endEpoch: number;
 }
@@ -48,7 +36,7 @@ export interface AccountLinkVotingKeyDTO {
 /**
  * Check if a given object implements the AccountLinkVotingKeyDTO interface.
  */
-export function instanceOfAccountLinkVotingKeyDTO(value: Record<string, any>): value is AccountLinkVotingKeyDTO {
+export function instanceOfAccountLinkVotingKeyDTO(value: object): value is AccountLinkVotingKeyDTO {
     if (!('publicKey' in value) || value['publicKey'] === undefined) return false;
     if (!('startEpoch' in value) || value['startEpoch'] === undefined) return false;
     if (!('endEpoch' in value) || value['endEpoch'] === undefined) return false;

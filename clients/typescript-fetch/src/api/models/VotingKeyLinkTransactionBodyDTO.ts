@@ -29,8 +29,6 @@ import {
 export interface VotingKeyLinkTransactionBodyDTO {
     /**
      * 32-byte voting public key used for finalization voting.
-     * @type {string}
-     * @memberof VotingKeyLinkTransactionBodyDTO
      */
     linkedPublicKey: string;
     /**
@@ -38,8 +36,6 @@ export interface VotingKeyLinkTransactionBodyDTO {
      * integer. Each epoch groups a set of blocks for finalization voting; the interval is defined
      * by the `votingSetGrouping` network property (e.g. 1440 blocks, ~12h on mainnet).
      * 
-     * @type {number}
-     * @memberof VotingKeyLinkTransactionBodyDTO
      */
     startEpoch: number;
     /**
@@ -47,14 +43,10 @@ export interface VotingKeyLinkTransactionBodyDTO {
      * integer. Each epoch groups a set of blocks for finalization voting; the interval is defined
      * by the `votingSetGrouping` network property (e.g. 1440 blocks, ~12h on mainnet).
      * 
-     * @type {number}
-     * @memberof VotingKeyLinkTransactionBodyDTO
      */
     endEpoch: number;
     /**
      * 
-     * @type {LinkActionEnum}
-     * @memberof VotingKeyLinkTransactionBodyDTO
      */
     linkAction: LinkActionEnum;
 }
@@ -64,7 +56,7 @@ export interface VotingKeyLinkTransactionBodyDTO {
 /**
  * Check if a given object implements the VotingKeyLinkTransactionBodyDTO interface.
  */
-export function instanceOfVotingKeyLinkTransactionBodyDTO(value: Record<string, any>): value is VotingKeyLinkTransactionBodyDTO {
+export function instanceOfVotingKeyLinkTransactionBodyDTO(value: object): value is VotingKeyLinkTransactionBodyDTO {
     if (!('linkedPublicKey' in value) || value['linkedPublicKey'] === undefined) return false;
     if (!('startEpoch' in value) || value['startEpoch'] === undefined) return false;
     if (!('endEpoch' in value) || value['endEpoch'] === undefined) return false;

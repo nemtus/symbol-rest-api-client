@@ -36,34 +36,23 @@ export interface ChainInfoDTO {
      * Height of a block in the blockchain. Starts at 1 and increments by one per block.
      * Represented as a string to preserve precision, since the value is an unsigned 64-bit integer.
      * 
-     * @type {string}
-     * @memberof ChainInfoDTO
      */
     height: string;
     /**
-     * 64-bit part of the full 128-bit chain score. The full score is
-     * `(scoreHigh << 64) + scoreLow`. Each block adds `difficulty − time elapsed since previous block`;
-     * the chain score is the sum. During synchronization, nodes select the chain with the highest score.
+     * High 64 bits of the 128-bit chain score. The full score is
+     * `(scoreHigh << 64) + scoreLow`. Split because JSON has no native 128-bit integer;
+     * the sum of millions of block scores (difficulty ~1e13 to 1e15) exceeds 64 bits.
      * 
-     * @type {string}
-     * @memberof ChainInfoDTO
      */
     scoreHigh: string;
     /**
-     * 64-bit part of the full 128-bit chain score. The full score is
-     * `(scoreHigh << 64) + scoreLow`. Each block adds `difficulty − time elapsed since previous block`;
-     * the chain score is the sum. During synchronization, nodes select the chain with the highest score.
-     * 
-     * @type {string}
-     * @memberof ChainInfoDTO
+     * Low 64 bits of the 128-bit chain score.
      */
     scoreLow: string;
     /**
      * The most recent block that has been made permanent and will never be rolled back.
      * See [finalization](https://docs.symbol.dev/concepts/block.html#finalization).
      * 
-     * @type {FinalizedBlockDTO}
-     * @memberof ChainInfoDTO
      */
     latestFinalizedBlock: FinalizedBlockDTO;
 }
@@ -71,7 +60,7 @@ export interface ChainInfoDTO {
 /**
  * Check if a given object implements the ChainInfoDTO interface.
  */
-export function instanceOfChainInfoDTO(value: Record<string, any>): value is ChainInfoDTO {
+export function instanceOfChainInfoDTO(value: object): value is ChainInfoDTO {
     if (!('height' in value) || value['height'] === undefined) return false;
     if (!('scoreHigh' in value) || value['scoreHigh'] === undefined) return false;
     if (!('scoreLow' in value) || value['scoreLow'] === undefined) return false;

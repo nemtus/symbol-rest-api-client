@@ -36,32 +36,22 @@ import {
 export interface MessageGroup {
     /**
      * Finalization stage (prevote, precommit, or count).
-     * @type {StageEnum}
-     * @memberof MessageGroup
      */
     stage: StageEnum;
     /**
-     * Height of a block in the blockchain. Starts at 1 and increments by one per block.
-     * Represented as a string to preserve precision, since the value is an unsigned 64-bit integer.
-     * 
-     * @type {string}
-     * @memberof MessageGroup
+     * Block height corresponding to the first hash.
      */
     height: string;
     /**
      * Block hashes voted for at this stage. Ordered by height; the first hash corresponds to `height`,
      * subsequent hashes to consecutive block heights.
      * 
-     * @type {Array<string>}
-     * @memberof MessageGroup
      */
     hashes: Array<string>;
     /**
      * BLS aggregate signatures from the finalizer set attesting to the votes.
      * Each entry contains `root` and `bottom` of the Bm tree.
      * 
-     * @type {Array<BmTreeSignature>}
-     * @memberof MessageGroup
      */
     signatures: Array<BmTreeSignature>;
 }
@@ -71,7 +61,7 @@ export interface MessageGroup {
 /**
  * Check if a given object implements the MessageGroup interface.
  */
-export function instanceOfMessageGroup(value: Record<string, any>): value is MessageGroup {
+export function instanceOfMessageGroup(value: object): value is MessageGroup {
     if (!('stage' in value) || value['stage'] === undefined) return false;
     if (!('height' in value) || value['height'] === undefined) return false;
     if (!('hashes' in value) || value['hashes'] === undefined) return false;

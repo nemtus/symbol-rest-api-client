@@ -29,20 +29,14 @@ import {
 export interface AccountMosaicRestrictionTransactionBodyDTO {
     /**
      * 
-     * @type {AccountRestrictionFlagsEnum}
-     * @memberof AccountMosaicRestrictionTransactionBodyDTO
      */
     restrictionFlags: AccountRestrictionFlagsEnum;
     /**
      * Account restriction additions.
-     * @type {Array<string>}
-     * @memberof AccountMosaicRestrictionTransactionBodyDTO
      */
     restrictionAdditions: Array<string>;
     /**
      * Account restriction deletions.
-     * @type {Array<string>}
-     * @memberof AccountMosaicRestrictionTransactionBodyDTO
      */
     restrictionDeletions: Array<string>;
 }
@@ -52,7 +46,7 @@ export interface AccountMosaicRestrictionTransactionBodyDTO {
 /**
  * Check if a given object implements the AccountMosaicRestrictionTransactionBodyDTO interface.
  */
-export function instanceOfAccountMosaicRestrictionTransactionBodyDTO(value: Record<string, any>): value is AccountMosaicRestrictionTransactionBodyDTO {
+export function instanceOfAccountMosaicRestrictionTransactionBodyDTO(value: object): value is AccountMosaicRestrictionTransactionBodyDTO {
     if (!('restrictionFlags' in value) || value['restrictionFlags'] === undefined) return false;
     if (!('restrictionAdditions' in value) || value['restrictionAdditions'] === undefined) return false;
     if (!('restrictionDeletions' in value) || value['restrictionDeletions'] === undefined) return false;

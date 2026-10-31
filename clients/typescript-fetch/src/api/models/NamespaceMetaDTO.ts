@@ -23,8 +23,6 @@ import { mapValues } from '../runtime';
 export interface NamespaceMetaDTO {
     /**
      * Indicates whether the namespace is currently active at the chain height used to serve the request.
-     * @type {boolean}
-     * @memberof NamespaceMetaDTO
      */
     active: boolean;
     /**
@@ -33,8 +31,6 @@ export interface NamespaceMetaDTO {
      * API clients should not use it as a pagination cursor; use the standard pagination query parameters (`pageSize`,
      * `pageNumber`, `offset`, `order`) instead.
      * 
-     * @type {number}
-     * @memberof NamespaceMetaDTO
      */
     index: number;
 }
@@ -42,7 +38,7 @@ export interface NamespaceMetaDTO {
 /**
  * Check if a given object implements the NamespaceMetaDTO interface.
  */
-export function instanceOfNamespaceMetaDTO(value: Record<string, any>): value is NamespaceMetaDTO {
+export function instanceOfNamespaceMetaDTO(value: object): value is NamespaceMetaDTO {
     if (!('active' in value) || value['active'] === undefined) return false;
     if (!('index' in value) || value['index'] === undefined) return false;
     return true;

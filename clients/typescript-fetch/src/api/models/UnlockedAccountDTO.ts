@@ -23,8 +23,6 @@ import { mapValues } from '../runtime';
 export interface UnlockedAccountDTO {
     /**
      * Public keys of accounts harvesting on this node.
-     * @type {Array<string>}
-     * @memberof UnlockedAccountDTO
      */
     unlockedAccount: Array<string>;
 }
@@ -32,7 +30,7 @@ export interface UnlockedAccountDTO {
 /**
  * Check if a given object implements the UnlockedAccountDTO interface.
  */
-export function instanceOfUnlockedAccountDTO(value: Record<string, any>): value is UnlockedAccountDTO {
+export function instanceOfUnlockedAccountDTO(value: object): value is UnlockedAccountDTO {
     if (!('unlockedAccount' in value) || value['unlockedAccount'] === undefined) return false;
     return true;
 }

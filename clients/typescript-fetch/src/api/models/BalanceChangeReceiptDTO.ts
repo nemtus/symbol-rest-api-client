@@ -32,41 +32,22 @@ import {
 export interface BalanceChangeReceiptDTO {
     /**
      * Version of the receipt format.
-     * @type {number}
-     * @memberof BalanceChangeReceiptDTO
      */
     version: number;
     /**
      * 
-     * @type {ReceiptTypeEnum}
-     * @memberof BalanceChangeReceiptDTO
      */
     type: ReceiptTypeEnum;
     /**
-     * Unique [mosaic](https://docs.symbol.dev/concepts/mosaic.html) identifier.
-     * A 64-bit unsigned integer derived from the creator's address and a registration nonce,
-     * encoded as a 16-character hexadecimal string.
-     * 
-     * @type {string}
-     * @memberof BalanceChangeReceiptDTO
+     * Identifier of the mosaic whose balance changed.
      */
     mosaicId: string;
     /**
-     * Absolute amount expressed in the mosaic's smallest (atomic) unit, with no decimal point.
-     * For example, an amount of `123456789` for a mosaic with divisibility 6 represents
-     * `123.456789` whole units. Encoded as a string to preserve precision, since the value
-     * is an unsigned 64-bit integer.
-     * 
-     * @type {string}
-     * @memberof BalanceChangeReceiptDTO
+     * Amount of mosaic units added to or removed from the balance, expressed in the mosaic's smallest (atomic) unit.
      */
     amount: string;
     /**
-     * Address encoded as a 48-character hexadecimal string (24 bytes).
-     * The REST API returns addresses in this format. For Base32-encoded addresses (39 chars) see `Address`.
-     * 
-     * @type {string}
-     * @memberof BalanceChangeReceiptDTO
+     * Address whose balance was affected.
      */
     targetAddress: string;
 }
@@ -76,7 +57,7 @@ export interface BalanceChangeReceiptDTO {
 /**
  * Check if a given object implements the BalanceChangeReceiptDTO interface.
  */
-export function instanceOfBalanceChangeReceiptDTO(value: Record<string, any>): value is BalanceChangeReceiptDTO {
+export function instanceOfBalanceChangeReceiptDTO(value: object): value is BalanceChangeReceiptDTO {
     if (!('version' in value) || value['version'] === undefined) return false;
     if (!('type' in value) || value['type'] === undefined) return false;
     if (!('mosaicId' in value) || value['mosaicId'] === undefined) return false;

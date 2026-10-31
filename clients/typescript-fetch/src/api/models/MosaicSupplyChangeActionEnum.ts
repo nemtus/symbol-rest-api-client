@@ -22,7 +22,7 @@
  */
 export const MosaicSupplyChangeActionEnum = {
     NUMBER_0: 0,
-    NUMBER_1: 1
+    NUMBER_1: 1,
 } as const;
 export type MosaicSupplyChangeActionEnum = typeof MosaicSupplyChangeActionEnum[keyof typeof MosaicSupplyChangeActionEnum];
 

@@ -52,42 +52,30 @@ import {
 export interface NetworkConfigurationDTO {
     /**
      * 
-     * @type {NetworkPropertiesDTO}
-     * @memberof NetworkConfigurationDTO
      */
     network: NetworkPropertiesDTO;
     /**
      * 
-     * @type {ChainPropertiesDTO}
-     * @memberof NetworkConfigurationDTO
      */
     chain: ChainPropertiesDTO;
     /**
      * 
-     * @type {PluginsPropertiesDTO}
-     * @memberof NetworkConfigurationDTO
      */
     plugins: PluginsPropertiesDTO;
     /**
      * 
-     * @type {ForkHeightsDTO}
-     * @memberof NetworkConfigurationDTO
      */
     forkHeights: ForkHeightsDTO;
     /**
      * Multisignature approvals authorizing the network treasury reissuance event for the specified fork height.
      * More: https://hackmd.io/@syndicate/governance.
      * 
-     * @type {Array<string>}
-     * @memberof NetworkConfigurationDTO
      */
     treasuryReissuanceTransactionSignatures?: Array<string>;
     /**
      * List of aggregate transaction hashes that were known to be invalid due to a bug and must be remapped to corrected hashes.
      * More: https://hackmd.io/@syndicate/postmortem-251022.
      * 
-     * @type {Array<string>}
-     * @memberof NetworkConfigurationDTO
      */
     corruptAggregateTransactionHashes?: Array<string>;
 }
@@ -95,7 +83,7 @@ export interface NetworkConfigurationDTO {
 /**
  * Check if a given object implements the NetworkConfigurationDTO interface.
  */
-export function instanceOfNetworkConfigurationDTO(value: Record<string, any>): value is NetworkConfigurationDTO {
+export function instanceOfNetworkConfigurationDTO(value: object): value is NetworkConfigurationDTO {
     if (!('network' in value) || value['network'] === undefined) return false;
     if (!('chain' in value) || value['chain'] === undefined) return false;
     if (!('plugins' in value) || value['plugins'] === undefined) return false;

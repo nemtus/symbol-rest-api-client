@@ -1,0 +1,35 @@
+
+# AnnounceTransactionInfoDTO
+
+Informational response returned after a transaction announce request is accepted.  This object does not contain the announced transaction payload or its final execution result. It only carries the node message associated with the announce request.  Acceptance by a node does not mean the transaction is already part of the blockchain. The transaction still needs to be validated and confirmed by the network.  To verify the final result, query `GET /transactionStatus/{hash}` on the same node that received the announce request. If that node drops the transaction before propagation, other nodes may not know the transaction at all and can return `404` for the same hash.  In some cases the transaction can be dropped without any failure status being returned. Common causes include using a fee below the minimum accepted by that node or using a generation hash seed that does not match the target network. Transaction status availability is not guaranteed indefinitely: failed statuses are stored in a capped collection and may be evicted as new entries arrive. 
+
+## Properties
+
+Name | Type
+------------ | -------------
+`message` | string
+
+## Example
+
+```typescript
+import type { AnnounceTransactionInfoDTO } from ''
+
+// TODO: Update the object below with actual values
+const example = {
+  "message": null,
+} satisfies AnnounceTransactionInfoDTO
+
+console.log(example)
+
+// Convert the instance to a JSON string
+const exampleJSON: string = JSON.stringify(example)
+console.log(exampleJSON)
+
+// Parse the JSON string back to an object
+const exampleParsed = JSON.parse(exampleJSON) as AnnounceTransactionInfoDTO
+console.log(exampleParsed)
+```
+
+[[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
+
+

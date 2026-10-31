@@ -12,62 +12,150 @@
  * Do not edit the class manually.
  */
 
-
 import * as runtime from '../runtime';
-import type {
-  CompositeHashes,
-  MerkleStateInfoDTO,
-  MetadataInfoDTO,
-  MetadataPage,
-  MetadataTypeEnum,
-  ModelError,
-  Order,
-} from '../models/index';
 import {
+    type CompositeHashes,
     CompositeHashesFromJSON,
     CompositeHashesToJSON,
+} from '../models/CompositeHashes';
+import {
+    type MerkleStateInfoDTO,
     MerkleStateInfoDTOFromJSON,
     MerkleStateInfoDTOToJSON,
+} from '../models/MerkleStateInfoDTO';
+import {
+    type MetadataInfoDTO,
     MetadataInfoDTOFromJSON,
     MetadataInfoDTOToJSON,
+} from '../models/MetadataInfoDTO';
+import {
+    type MetadataPage,
     MetadataPageFromJSON,
     MetadataPageToJSON,
+} from '../models/MetadataPage';
+import {
+    type MetadataTypeEnum,
     MetadataTypeEnumFromJSON,
     MetadataTypeEnumToJSON,
+} from '../models/MetadataTypeEnum';
+import {
+    type ModelError,
     ModelErrorFromJSON,
     ModelErrorToJSON,
+} from '../models/ModelError';
+import {
+    type Order,
     OrderFromJSON,
     OrderToJSON,
-} from '../models/index';
+} from '../models/Order';
 
 export interface GetMetadataRequest {
+    /**
+     * Composite hash encoded as a 64-character hexadecimal string.
+     */
     compositeHash: string;
 }
 
 export interface GetMetadataEntriesRequest {
+    /**
+     * 
+     */
     compositeHashes: CompositeHashes;
 }
 
 export interface GetMetadataMerkleRequest {
+    /**
+     * Composite hash encoded as a 64-character hexadecimal string.
+     */
     compositeHash: string;
 }
 
 export interface GetMetadataMetalRequest {
+    /**
+     * Metal identifier: Base58-encoded composite hash of the first metadata chunk.
+     * 
+     */
     metalId: string;
+    /**
+     * Override the MIME type of the response.
+     */
     mimeType?: string;
+    /**
+     * Override the filename in the Content-Disposition header.
+     */
     fileName?: string;
+    /**
+     * When true, sets Content-Disposition to attachment.
+     */
     download?: boolean;
 }
 
 export interface SearchMetadataEntriesRequest {
+    /**
+     * Filter by address sending the metadata entry (include).
+     */
     sourceAddress?: string;
+    /**
+     * Filter by target address in Base32 (include).
+     */
     targetAddress?: string;
+    /**
+     * Filter by metadata key (include).
+     */
     scopedMetadataKey?: string;
+    /**
+     * Filter by namespace or mosaic ID (include).
+     */
     targetId?: string;
+    /**
+     * Filter by metadata type (include):
+     * - `0`: Account metadata
+     * - `1`: Mosaic metadata
+     * - `2`: Namespace metadata
+     * 
+     */
     metadataType?: MetadataTypeEnum;
+    /**
+     * Select the number of entries to return per page.
+     * Values outside the allowed range are clamped to the schema minimum or maximum.
+     * 
+     */
     pageSize?: number;
+    /**
+     * Page number for numbered pagination (1-based).
+     * 
+     * Numbered and cursor pagination can be combined, but this is not recommended because the semantics
+     * are harder to reason about. For cursor-style flows, keep `pageNumber=1` and advance pages by
+     * updating only `offset`. For numbered pagination flows, omit `offset` and advance pages by
+     * incrementing `pageNumber`.
+     * 
+     */
     pageNumber?: number;
+    /**
+     * Cursor for pagination. Provide the value of the sort field (`orderBy`) from the
+     * last entry of the previous page. **The offset type must match `orderBy`:**
+     * - `orderBy=id`: use the entry's `id` (ObjectId, 24-char hex).
+     * - `orderBy=height`: use the block height (string, e.g. `"17592"`).
+     * - `orderBy=balance`: use the mosaic balance amount (string, e.g. `"1000000"`).
+     * 
+     * Allowed `orderBy` values depend on the endpoint. If `orderBy` is omitted, `id` is used by default.
+     * 
+     * Set `offset` to the sort-field value of the last entry from the previous page. Across pages,
+     * this value decreases with `order=desc` and increases with `order=asc`.
+     * 
+     * Numbered and cursor pagination can be combined, but this is not recommended because the semantics
+     * are harder to reason about. For cursor-style flows, keep `pageNumber=1` and advance pages by
+     * updating only `offset`. For numbered pagination flows, omit `offset` and advance pages by
+     * incrementing `pageNumber`.
+     * 
+     */
     offset?: string;
+    /**
+     * Sort responses in ascending or descending order based on the collection property set on the param `orderBy`.
+     * If the request does not specify `orderBy`, REST returns the collection ordered by id.
+     * The default sort direction depends on the endpoint implementation.
+     * 
+     */
     order?: Order;
 }
 
@@ -77,10 +165,9 @@ export interface SearchMetadataEntriesRequest {
 export class MetadataRoutesApi extends runtime.BaseAPI {
 
     /**
-     * Returns the metadata entry associated with the given composite hash.
-     * Get metadata information
+     * Creates request options for getMetadata without sending the request
      */
-    async getMetadataRaw(requestParameters: GetMetadataRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<MetadataInfoDTO>> {
+    async getMetadataRequestOpts(requestParameters: GetMetadataRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['compositeHash'] == null) {
             throw new runtime.RequiredError(
                 'compositeHash',
@@ -94,14 +181,23 @@ export class MetadataRoutesApi extends runtime.BaseAPI {
 
 
         let urlPath = `/metadata/{compositeHash}`;
-        urlPath = urlPath.replace(`{${"compositeHash"}}`, encodeURIComponent(String(requestParameters['compositeHash'])));
+        urlPath = urlPath.replace('{compositeHash}', encodeURIComponent(String(requestParameters['compositeHash'])));
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Returns the metadata entry associated with the given composite hash.
+     * Get metadata information
+     */
+    async getMetadataRaw(requestParameters: GetMetadataRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<MetadataInfoDTO>> {
+        const requestOptions = await this.getMetadataRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => MetadataInfoDTOFromJSON(jsonValue));
     }
@@ -116,10 +212,9 @@ export class MetadataRoutesApi extends runtime.BaseAPI {
     }
 
     /**
-     * Returns the metadata entries associated with the given composite hashes.
-     * Get metadata information for an array of composite hashes
+     * Creates request options for getMetadataEntries without sending the request
      */
-    async getMetadataEntriesRaw(requestParameters: GetMetadataEntriesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<MetadataInfoDTO>>> {
+    async getMetadataEntriesRequestOpts(requestParameters: GetMetadataEntriesRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['compositeHashes'] == null) {
             throw new runtime.RequiredError(
                 'compositeHashes',
@@ -136,13 +231,22 @@ export class MetadataRoutesApi extends runtime.BaseAPI {
 
         let urlPath = `/metadata`;
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
             body: CompositeHashesToJSON(requestParameters['compositeHashes']),
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Returns the metadata entries associated with the given composite hashes.
+     * Get metadata information for an array of composite hashes
+     */
+    async getMetadataEntriesRaw(requestParameters: GetMetadataEntriesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<MetadataInfoDTO>>> {
+        const requestOptions = await this.getMetadataEntriesRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(MetadataInfoDTOFromJSON));
     }
@@ -157,10 +261,9 @@ export class MetadataRoutesApi extends runtime.BaseAPI {
     }
 
     /**
-     * Returns the Merkle proof for the metadata state entry associated with the given composite hash.
-     * Get metadata Merkle information
+     * Creates request options for getMetadataMerkle without sending the request
      */
-    async getMetadataMerkleRaw(requestParameters: GetMetadataMerkleRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<MerkleStateInfoDTO>> {
+    async getMetadataMerkleRequestOpts(requestParameters: GetMetadataMerkleRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['compositeHash'] == null) {
             throw new runtime.RequiredError(
                 'compositeHash',
@@ -174,14 +277,23 @@ export class MetadataRoutesApi extends runtime.BaseAPI {
 
 
         let urlPath = `/metadata/{compositeHash}/merkle`;
-        urlPath = urlPath.replace(`{${"compositeHash"}}`, encodeURIComponent(String(requestParameters['compositeHash'])));
+        urlPath = urlPath.replace('{compositeHash}', encodeURIComponent(String(requestParameters['compositeHash'])));
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Returns the Merkle proof for the metadata state entry associated with the given composite hash.
+     * Get metadata Merkle information
+     */
+    async getMetadataMerkleRaw(requestParameters: GetMetadataMerkleRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<MerkleStateInfoDTO>> {
+        const requestOptions = await this.getMetadataMerkleRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => MerkleStateInfoDTOFromJSON(jsonValue));
     }
@@ -196,10 +308,9 @@ export class MetadataRoutesApi extends runtime.BaseAPI {
     }
 
     /**
-     * Returns the decoded binary payload stored in Metal metadata entries identified by the given metal id. Metal is a convention for storing chunked binary payloads in metadata entries. See the [metal-on-symbol repository](https://github.com/OPENSPHERE-Inc/metal-on-symbol). The response content type is derived from the stored Metal seal when available, or defaults to `application/octet-stream`. Optional query parameters can override the response headers for content type and filename. 
-     * Get Metal metadata binary data
+     * Creates request options for getMetadataMetal without sending the request
      */
-    async getMetadataMetalRaw(requestParameters: GetMetadataMetalRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Blob>> {
+    async getMetadataMetalRequestOpts(requestParameters: GetMetadataMetalRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['metalId'] == null) {
             throw new runtime.RequiredError(
                 'metalId',
@@ -225,14 +336,23 @@ export class MetadataRoutesApi extends runtime.BaseAPI {
 
 
         let urlPath = `/metadata/metal/{metalId}`;
-        urlPath = urlPath.replace(`{${"metalId"}}`, encodeURIComponent(String(requestParameters['metalId'])));
+        urlPath = urlPath.replace('{metalId}', encodeURIComponent(String(requestParameters['metalId'])));
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Returns the decoded binary payload stored in Metal metadata entries identified by the given metal id. Metal is a convention for storing chunked binary payloads in metadata entries. See the [metal-on-symbol repository](https://github.com/OPENSPHERE-Inc/metal-on-symbol). The response content type is derived from the stored Metal seal when available, or defaults to `application/octet-stream`. Optional query parameters can override the response headers for content type and filename. 
+     * Get Metal metadata binary data
+     */
+    async getMetadataMetalRaw(requestParameters: GetMetadataMetalRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<runtime.HttpFile>> {
+        const requestOptions = await this.getMetadataMetalRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.BlobApiResponse(response);
     }
@@ -241,16 +361,15 @@ export class MetadataRoutesApi extends runtime.BaseAPI {
      * Returns the decoded binary payload stored in Metal metadata entries identified by the given metal id. Metal is a convention for storing chunked binary payloads in metadata entries. See the [metal-on-symbol repository](https://github.com/OPENSPHERE-Inc/metal-on-symbol). The response content type is derived from the stored Metal seal when available, or defaults to `application/octet-stream`. Optional query parameters can override the response headers for content type and filename. 
      * Get Metal metadata binary data
      */
-    async getMetadataMetal(requestParameters: GetMetadataMetalRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Blob> {
+    async getMetadataMetal(requestParameters: GetMetadataMetalRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.HttpFile> {
         const response = await this.getMetadataMetalRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
-     * Returns a paginated list of metadata entries.  Results can be filtered by source address, target address, scoped metadata key, target ID, and metadata type. 
-     * Search metadata entries
+     * Creates request options for searchMetadataEntries without sending the request
      */
-    async searchMetadataEntriesRaw(requestParameters: SearchMetadataEntriesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<MetadataPage>> {
+    async searchMetadataEntriesRequestOpts(requestParameters: SearchMetadataEntriesRequest): Promise<runtime.RequestOpts> {
         const queryParameters: any = {};
 
         if (requestParameters['sourceAddress'] != null) {
@@ -294,12 +413,21 @@ export class MetadataRoutesApi extends runtime.BaseAPI {
 
         let urlPath = `/metadata`;
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Returns a paginated list of metadata entries.  Results can be filtered by source address, target address, scoped metadata key, target ID, and metadata type. 
+     * Search metadata entries
+     */
+    async searchMetadataEntriesRaw(requestParameters: SearchMetadataEntriesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<MetadataPage>> {
+        const requestOptions = await this.searchMetadataEntriesRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => MetadataPageFromJSON(jsonValue));
     }

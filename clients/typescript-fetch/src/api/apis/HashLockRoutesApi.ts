@@ -12,56 +12,164 @@
  * Do not edit the class manually.
  */
 
-
 import * as runtime from '../runtime';
-import type {
-  HashLockInfoDTO,
-  HashLockPage,
-  MerkleStateInfoDTO,
-  ModelError,
-  Order,
-  TransactionHashes,
-} from '../models/index';
 import {
+    type HashLockInfoDTO,
     HashLockInfoDTOFromJSON,
     HashLockInfoDTOToJSON,
+} from '../models/HashLockInfoDTO';
+import {
+    type HashLockPage,
     HashLockPageFromJSON,
     HashLockPageToJSON,
+} from '../models/HashLockPage';
+import {
+    type MerkleStateInfoDTO,
     MerkleStateInfoDTOFromJSON,
     MerkleStateInfoDTOToJSON,
+} from '../models/MerkleStateInfoDTO';
+import {
+    type ModelError,
     ModelErrorFromJSON,
     ModelErrorToJSON,
+} from '../models/ModelError';
+import {
+    type Order,
     OrderFromJSON,
     OrderToJSON,
+} from '../models/Order';
+import {
+    type TransactionHashes,
     TransactionHashesFromJSON,
     TransactionHashesToJSON,
-} from '../models/index';
+} from '../models/TransactionHashes';
 
 export interface GetHashLockRequest {
+    /**
+     * Filter by hash (include).
+     */
     hash: string;
 }
 
 export interface GetHashLockMerkleRequest {
+    /**
+     * Filter by hash (include).
+     */
     hash: string;
 }
 
 export interface GetHashLocksRequest {
+    /**
+     * 
+     */
     transactionHashes: TransactionHashes;
 }
 
 export interface SearchAccountHashLocksRequest {
+    /**
+     * Account address in Base32-encoded format.
+     */
     address: string;
+    /**
+     * Select the number of entries to return per page.
+     * Values outside the allowed range are clamped to the schema minimum or maximum.
+     * 
+     */
     pageSize?: number;
+    /**
+     * Page number for numbered pagination (1-based).
+     * 
+     * Numbered and cursor pagination can be combined, but this is not recommended because the semantics
+     * are harder to reason about. For cursor-style flows, keep `pageNumber=1` and advance pages by
+     * updating only `offset`. For numbered pagination flows, omit `offset` and advance pages by
+     * incrementing `pageNumber`.
+     * 
+     */
     pageNumber?: number;
+    /**
+     * Cursor for pagination. Provide the value of the sort field (`orderBy`) from the
+     * last entry of the previous page. **The offset type must match `orderBy`:**
+     * - `orderBy=id`: use the entry's `id` (ObjectId, 24-char hex).
+     * - `orderBy=height`: use the block height (string, e.g. `"17592"`).
+     * - `orderBy=balance`: use the mosaic balance amount (string, e.g. `"1000000"`).
+     * 
+     * Allowed `orderBy` values depend on the endpoint. If `orderBy` is omitted, `id` is used by default.
+     * 
+     * Set `offset` to the sort-field value of the last entry from the previous page. Across pages,
+     * this value decreases with `order=desc` and increases with `order=asc`.
+     * 
+     * Numbered and cursor pagination can be combined, but this is not recommended because the semantics
+     * are harder to reason about. For cursor-style flows, keep `pageNumber=1` and advance pages by
+     * updating only `offset`. For numbered pagination flows, omit `offset` and advance pages by
+     * incrementing `pageNumber`.
+     * 
+     */
     offset?: string;
+    /**
+     * Sort responses in ascending or descending order based on the collection property set on the param `orderBy`.
+     * If the request does not specify `orderBy`, REST returns the collection ordered by id.
+     * The default sort direction depends on the endpoint implementation.
+     * 
+     */
     order?: Order;
 }
 
 export interface SearchHashLockRequest {
+    /**
+     * Filter by address (include), in Base32 format.
+     * 
+     * The exact meaning depends on the endpoint:
+     * - transaction search: returns transactions where the address appears as the sender, recipient, or cosigner
+     * - account search: matches the account address
+     * - account restriction search: matches the restricted account address
+     * - hash lock and secret lock search: matches the lock owner address
+     * 
+     * On transaction search endpoints, this filter cannot be combined with `recipientAddress` and
+     * `signerPublicKey`.
+     * 
+     */
     address?: string;
+    /**
+     * Select the number of entries to return per page.
+     * Values outside the allowed range are clamped to the schema minimum or maximum.
+     * 
+     */
     pageSize?: number;
+    /**
+     * Page number for numbered pagination (1-based).
+     * 
+     * Numbered and cursor pagination can be combined, but this is not recommended because the semantics
+     * are harder to reason about. For cursor-style flows, keep `pageNumber=1` and advance pages by
+     * updating only `offset`. For numbered pagination flows, omit `offset` and advance pages by
+     * incrementing `pageNumber`.
+     * 
+     */
     pageNumber?: number;
+    /**
+     * Cursor for pagination. Provide the value of the sort field (`orderBy`) from the
+     * last entry of the previous page. **The offset type must match `orderBy`:**
+     * - `orderBy=id`: use the entry's `id` (ObjectId, 24-char hex).
+     * - `orderBy=height`: use the block height (string, e.g. `"17592"`).
+     * - `orderBy=balance`: use the mosaic balance amount (string, e.g. `"1000000"`).
+     * 
+     * Allowed `orderBy` values depend on the endpoint. If `orderBy` is omitted, `id` is used by default.
+     * 
+     * Set `offset` to the sort-field value of the last entry from the previous page. Across pages,
+     * this value decreases with `order=desc` and increases with `order=asc`.
+     * 
+     * Numbered and cursor pagination can be combined, but this is not recommended because the semantics
+     * are harder to reason about. For cursor-style flows, keep `pageNumber=1` and advance pages by
+     * updating only `offset`. For numbered pagination flows, omit `offset` and advance pages by
+     * incrementing `pageNumber`.
+     * 
+     */
     offset?: string;
+    /**
+     * Sort responses in ascending or descending order based on the collection property set on the param `orderBy`.
+     * If the request does not specify `orderBy`, REST returns the collection ordered by id.
+     * The default sort direction depends on the endpoint implementation.
+     * 
+     */
     order?: Order;
 }
 
@@ -71,10 +179,9 @@ export interface SearchHashLockRequest {
 export class HashLockRoutesApi extends runtime.BaseAPI {
 
     /**
-     * Returns the hash lock entry associated with the given aggregate bonded transaction hash.
-     * Get hash lock information
+     * Creates request options for getHashLock without sending the request
      */
-    async getHashLockRaw(requestParameters: GetHashLockRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<HashLockInfoDTO>> {
+    async getHashLockRequestOpts(requestParameters: GetHashLockRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['hash'] == null) {
             throw new runtime.RequiredError(
                 'hash',
@@ -88,14 +195,23 @@ export class HashLockRoutesApi extends runtime.BaseAPI {
 
 
         let urlPath = `/lock/hash/{hash}`;
-        urlPath = urlPath.replace(`{${"hash"}}`, encodeURIComponent(String(requestParameters['hash'])));
+        urlPath = urlPath.replace('{hash}', encodeURIComponent(String(requestParameters['hash'])));
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Returns the hash lock entry associated with the given aggregate bonded transaction hash.
+     * Get hash lock information
+     */
+    async getHashLockRaw(requestParameters: GetHashLockRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<HashLockInfoDTO>> {
+        const requestOptions = await this.getHashLockRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => HashLockInfoDTOFromJSON(jsonValue));
     }
@@ -110,10 +226,9 @@ export class HashLockRoutesApi extends runtime.BaseAPI {
     }
 
     /**
-     * Returns the state Merkle proof for the hash lock entry associated with the given aggregate bonded transaction hash.
-     * Get hash lock Merkle information
+     * Creates request options for getHashLockMerkle without sending the request
      */
-    async getHashLockMerkleRaw(requestParameters: GetHashLockMerkleRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<MerkleStateInfoDTO>> {
+    async getHashLockMerkleRequestOpts(requestParameters: GetHashLockMerkleRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['hash'] == null) {
             throw new runtime.RequiredError(
                 'hash',
@@ -127,14 +242,23 @@ export class HashLockRoutesApi extends runtime.BaseAPI {
 
 
         let urlPath = `/lock/hash/{hash}/merkle`;
-        urlPath = urlPath.replace(`{${"hash"}}`, encodeURIComponent(String(requestParameters['hash'])));
+        urlPath = urlPath.replace('{hash}', encodeURIComponent(String(requestParameters['hash'])));
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Returns the state Merkle proof for the hash lock entry associated with the given aggregate bonded transaction hash.
+     * Get hash lock Merkle information
+     */
+    async getHashLockMerkleRaw(requestParameters: GetHashLockMerkleRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<MerkleStateInfoDTO>> {
+        const requestOptions = await this.getHashLockMerkleRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => MerkleStateInfoDTOFromJSON(jsonValue));
     }
@@ -149,10 +273,9 @@ export class HashLockRoutesApi extends runtime.BaseAPI {
     }
 
     /**
-     * Returns hash lock entries for the given array of aggregate bonded transaction hashes.
-     * Get hash lock information for an array of hashes
+     * Creates request options for getHashLocks without sending the request
      */
-    async getHashLocksRaw(requestParameters: GetHashLocksRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<HashLockInfoDTO>>> {
+    async getHashLocksRequestOpts(requestParameters: GetHashLocksRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['transactionHashes'] == null) {
             throw new runtime.RequiredError(
                 'transactionHashes',
@@ -169,13 +292,22 @@ export class HashLockRoutesApi extends runtime.BaseAPI {
 
         let urlPath = `/lock/hash`;
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
             body: TransactionHashesToJSON(requestParameters['transactionHashes']),
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Returns hash lock entries for the given array of aggregate bonded transaction hashes.
+     * Get hash lock information for an array of hashes
+     */
+    async getHashLocksRaw(requestParameters: GetHashLocksRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<HashLockInfoDTO>>> {
+        const requestOptions = await this.getHashLocksRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(HashLockInfoDTOFromJSON));
     }
@@ -190,10 +322,9 @@ export class HashLockRoutesApi extends runtime.BaseAPI {
     }
 
     /**
-     * Returns a paginated list of hash lock entries created by the given account address.
-     * Search hash lock entries by account
+     * Creates request options for searchAccountHashLocks without sending the request
      */
-    async searchAccountHashLocksRaw(requestParameters: SearchAccountHashLocksRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<HashLockPage>> {
+    async searchAccountHashLocksRequestOpts(requestParameters: SearchAccountHashLocksRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['address'] == null) {
             throw new runtime.RequiredError(
                 'address',
@@ -223,14 +354,23 @@ export class HashLockRoutesApi extends runtime.BaseAPI {
 
 
         let urlPath = `/account/{address}/lock/hash`;
-        urlPath = urlPath.replace(`{${"address"}}`, encodeURIComponent(String(requestParameters['address'])));
+        urlPath = urlPath.replace('{address}', encodeURIComponent(String(requestParameters['address'])));
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Returns a paginated list of hash lock entries created by the given account address.
+     * Search hash lock entries by account
+     */
+    async searchAccountHashLocksRaw(requestParameters: SearchAccountHashLocksRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<HashLockPage>> {
+        const requestOptions = await this.searchAccountHashLocksRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => HashLockPageFromJSON(jsonValue));
     }
@@ -245,10 +385,9 @@ export class HashLockRoutesApi extends runtime.BaseAPI {
     }
 
     /**
-     * Returns a paginated list of hash lock entries, optionally filtered by owner address.
-     * Search hash lock entries
+     * Creates request options for searchHashLock without sending the request
      */
-    async searchHashLockRaw(requestParameters: SearchHashLockRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<HashLockPage>> {
+    async searchHashLockRequestOpts(requestParameters: SearchHashLockRequest): Promise<runtime.RequestOpts> {
         const queryParameters: any = {};
 
         if (requestParameters['address'] != null) {
@@ -276,12 +415,21 @@ export class HashLockRoutesApi extends runtime.BaseAPI {
 
         let urlPath = `/lock/hash`;
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Returns a paginated list of hash lock entries, optionally filtered by owner address.
+     * Search hash lock entries
+     */
+    async searchHashLockRaw(requestParameters: SearchHashLockRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<HashLockPage>> {
+        const requestOptions = await this.searchHashLockRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => HashLockPageFromJSON(jsonValue));
     }

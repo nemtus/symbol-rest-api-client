@@ -12,54 +12,134 @@
  * Do not edit the class manually.
  */
 
-
 import * as runtime from '../runtime';
-import type {
-  BlockInfoDTO,
-  BlockOrderByEnum,
-  BlockPage,
-  MerkleProofInfoDTO,
-  ModelError,
-  Order,
-} from '../models/index';
 import {
+    type BlockInfoDTO,
     BlockInfoDTOFromJSON,
     BlockInfoDTOToJSON,
+} from '../models/BlockInfoDTO';
+import {
+    type BlockOrderByEnum,
     BlockOrderByEnumFromJSON,
     BlockOrderByEnumToJSON,
+} from '../models/BlockOrderByEnum';
+import {
+    type BlockPage,
     BlockPageFromJSON,
     BlockPageToJSON,
+} from '../models/BlockPage';
+import {
+    type MerkleProofInfoDTO,
     MerkleProofInfoDTOFromJSON,
     MerkleProofInfoDTOToJSON,
+} from '../models/MerkleProofInfoDTO';
+import {
+    type ModelError,
     ModelErrorFromJSON,
     ModelErrorToJSON,
+} from '../models/ModelError';
+import {
+    type Order,
     OrderFromJSON,
     OrderToJSON,
-} from '../models/index';
+} from '../models/Order';
 
 export interface GetBlockByHeightRequest {
+    /**
+     * Filter by block height (include). Sequential block position in the chain; starts at 1 and increments by one.
+     */
     height: string;
 }
 
 export interface GetMerkleReceiptsRequest {
+    /**
+     * Filter by block height (include). Sequential block position in the chain; starts at 1 and increments by one.
+     */
     height: string;
+    /**
+     * Receipt statement hash.
+     */
     hash: string;
 }
 
 export interface GetMerkleTransactionRequest {
+    /**
+     * Filter by block height (include). Sequential block position in the chain; starts at 1 and increments by one.
+     */
     height: string;
+    /**
+     * Transaction hash encoded as a 64-character hexadecimal string.
+     */
     hash: string;
 }
 
 export interface SearchBlocksRequest {
+    /**
+     * Filter transactions by the public key of the signing account (include).
+     */
     signerPublicKey?: string;
+    /**
+     * Filter by beneficiary address (include).
+     */
     beneficiaryAddress?: string;
+    /**
+     * Select the number of entries to return per page.
+     * Values outside the allowed range are clamped to the schema minimum or maximum.
+     * 
+     */
     pageSize?: number;
+    /**
+     * Page number for numbered pagination (1-based).
+     * 
+     * Numbered and cursor pagination can be combined, but this is not recommended because the semantics
+     * are harder to reason about. For cursor-style flows, keep `pageNumber=1` and advance pages by
+     * updating only `offset`. For numbered pagination flows, omit `offset` and advance pages by
+     * incrementing `pageNumber`.
+     * 
+     */
     pageNumber?: number;
+    /**
+     * Cursor for pagination. Provide the value of the sort field (`orderBy`) from the
+     * last entry of the previous page. **The offset type must match `orderBy`:**
+     * - `orderBy=id`: use the entry's `id` (ObjectId, 24-char hex).
+     * - `orderBy=height`: use the block height (string, e.g. `"17592"`).
+     * - `orderBy=balance`: use the mosaic balance amount (string, e.g. `"1000000"`).
+     * 
+     * Allowed `orderBy` values depend on the endpoint. If `orderBy` is omitted, `id` is used by default.
+     * 
+     * Set `offset` to the sort-field value of the last entry from the previous page. Across pages,
+     * this value decreases with `order=desc` and increases with `order=asc`.
+     * 
+     * Numbered and cursor pagination can be combined, but this is not recommended because the semantics
+     * are harder to reason about. For cursor-style flows, keep `pageNumber=1` and advance pages by
+     * updating only `offset`. For numbered pagination flows, omit `offset` and advance pages by
+     * incrementing `pageNumber`.
+     * 
+     */
     offset?: string;
+    /**
+     * Sort responses in ascending or descending order based on the collection property set on the param `orderBy`.
+     * If the request does not specify `orderBy`, REST returns the collection ordered by id.
+     * The default sort direction depends on the endpoint implementation.
+     * 
+     */
     order?: Order;
+    /**
+     * Sort responses by the property set. Defaults to `id` when not specified.
+     * 
+     */
     orderBy?: BlockOrderByEnum;
+    /**
+     * Only blocks with timestamp greater or equal than this one are returned. The timestamp is
+     * expressed in milliseconds since the nemesis block.
+     * 
+     */
     fromTimestamp?: string;
+    /**
+     * Only blocks with timestamp smaller or equal than this one are returned. The timestamp is
+     * expressed in milliseconds since the nemesis block.
+     * 
+     */
     toTimestamp?: string;
 }
 
@@ -69,10 +149,9 @@ export interface SearchBlocksRequest {
 export class BlockRoutesApi extends runtime.BaseAPI {
 
     /**
-     * Returns the block at the given height. The response includes the block header, harvester signature, and block metadata (hash, total fee, generation hash, transaction and statement counts).  If the block is an importance block, the response additionally contains voting-eligible and harvesting-eligible account counts, total voting balance, and the previous importance block hash. 
-     * Get block information
+     * Creates request options for getBlockByHeight without sending the request
      */
-    async getBlockByHeightRaw(requestParameters: GetBlockByHeightRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<BlockInfoDTO>> {
+    async getBlockByHeightRequestOpts(requestParameters: GetBlockByHeightRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['height'] == null) {
             throw new runtime.RequiredError(
                 'height',
@@ -86,14 +165,23 @@ export class BlockRoutesApi extends runtime.BaseAPI {
 
 
         let urlPath = `/blocks/{height}`;
-        urlPath = urlPath.replace(`{${"height"}}`, encodeURIComponent(String(requestParameters['height'])));
+        urlPath = urlPath.replace('{height}', encodeURIComponent(String(requestParameters['height'])));
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Returns the block at the given height. The response includes the block header, harvester signature, and block metadata (hash, total fee, generation hash, transaction and statement counts).  If the block is an importance block, the response additionally contains voting-eligible and harvesting-eligible account counts, total voting balance, and the previous importance block hash. 
+     * Get block information
+     */
+    async getBlockByHeightRaw(requestParameters: GetBlockByHeightRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<BlockInfoDTO>> {
+        const requestOptions = await this.getBlockByHeightRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => BlockInfoDTOFromJSON(jsonValue));
     }
@@ -108,10 +196,9 @@ export class BlockRoutesApi extends runtime.BaseAPI {
     }
 
     /**
-     * Returns the [Merkle path](https://docs.symbol.dev/concepts/data-validation.html#merkle-proof) for a [receipt statement or resolution](https://docs.symbol.dev/concepts/receipt.html) linked to a block. The `hash` parameter is the receipt statement hash, not the transaction hash. The Merkle path is the minimum number of nodes needed to calculate the Merkle root.  Steps to calculate the Merkle root: 1. proofHash = hash (leaf). 2. Concatenate proofHash with the first unprocessed item from the merklePath list as follows: - `left`: the item hash is concatenated before the proofHash (proofHash = sha_256(item.hash + proofHash)). - `right`: the item hash is concatenated after the proofHash (proofHash = sha_256(proofHash + item.hash)). 3. Repeat 2. for every item in the merklePath list. 4. Compare if the calculated proofHash equals the one recorded in the [block header](https://docs.symbol.dev/concepts/block.html) (`block.receiptsHash`) to verify if the statement was linked with the block. 
-     * Get the Merkle path for a given receipt statement hash and block
+     * Creates request options for getMerkleReceipts without sending the request
      */
-    async getMerkleReceiptsRaw(requestParameters: GetMerkleReceiptsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<MerkleProofInfoDTO>> {
+    async getMerkleReceiptsRequestOpts(requestParameters: GetMerkleReceiptsRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['height'] == null) {
             throw new runtime.RequiredError(
                 'height',
@@ -132,15 +219,24 @@ export class BlockRoutesApi extends runtime.BaseAPI {
 
 
         let urlPath = `/blocks/{height}/statements/{hash}/merkle`;
-        urlPath = urlPath.replace(`{${"height"}}`, encodeURIComponent(String(requestParameters['height'])));
-        urlPath = urlPath.replace(`{${"hash"}}`, encodeURIComponent(String(requestParameters['hash'])));
+        urlPath = urlPath.replace('{height}', encodeURIComponent(String(requestParameters['height'])));
+        urlPath = urlPath.replace('{hash}', encodeURIComponent(String(requestParameters['hash'])));
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Returns the [Merkle path](https://docs.symbol.dev/concepts/data-validation.html#merkle-proof) for a [receipt statement or resolution](https://docs.symbol.dev/concepts/receipt.html) linked to a block. The `hash` parameter is the receipt statement hash, not the transaction hash. The Merkle path is the minimum number of nodes needed to calculate the Merkle root.  Steps to calculate the Merkle root: 1. proofHash = hash (leaf). 2. Concatenate proofHash with the first unprocessed item from the merklePath list as follows: - `left`: the item hash is concatenated before the proofHash (proofHash = sha_256(item.hash + proofHash)). - `right`: the item hash is concatenated after the proofHash (proofHash = sha_256(proofHash + item.hash)). 3. Repeat 2. for every item in the merklePath list. 4. Compare if the calculated proofHash equals the one recorded in the [block header](https://docs.symbol.dev/concepts/block.html) (`block.receiptsHash`) to verify if the statement was linked with the block. 
+     * Get the Merkle path for a given receipt statement hash and block
+     */
+    async getMerkleReceiptsRaw(requestParameters: GetMerkleReceiptsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<MerkleProofInfoDTO>> {
+        const requestOptions = await this.getMerkleReceiptsRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => MerkleProofInfoDTOFromJSON(jsonValue));
     }
@@ -155,10 +251,9 @@ export class BlockRoutesApi extends runtime.BaseAPI {
     }
 
     /**
-     * Returns the [Merkle path](https://docs.symbol.dev/concepts/data-validation.html#merkle-proof) for a [transaction](https://docs.symbol.dev/concepts/transaction.html) included in a block. The Merkle path is the minimum number of nodes needed to calculate the Merkle root.  Steps to calculate the Merkle root: 1. proofHash = hash (leaf). 2. Concatenate proofHash with the first unprocessed item from the merklePath list as follows: - `left`: the item hash is concatenated before the proofHash (proofHash = sha_256(item.hash + proofHash)). - `right`: the item hash is concatenated after the proofHash (proofHash = sha_256(proofHash + item.hash)). 3. Repeat 2. for every item in the merklePath list. 4. Compare if the calculated proofHash equals the one recorded in the [block header](https://docs.symbol.dev/concepts/block.html) (`block.transactionsHash`) to verify if the transaction was included in the block. 
-     * Get the Merkle path for a given transaction and block
+     * Creates request options for getMerkleTransaction without sending the request
      */
-    async getMerkleTransactionRaw(requestParameters: GetMerkleTransactionRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<MerkleProofInfoDTO>> {
+    async getMerkleTransactionRequestOpts(requestParameters: GetMerkleTransactionRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['height'] == null) {
             throw new runtime.RequiredError(
                 'height',
@@ -179,15 +274,24 @@ export class BlockRoutesApi extends runtime.BaseAPI {
 
 
         let urlPath = `/blocks/{height}/transactions/{hash}/merkle`;
-        urlPath = urlPath.replace(`{${"height"}}`, encodeURIComponent(String(requestParameters['height'])));
-        urlPath = urlPath.replace(`{${"hash"}}`, encodeURIComponent(String(requestParameters['hash'])));
+        urlPath = urlPath.replace('{height}', encodeURIComponent(String(requestParameters['height'])));
+        urlPath = urlPath.replace('{hash}', encodeURIComponent(String(requestParameters['hash'])));
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Returns the [Merkle path](https://docs.symbol.dev/concepts/data-validation.html#merkle-proof) for a [transaction](https://docs.symbol.dev/concepts/transaction.html) included in a block. The Merkle path is the minimum number of nodes needed to calculate the Merkle root.  Steps to calculate the Merkle root: 1. proofHash = hash (leaf). 2. Concatenate proofHash with the first unprocessed item from the merklePath list as follows: - `left`: the item hash is concatenated before the proofHash (proofHash = sha_256(item.hash + proofHash)). - `right`: the item hash is concatenated after the proofHash (proofHash = sha_256(proofHash + item.hash)). 3. Repeat 2. for every item in the merklePath list. 4. Compare if the calculated proofHash equals the one recorded in the [block header](https://docs.symbol.dev/concepts/block.html) (`block.transactionsHash`) to verify if the transaction was included in the block. 
+     * Get the Merkle path for a given transaction and block
+     */
+    async getMerkleTransactionRaw(requestParameters: GetMerkleTransactionRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<MerkleProofInfoDTO>> {
+        const requestOptions = await this.getMerkleTransactionRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => MerkleProofInfoDTOFromJSON(jsonValue));
     }
@@ -202,10 +306,9 @@ export class BlockRoutesApi extends runtime.BaseAPI {
     }
 
     /**
-     * Returns a paginated list of blocks matching the given criteria.  Results can be filtered by harvester (`signerPublicKey`), `beneficiaryAddress`, and timestamp range. Standard pagination parameters (`pageSize`, `pageNumber`, `offset`, `order`) apply. The `orderBy` parameter supports `id` and `height`. The `offset` value must match the `orderBy` field. 
-     * Search blocks
+     * Creates request options for searchBlocks without sending the request
      */
-    async searchBlocksRaw(requestParameters: SearchBlocksRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<BlockPage>> {
+    async searchBlocksRequestOpts(requestParameters: SearchBlocksRequest): Promise<runtime.RequestOpts> {
         const queryParameters: any = {};
 
         if (requestParameters['signerPublicKey'] != null) {
@@ -249,12 +352,21 @@ export class BlockRoutesApi extends runtime.BaseAPI {
 
         let urlPath = `/blocks`;
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Returns a paginated list of blocks matching the given criteria.  Results can be filtered by harvester (`signerPublicKey`), `beneficiaryAddress`, and timestamp range. Standard pagination parameters (`pageSize`, `pageNumber`, `offset`, `order`) apply. The `orderBy` parameter supports `id` and `height`. The `offset` value must match the `orderBy` field. 
+     * Search blocks
+     */
+    async searchBlocksRaw(requestParameters: SearchBlocksRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<BlockPage>> {
+        const requestOptions = await this.searchBlocksRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => BlockPageFromJSON(jsonValue));
     }

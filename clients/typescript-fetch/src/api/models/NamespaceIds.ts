@@ -21,8 +21,6 @@ import { mapValues } from '../runtime';
 export interface NamespaceIds {
     /**
      * Array of namespace identifiers.
-     * @type {Array<string>}
-     * @memberof NamespaceIds
      */
     namespaceIds?: Array<string>;
 }
@@ -30,7 +28,7 @@ export interface NamespaceIds {
 /**
  * Check if a given object implements the NamespaceIds interface.
  */
-export function instanceOfNamespaceIds(value: Record<string, any>): value is NamespaceIds {
+export function instanceOfNamespaceIds(value: object): value is NamespaceIds {
     return true;
 }
 

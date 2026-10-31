@@ -31,38 +31,26 @@ import {
 export interface MerkleTreeLeafDTO {
     /**
      * Node type (always leaf).
-     * @type {MerkleTreeNodeTypeEnum}
-     * @memberof MerkleTreeLeafDTO
      */
     type: MerkleTreeNodeTypeEnum;
     /**
      * Full path (hex) from root to this leaf.
-     * @type {string}
-     * @memberof MerkleTreeLeafDTO
      */
     path: string;
     /**
      * Compact-encoded path.
-     * @type {string}
-     * @memberof MerkleTreeLeafDTO
      */
     encodedPath: string;
     /**
      * Number of nibbles in the path.
-     * @type {number}
-     * @memberof MerkleTreeLeafDTO
      */
     nibbleCount: number;
     /**
      * Leaf value (SHA3-256 hash of the entity state).
-     * @type {string}
-     * @memberof MerkleTreeLeafDTO
      */
     value: string;
     /**
-     * 256-bit hash encoded as a 64-character hexadecimal string.
-     * @type {string}
-     * @memberof MerkleTreeLeafDTO
+     * Hash of the leaf node.
      */
     leafHash: string;
 }
@@ -72,7 +60,7 @@ export interface MerkleTreeLeafDTO {
 /**
  * Check if a given object implements the MerkleTreeLeafDTO interface.
  */
-export function instanceOfMerkleTreeLeafDTO(value: Record<string, any>): value is MerkleTreeLeafDTO {
+export function instanceOfMerkleTreeLeafDTO(value: object): value is MerkleTreeLeafDTO {
     if (!('type' in value) || value['type'] === undefined) return false;
     if (!('path' in value) || value['path'] === undefined) return false;
     if (!('encodedPath' in value) || value['encodedPath'] === undefined) return false;

@@ -35,33 +35,23 @@ import {
  */
 export interface EmbeddedVotingKeyLinkTransactionDTO {
     /**
-     * 256-bit public key encoded as a hexadecimal string (64 hex characters).
-     * @type {string}
-     * @memberof EmbeddedVotingKeyLinkTransactionDTO
+     * Public key of the account that signed the entity (e.g. block harvester, transaction signer).
      */
     signerPublicKey: string;
     /**
      * Entity version. Indicates the schema variant for serialization and validation.
-     * @type {number}
-     * @memberof EmbeddedVotingKeyLinkTransactionDTO
      */
     version: number;
     /**
      * Network type (mainnet or testnet). Ensures the entity targets the correct network.
-     * @type {NetworkTypeEnum}
-     * @memberof EmbeddedVotingKeyLinkTransactionDTO
      */
     network: NetworkTypeEnum;
     /**
      * Entity type identifier (e.g. transaction type code, block type). Determines the entity schema.
-     * @type {number}
-     * @memberof EmbeddedVotingKeyLinkTransactionDTO
      */
     type: number;
     /**
      * 32-byte voting public key used for finalization voting.
-     * @type {string}
-     * @memberof EmbeddedVotingKeyLinkTransactionDTO
      */
     linkedPublicKey: string;
     /**
@@ -69,8 +59,6 @@ export interface EmbeddedVotingKeyLinkTransactionDTO {
      * integer. Each epoch groups a set of blocks for finalization voting; the interval is defined
      * by the `votingSetGrouping` network property (e.g. 1440 blocks, ~12h on mainnet).
      * 
-     * @type {number}
-     * @memberof EmbeddedVotingKeyLinkTransactionDTO
      */
     startEpoch: number;
     /**
@@ -78,14 +66,10 @@ export interface EmbeddedVotingKeyLinkTransactionDTO {
      * integer. Each epoch groups a set of blocks for finalization voting; the interval is defined
      * by the `votingSetGrouping` network property (e.g. 1440 blocks, ~12h on mainnet).
      * 
-     * @type {number}
-     * @memberof EmbeddedVotingKeyLinkTransactionDTO
      */
     endEpoch: number;
     /**
      * 
-     * @type {LinkActionEnum}
-     * @memberof EmbeddedVotingKeyLinkTransactionDTO
      */
     linkAction: LinkActionEnum;
 }
@@ -95,7 +79,7 @@ export interface EmbeddedVotingKeyLinkTransactionDTO {
 /**
  * Check if a given object implements the EmbeddedVotingKeyLinkTransactionDTO interface.
  */
-export function instanceOfEmbeddedVotingKeyLinkTransactionDTO(value: Record<string, any>): value is EmbeddedVotingKeyLinkTransactionDTO {
+export function instanceOfEmbeddedVotingKeyLinkTransactionDTO(value: object): value is EmbeddedVotingKeyLinkTransactionDTO {
     if (!('signerPublicKey' in value) || value['signerPublicKey'] === undefined) return false;
     if (!('version' in value) || value['version'] === undefined) return false;
     if (!('network' in value) || value['network'] === undefined) return false;

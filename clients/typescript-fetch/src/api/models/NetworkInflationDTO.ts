@@ -21,21 +21,11 @@ import { mapValues } from '../runtime';
  */
 export interface NetworkInflationDTO {
     /**
-     * Height of a block in the blockchain. Starts at 1 and increments by one per block.
-     * Represented as a string to preserve precision, since the value is an unsigned 64-bit integer.
-     * 
-     * @type {string}
-     * @memberof NetworkInflationDTO
+     * Block height at which this reward amount becomes active.
      */
     startHeight: string;
     /**
-     * Absolute amount expressed in the mosaic's smallest (atomic) unit, with no decimal point.
-     * For example, an amount of `123456789` for a mosaic with divisibility 6 represents
-     * `123.456789` whole units. Encoded as a string to preserve precision, since the value
-     * is an unsigned 64-bit integer.
-     * 
-     * @type {string}
-     * @memberof NetworkInflationDTO
+     * Inflation reward per block in smallest (atomic) units of the network currency.
      */
     rewardAmount: string;
 }
@@ -43,7 +33,7 @@ export interface NetworkInflationDTO {
 /**
  * Check if a given object implements the NetworkInflationDTO interface.
  */
-export function instanceOfNetworkInflationDTO(value: Record<string, any>): value is NetworkInflationDTO {
+export function instanceOfNetworkInflationDTO(value: object): value is NetworkInflationDTO {
     if (!('startHeight' in value) || value['startHeight'] === undefined) return false;
     if (!('rewardAmount' in value) || value['rewardAmount'] === undefined) return false;
     return true;

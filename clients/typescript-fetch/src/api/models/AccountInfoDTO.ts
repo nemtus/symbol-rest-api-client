@@ -31,14 +31,10 @@ export interface AccountInfoDTO {
      * Unique identifier of the object in the node's database (MongoDB ObjectId).
      * Used as the `offset` parameter value for cursor-based pagination.
      * 
-     * @type {string}
-     * @memberof AccountInfoDTO
      */
     id: string;
     /**
      * 
-     * @type {AccountDTO}
-     * @memberof AccountInfoDTO
      */
     account: AccountDTO;
 }
@@ -46,7 +42,7 @@ export interface AccountInfoDTO {
 /**
  * Check if a given object implements the AccountInfoDTO interface.
  */
-export function instanceOfAccountInfoDTO(value: Record<string, any>): value is AccountInfoDTO {
+export function instanceOfAccountInfoDTO(value: object): value is AccountInfoDTO {
     if (!('id' in value) || value['id'] === undefined) return false;
     if (!('account' in value) || value['account'] === undefined) return false;
     return true;

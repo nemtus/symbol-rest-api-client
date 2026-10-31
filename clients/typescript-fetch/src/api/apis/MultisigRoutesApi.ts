@@ -12,34 +12,46 @@
  * Do not edit the class manually.
  */
 
-
 import * as runtime from '../runtime';
-import type {
-  MerkleStateInfoDTO,
-  ModelError,
-  MultisigAccountGraphInfoDTO,
-  MultisigAccountInfoDTO,
-} from '../models/index';
 import {
+    type MerkleStateInfoDTO,
     MerkleStateInfoDTOFromJSON,
     MerkleStateInfoDTOToJSON,
+} from '../models/MerkleStateInfoDTO';
+import {
+    type ModelError,
     ModelErrorFromJSON,
     ModelErrorToJSON,
+} from '../models/ModelError';
+import {
+    type MultisigAccountGraphInfoDTO,
     MultisigAccountGraphInfoDTOFromJSON,
     MultisigAccountGraphInfoDTOToJSON,
+} from '../models/MultisigAccountGraphInfoDTO';
+import {
+    type MultisigAccountInfoDTO,
     MultisigAccountInfoDTOFromJSON,
     MultisigAccountInfoDTOToJSON,
-} from '../models/index';
+} from '../models/MultisigAccountInfoDTO';
 
 export interface GetAccountMultisigRequest {
+    /**
+     * Account address in Base32-encoded format.
+     */
     address: string;
 }
 
 export interface GetAccountMultisigGraphRequest {
+    /**
+     * Account address in Base32-encoded format.
+     */
     address: string;
 }
 
 export interface GetAccountMultisigMerkleRequest {
+    /**
+     * Account address in Base32-encoded format.
+     */
     address: string;
 }
 
@@ -49,10 +61,9 @@ export interface GetAccountMultisigMerkleRequest {
 export class MultisigRoutesApi extends runtime.BaseAPI {
 
     /**
-     * Returns the current multisig state for an account.  The response includes the approval thresholds for the multisig account, its direct cosignatories, and the multisig accounts where the queried account is itself acting as a cosignatory.  If the queried account is only a cosignatory, the endpoint still returns `200`, with `minApproval = 0`, `minRemoval = 0`, an empty `cosignatoryAddresses` array, and the related multisig accounts listed in `multisigAddresses`.  If the account is neither a multisig account nor a cosignatory of any multisig account, the endpoint returns `404`. 
-     * Get multisig account information
+     * Creates request options for getAccountMultisig without sending the request
      */
-    async getAccountMultisigRaw(requestParameters: GetAccountMultisigRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<MultisigAccountInfoDTO>> {
+    async getAccountMultisigRequestOpts(requestParameters: GetAccountMultisigRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['address'] == null) {
             throw new runtime.RequiredError(
                 'address',
@@ -66,14 +77,23 @@ export class MultisigRoutesApi extends runtime.BaseAPI {
 
 
         let urlPath = `/account/{address}/multisig`;
-        urlPath = urlPath.replace(`{${"address"}}`, encodeURIComponent(String(requestParameters['address'])));
+        urlPath = urlPath.replace('{address}', encodeURIComponent(String(requestParameters['address'])));
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Returns the current multisig state for an account.  The response includes the approval thresholds for the multisig account, its direct cosignatories, and the multisig accounts where the queried account is itself acting as a cosignatory.  If the queried account is only a cosignatory, the endpoint still returns `200`, with `minApproval = 0`, `minRemoval = 0`, an empty `cosignatoryAddresses` array, and the related multisig accounts listed in `multisigAddresses`.  If the account is neither a multisig account nor a cosignatory of any multisig account, the endpoint returns `404`. 
+     * Get multisig account information
+     */
+    async getAccountMultisigRaw(requestParameters: GetAccountMultisigRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<MultisigAccountInfoDTO>> {
+        const requestOptions = await this.getAccountMultisigRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => MultisigAccountInfoDTOFromJSON(jsonValue));
     }
@@ -88,10 +108,9 @@ export class MultisigRoutesApi extends runtime.BaseAPI {
     }
 
     /**
-     * Returns the multisig graph centered on the requested account.  Level `0` contains the requested account. Negative levels contain multisig accounts for which the queried account acts as a cosignatory. Positive levels contain multisig relationships discovered through the queried account\'s cosignatories.  If the requested account is a cosignatory but is not itself managed as a multisig account, the response still includes level `0` for that account. In this case, the level `0` entry has `minApproval = 0`, `minRemoval = 0`, an empty `cosignatoryAddresses` array, and `multisigAddresses` listing the multisig accounts it can cosign.  If the requested account is neither a multisig account nor a cosignatory of any multisig account, no multisig state entry exists for it and the endpoint returns `404`.  If the requested account is itself a multisig account, the response includes its multisig state at level `0` together with any reachable negative and positive graph levels. 
-     * Get multisig account graph information
+     * Creates request options for getAccountMultisigGraph without sending the request
      */
-    async getAccountMultisigGraphRaw(requestParameters: GetAccountMultisigGraphRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<MultisigAccountGraphInfoDTO>>> {
+    async getAccountMultisigGraphRequestOpts(requestParameters: GetAccountMultisigGraphRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['address'] == null) {
             throw new runtime.RequiredError(
                 'address',
@@ -105,14 +124,23 @@ export class MultisigRoutesApi extends runtime.BaseAPI {
 
 
         let urlPath = `/account/{address}/multisig/graph`;
-        urlPath = urlPath.replace(`{${"address"}}`, encodeURIComponent(String(requestParameters['address'])));
+        urlPath = urlPath.replace('{address}', encodeURIComponent(String(requestParameters['address'])));
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Returns the multisig graph centered on the requested account.  Level `0` contains the requested account. Negative levels contain multisig accounts for which the queried account acts as a cosignatory. Positive levels contain multisig relationships discovered through the queried account\'s cosignatories.  If the requested account is a cosignatory but is not itself managed as a multisig account, the response still includes level `0` for that account. In this case, the level `0` entry has `minApproval = 0`, `minRemoval = 0`, an empty `cosignatoryAddresses` array, and `multisigAddresses` listing the multisig accounts it can cosign.  If the requested account is neither a multisig account nor a cosignatory of any multisig account, no multisig state entry exists for it and the endpoint returns `404`.  If the requested account is itself a multisig account, the response includes its multisig state at level `0` together with any reachable negative and positive graph levels. 
+     * Get multisig account graph information
+     */
+    async getAccountMultisigGraphRaw(requestParameters: GetAccountMultisigGraphRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<MultisigAccountGraphInfoDTO>>> {
+        const requestOptions = await this.getAccountMultisigGraphRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(MultisigAccountGraphInfoDTOFromJSON));
     }
@@ -127,10 +155,9 @@ export class MultisigRoutesApi extends runtime.BaseAPI {
     }
 
     /**
-     * Returns the [Merkle proof](https://docs.symbol.dev/concepts/data-validation.html#merkle-proof) for the multisig state entry associated with the requested account.  If the requested account is a cosignatory, the endpoint returns the Merkle proof for that account\'s multisig state entry. Cosignatory-only accounts still have a multisig state entry with `minApproval = 0`, `minRemoval = 0`, an empty `cosignatoryAddresses` array, and `multisigAddresses` listing the multisig accounts they can cosign.  If the requested account is itself a multisig account, the endpoint returns the Merkle proof for that multisig account state entry.  If the requested account is neither a multisig account nor a cosignatory, the endpoint still returns a Merkle proof response, but it is a negative proof showing that no multisig state entry exists for the supplied address. 
-     * Get multisig account Merkle information
+     * Creates request options for getAccountMultisigMerkle without sending the request
      */
-    async getAccountMultisigMerkleRaw(requestParameters: GetAccountMultisigMerkleRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<MerkleStateInfoDTO>> {
+    async getAccountMultisigMerkleRequestOpts(requestParameters: GetAccountMultisigMerkleRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['address'] == null) {
             throw new runtime.RequiredError(
                 'address',
@@ -144,14 +171,23 @@ export class MultisigRoutesApi extends runtime.BaseAPI {
 
 
         let urlPath = `/account/{address}/multisig/merkle`;
-        urlPath = urlPath.replace(`{${"address"}}`, encodeURIComponent(String(requestParameters['address'])));
+        urlPath = urlPath.replace('{address}', encodeURIComponent(String(requestParameters['address'])));
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Returns the [Merkle proof](https://docs.symbol.dev/concepts/data-validation.html#merkle-proof) for the multisig state entry associated with the requested account.  If the requested account is a cosignatory, the endpoint returns the Merkle proof for that account\'s multisig state entry. Cosignatory-only accounts still have a multisig state entry with `minApproval = 0`, `minRemoval = 0`, an empty `cosignatoryAddresses` array, and `multisigAddresses` listing the multisig accounts they can cosign.  If the requested account is itself a multisig account, the endpoint returns the Merkle proof for that multisig account state entry.  If the requested account is neither a multisig account nor a cosignatory, the endpoint still returns a Merkle proof response, but it is a negative proof showing that no multisig state entry exists for the supplied address. 
+     * Get multisig account Merkle information
+     */
+    async getAccountMultisigMerkleRaw(requestParameters: GetAccountMultisigMerkleRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<MerkleStateInfoDTO>> {
+        const requestOptions = await this.getAccountMultisigMerkleRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => MerkleStateInfoDTOFromJSON(jsonValue));
     }

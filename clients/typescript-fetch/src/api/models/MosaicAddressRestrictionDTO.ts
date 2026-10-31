@@ -31,14 +31,10 @@ export interface MosaicAddressRestrictionDTO {
      * Unique identifier of the object in the node's database (MongoDB ObjectId).
      * Used as the `offset` parameter value for cursor-based pagination.
      * 
-     * @type {string}
-     * @memberof MosaicAddressRestrictionDTO
      */
     id: string;
     /**
      * 
-     * @type {MosaicAddressRestrictionEntryWrapperDTO}
-     * @memberof MosaicAddressRestrictionDTO
      */
     mosaicRestrictionEntry: MosaicAddressRestrictionEntryWrapperDTO;
 }
@@ -46,7 +42,7 @@ export interface MosaicAddressRestrictionDTO {
 /**
  * Check if a given object implements the MosaicAddressRestrictionDTO interface.
  */
-export function instanceOfMosaicAddressRestrictionDTO(value: Record<string, any>): value is MosaicAddressRestrictionDTO {
+export function instanceOfMosaicAddressRestrictionDTO(value: object): value is MosaicAddressRestrictionDTO {
     if (!('id' in value) || value['id'] === undefined) return false;
     if (!('mosaicRestrictionEntry' in value) || value['mosaicRestrictionEntry'] === undefined) return false;
     return true;

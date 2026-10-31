@@ -376,7 +376,7 @@ export const TransactionStatusEnum = {
     FailureConsumerRemoteChainImproperImportanceLink: 'Failure_Consumer_Remote_Chain_Improper_Importance_Link',
     FailureExtensionPartialTransactionCachePrune: 'Failure_Extension_Partial_Transaction_Cache_Prune',
     FailureExtensionPartialTransactionDependencyRemoved: 'Failure_Extension_Partial_Transaction_Dependency_Removed',
-    FailureExtensionReadRateLimitExceeded: 'Failure_Extension_Read_Rate_Limit_Exceeded'
+    FailureExtensionReadRateLimitExceeded: 'Failure_Extension_Read_Rate_Limit_Exceeded',
 } as const;
 export type TransactionStatusEnum = typeof TransactionStatusEnum[keyof typeof TransactionStatusEnum];
 

@@ -35,11 +35,9 @@ import {
  */
 export interface MosaicSupplyChangeTransactionDTO {
     /**
-     * Unsigned 32-bit integer.
-     * Represented as integer since it fits in JSON number precision.
+     * Total size of the serialized entity in bytes. Includes the full binary payload,
+     * including the 4-byte size field itself.
      * 
-     * @type {number}
-     * @memberof MosaicSupplyChangeTransactionDTO
      */
     size: number;
     /**
@@ -47,58 +45,32 @@ export interface MosaicSupplyChangeTransactionDTO {
      * over the serialized entity payload. Can be verified with the signer's public key (`signerPublicKey`).
      * Used for blocks, transactions, and cosignatures.
      * 
-     * @type {string}
-     * @memberof MosaicSupplyChangeTransactionDTO
      */
     signature: string;
     /**
-     * 256-bit public key encoded as a hexadecimal string (64 hex characters).
-     * @type {string}
-     * @memberof MosaicSupplyChangeTransactionDTO
+     * Public key of the account that signed the entity (e.g. block harvester, transaction signer).
      */
     signerPublicKey: string;
     /**
      * Entity version. Indicates the schema variant for serialization and validation.
-     * @type {number}
-     * @memberof MosaicSupplyChangeTransactionDTO
      */
     version: number;
     /**
      * Network type (mainnet or testnet). Ensures the entity targets the correct network.
-     * @type {NetworkTypeEnum}
-     * @memberof MosaicSupplyChangeTransactionDTO
      */
     network: NetworkTypeEnum;
     /**
      * Entity type identifier (e.g. transaction type code, block type). Determines the entity schema.
-     * @type {number}
-     * @memberof MosaicSupplyChangeTransactionDTO
      */
     type: number;
     /**
-     * Absolute amount expressed in the mosaic's smallest (atomic) unit, with no decimal point.
-     * For example, an amount of `123456789` for a mosaic with divisibility 6 represents
-     * `123.456789` whole units. Encoded as a string to preserve precision, since the value
-     * is an unsigned 64-bit integer.
-     * 
-     * @type {string}
-     * @memberof MosaicSupplyChangeTransactionDTO
+     * Maximum fee the signer is willing to pay for this transaction, in smallest (atomic) units.
      */
     maxFee: string;
     /**
-     * Network timestamp in **milliseconds** since the creation of the nemesis (first) block.
-     * Used for block timestamps, transaction deadlines, and time synchronization.
+     * Latest network time at which the transaction can still be included in a block, expressed in milliseconds
+     * since the creation of the nemesis (first) block.
      * 
-     * **Finding the nemesis block time:** The `epochAdjustment` field returned by the
-     * [`/network/properties`] endpoint gives the nemesis block creation time in seconds since the
-     * [UNIX epoch](https://en.wikipedia.org/wiki/Unix_time). For Symbol MAINNET this is
-     * always `1615853185` (15 March 2021, 00:06:25 UTC).
-     * 
-     * **Converting to real time:** Add this timestamp (ms) to `epochAdjustment × 1000` (ms), then use standard date functions.
-     * Note: `epochAdjustment` may be returned as a string like `"1615853185s"`; use the numeric part.
-     * 
-     * @type {string}
-     * @memberof MosaicSupplyChangeTransactionDTO
      */
     deadline: string;
     /**
@@ -106,8 +78,6 @@ export interface MosaicSupplyChangeTransactionDTO {
      * If the most significant bit of byte 0 is set, the value contains a namespace ID alias
      * instead of a concrete mosaic ID.
      * 
-     * @type {string}
-     * @memberof MosaicSupplyChangeTransactionDTO
      */
     mosaicId: string;
     /**
@@ -116,14 +86,10 @@ export interface MosaicSupplyChangeTransactionDTO {
      * `123.456789` whole units. Encoded as a string to preserve precision, since the value
      * is an unsigned 64-bit integer.
      * 
-     * @type {string}
-     * @memberof MosaicSupplyChangeTransactionDTO
      */
     delta: string;
     /**
      * 
-     * @type {MosaicSupplyChangeActionEnum}
-     * @memberof MosaicSupplyChangeTransactionDTO
      */
     action: MosaicSupplyChangeActionEnum;
 }
@@ -133,7 +99,7 @@ export interface MosaicSupplyChangeTransactionDTO {
 /**
  * Check if a given object implements the MosaicSupplyChangeTransactionDTO interface.
  */
-export function instanceOfMosaicSupplyChangeTransactionDTO(value: Record<string, any>): value is MosaicSupplyChangeTransactionDTO {
+export function instanceOfMosaicSupplyChangeTransactionDTO(value: object): value is MosaicSupplyChangeTransactionDTO {
     if (!('size' in value) || value['size'] === undefined) return false;
     if (!('signature' in value) || value['signature'] === undefined) return false;
     if (!('signerPublicKey' in value) || value['signerPublicKey'] === undefined) return false;

@@ -36,14 +36,10 @@ import {
 export interface TransactionPage {
     /**
      * Array of transactions.
-     * @type {Array<TransactionInfoDTO>}
-     * @memberof TransactionPage
      */
     data: Array<TransactionInfoDTO>;
     /**
      * 
-     * @type {Pagination}
-     * @memberof TransactionPage
      */
     pagination: Pagination;
 }
@@ -51,7 +47,7 @@ export interface TransactionPage {
 /**
  * Check if a given object implements the TransactionPage interface.
  */
-export function instanceOfTransactionPage(value: Record<string, any>): value is TransactionPage {
+export function instanceOfTransactionPage(value: object): value is TransactionPage {
     if (!('data' in value) || value['data'] === undefined) return false;
     if (!('pagination' in value) || value['pagination'] === undefined) return false;
     return true;

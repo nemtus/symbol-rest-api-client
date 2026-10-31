@@ -26,22 +26,16 @@ export interface AccountMetadataTransactionBodyDTO {
      * If bit 0 of byte 0 is not set, the value represents a regular address.
      * Otherwise, it represents a namespace ID alias encoded as an unresolved address.
      * 
-     * @type {string}
-     * @memberof AccountMetadataTransactionBodyDTO
      */
     targetAddress: string;
     /**
      * 64-bit key assigned by the metadata creator to identify the metadata entry within the source and target context.
-     * @type {string}
-     * @memberof AccountMetadataTransactionBodyDTO
      */
     scopedMetadataKey: string;
     /**
      * Change in metadata value size, in bytes.
      * Positive values increase the stored value size, negative values decrease it.
      * 
-     * @type {number}
-     * @memberof AccountMetadataTransactionBodyDTO
      */
     valueSizeDelta: number;
     /**
@@ -50,8 +44,6 @@ export interface AccountMetadataTransactionBodyDTO {
      * value size after applying the update. When the value shrinks, this is the previous stored value size
      * before truncation.
      * 
-     * @type {number}
-     * @memberof AccountMetadataTransactionBodyDTO
      */
     valueSize: number;
     /**
@@ -60,8 +52,6 @@ export interface AccountMetadataTransactionBodyDTO {
      * When no previous value exists, it contains the new value.
      * When updating existing metadata, it contains the byte-wise XOR of the previous value and the new value.
      * 
-     * @type {string}
-     * @memberof AccountMetadataTransactionBodyDTO
      */
     value: string;
 }
@@ -69,7 +59,7 @@ export interface AccountMetadataTransactionBodyDTO {
 /**
  * Check if a given object implements the AccountMetadataTransactionBodyDTO interface.
  */
-export function instanceOfAccountMetadataTransactionBodyDTO(value: Record<string, any>): value is AccountMetadataTransactionBodyDTO {
+export function instanceOfAccountMetadataTransactionBodyDTO(value: object): value is AccountMetadataTransactionBodyDTO {
     if (!('targetAddress' in value) || value['targetAddress'] === undefined) return false;
     if (!('scopedMetadataKey' in value) || value['scopedMetadataKey'] === undefined) return false;
     if (!('valueSizeDelta' in value) || value['valueSizeDelta'] === undefined) return false;

@@ -21,20 +21,14 @@ import { mapValues } from '../runtime';
 export interface SecretLockNetworkPropertiesDTO {
     /**
      * Maximum number of blocks for which a secret lock can exist.
-     * @type {string}
-     * @memberof SecretLockNetworkPropertiesDTO
      */
     maxSecretLockDuration?: string;
     /**
      * Minimum size of a proof in bytes.
-     * @type {string}
-     * @memberof SecretLockNetworkPropertiesDTO
      */
     minProofSize?: string;
     /**
      * Maximum size of a proof in bytes.
-     * @type {string}
-     * @memberof SecretLockNetworkPropertiesDTO
      */
     maxProofSize?: string;
 }
@@ -42,7 +36,7 @@ export interface SecretLockNetworkPropertiesDTO {
 /**
  * Check if a given object implements the SecretLockNetworkPropertiesDTO interface.
  */
-export function instanceOfSecretLockNetworkPropertiesDTO(value: Record<string, any>): value is SecretLockNetworkPropertiesDTO {
+export function instanceOfSecretLockNetworkPropertiesDTO(value: object): value is SecretLockNetworkPropertiesDTO {
     return true;
 }
 

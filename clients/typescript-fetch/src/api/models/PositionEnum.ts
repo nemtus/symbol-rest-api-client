@@ -22,7 +22,7 @@
  */
 export const PositionEnum = {
     Left: 'left',
-    Right: 'right'
+    Right: 'right',
 } as const;
 export type PositionEnum = typeof PositionEnum[keyof typeof PositionEnum];
 

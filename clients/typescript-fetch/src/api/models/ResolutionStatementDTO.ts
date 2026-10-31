@@ -35,17 +35,11 @@ import {
  */
 export interface ResolutionStatementDTO {
     /**
-     * Height of a block in the blockchain. Starts at 1 and increments by one per block.
-     * Represented as a string to preserve precision, since the value is an unsigned 64-bit integer.
-     * 
-     * @type {string}
-     * @memberof ResolutionStatementDTO
+     * Height of the block that contains the resolution statement.
      */
     height: string;
     /**
      * 
-     * @type {ResolutionStatementDTOUnresolved}
-     * @memberof ResolutionStatementDTO
      */
     unresolved: ResolutionStatementDTOUnresolved;
     /**
@@ -54,8 +48,6 @@ export interface ResolutionStatementDTO {
      * This can happen when alias-related transactions in the same block change which address or mosaic id
      * the alias points to, so different transaction sources observe different resolved values.
      * 
-     * @type {Array<ResolutionEntryDTO>}
-     * @memberof ResolutionStatementDTO
      */
     resolutionEntries: Array<ResolutionEntryDTO>;
 }
@@ -63,7 +55,7 @@ export interface ResolutionStatementDTO {
 /**
  * Check if a given object implements the ResolutionStatementDTO interface.
  */
-export function instanceOfResolutionStatementDTO(value: Record<string, any>): value is ResolutionStatementDTO {
+export function instanceOfResolutionStatementDTO(value: object): value is ResolutionStatementDTO {
     if (!('height' in value) || value['height'] === undefined) return false;
     if (!('unresolved' in value) || value['unresolved'] === undefined) return false;
     if (!('resolutionEntries' in value) || value['resolutionEntries'] === undefined) return false;

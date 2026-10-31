@@ -39,35 +39,22 @@ export interface MosaicGlobalRestrictionEntryWrapperDTO {
      * schema of the entity changes (e.g. new fields are added), allowing the node to
      * deserialize entries written under earlier formats.
      * 
-     * @type {number}
-     * @memberof MosaicGlobalRestrictionEntryWrapperDTO
      */
     version: number;
     /**
-     * 256-bit hash encoded as a 64-character hexadecimal string.
-     * @type {string}
-     * @memberof MosaicGlobalRestrictionEntryWrapperDTO
+     * Composite hash uniquely identifying the mosaic restriction entry.
      */
     compositeHash: string;
     /**
      * 
-     * @type {MosaicRestrictionEntryTypeEnum}
-     * @memberof MosaicGlobalRestrictionEntryWrapperDTO
      */
     entryType: MosaicRestrictionEntryTypeEnum;
     /**
-     * Unique [mosaic](https://docs.symbol.dev/concepts/mosaic.html) identifier.
-     * A 64-bit unsigned integer derived from the creator's address and a registration nonce,
-     * encoded as a 16-character hexadecimal string.
-     * 
-     * @type {string}
-     * @memberof MosaicGlobalRestrictionEntryWrapperDTO
+     * Mosaic identifier for which the restrictions are defined.
      */
     mosaicId: string;
     /**
      * Global restriction rules associated with the mosaic.
-     * @type {Array<MosaicGlobalRestrictionEntryDTO>}
-     * @memberof MosaicGlobalRestrictionEntryWrapperDTO
      */
     restrictions: Array<MosaicGlobalRestrictionEntryDTO>;
 }
@@ -77,7 +64,7 @@ export interface MosaicGlobalRestrictionEntryWrapperDTO {
 /**
  * Check if a given object implements the MosaicGlobalRestrictionEntryWrapperDTO interface.
  */
-export function instanceOfMosaicGlobalRestrictionEntryWrapperDTO(value: Record<string, any>): value is MosaicGlobalRestrictionEntryWrapperDTO {
+export function instanceOfMosaicGlobalRestrictionEntryWrapperDTO(value: object): value is MosaicGlobalRestrictionEntryWrapperDTO {
     if (!('version' in value) || value['version'] === undefined) return false;
     if (!('compositeHash' in value) || value['compositeHash'] === undefined) return false;
     if (!('entryType' in value) || value['entryType'] === undefined) return false;

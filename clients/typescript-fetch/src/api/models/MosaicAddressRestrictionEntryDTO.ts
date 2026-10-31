@@ -23,8 +23,6 @@ export interface MosaicAddressRestrictionEntryDTO {
      * Creator-defined 64-bit numeric identifier of a mosaic restriction, scoped to a mosaic.
      * It can be derived from a human-readable name by hashing it, and is represented as a decimal string in stored restriction entries.
      * 
-     * @type {string}
-     * @memberof MosaicAddressRestrictionEntryDTO
      */
     key: string;
     /**
@@ -32,8 +30,6 @@ export interface MosaicAddressRestrictionEntryDTO {
      * For address restrictions, it is the value assigned to the target address;
      * for global restrictions, it is the threshold evaluated with the restriction type.
      * 
-     * @type {string}
-     * @memberof MosaicAddressRestrictionEntryDTO
      */
     value: string;
 }
@@ -41,7 +37,7 @@ export interface MosaicAddressRestrictionEntryDTO {
 /**
  * Check if a given object implements the MosaicAddressRestrictionEntryDTO interface.
  */
-export function instanceOfMosaicAddressRestrictionEntryDTO(value: Record<string, any>): value is MosaicAddressRestrictionEntryDTO {
+export function instanceOfMosaicAddressRestrictionEntryDTO(value: object): value is MosaicAddressRestrictionEntryDTO {
     if (!('key' in value) || value['key'] === undefined) return false;
     if (!('value' in value) || value['value'] === undefined) return false;
     return true;

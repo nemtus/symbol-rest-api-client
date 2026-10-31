@@ -99,68 +99,46 @@ import {
 export interface PluginsPropertiesDTO {
     /**
      * 
-     * @type {AccountKeyLinkNetworkPropertiesDTO}
-     * @memberof PluginsPropertiesDTO
      */
     accountlink?: AccountKeyLinkNetworkPropertiesDTO;
     /**
      * 
-     * @type {AggregateNetworkPropertiesDTO}
-     * @memberof PluginsPropertiesDTO
      */
     aggregate?: AggregateNetworkPropertiesDTO;
     /**
      * 
-     * @type {HashLockNetworkPropertiesDTO}
-     * @memberof PluginsPropertiesDTO
      */
     lockhash?: HashLockNetworkPropertiesDTO;
     /**
      * 
-     * @type {SecretLockNetworkPropertiesDTO}
-     * @memberof PluginsPropertiesDTO
      */
     locksecret?: SecretLockNetworkPropertiesDTO;
     /**
      * 
-     * @type {MetadataNetworkPropertiesDTO}
-     * @memberof PluginsPropertiesDTO
      */
     metadata?: MetadataNetworkPropertiesDTO;
     /**
      * 
-     * @type {MosaicNetworkPropertiesDTO}
-     * @memberof PluginsPropertiesDTO
      */
     mosaic?: MosaicNetworkPropertiesDTO;
     /**
      * 
-     * @type {MultisigNetworkPropertiesDTO}
-     * @memberof PluginsPropertiesDTO
      */
     multisig?: MultisigNetworkPropertiesDTO;
     /**
      * 
-     * @type {NamespaceNetworkPropertiesDTO}
-     * @memberof PluginsPropertiesDTO
      */
     namespace?: NamespaceNetworkPropertiesDTO;
     /**
      * 
-     * @type {AccountRestrictionNetworkPropertiesDTO}
-     * @memberof PluginsPropertiesDTO
      */
     restrictionaccount?: AccountRestrictionNetworkPropertiesDTO;
     /**
      * 
-     * @type {MosaicRestrictionNetworkPropertiesDTO}
-     * @memberof PluginsPropertiesDTO
      */
     restrictionmosaic?: MosaicRestrictionNetworkPropertiesDTO;
     /**
      * 
-     * @type {TransferNetworkPropertiesDTO}
-     * @memberof PluginsPropertiesDTO
      */
     transfer?: TransferNetworkPropertiesDTO;
 }
@@ -168,7 +146,7 @@ export interface PluginsPropertiesDTO {
 /**
  * Check if a given object implements the PluginsPropertiesDTO interface.
  */
-export function instanceOfPluginsPropertiesDTO(value: Record<string, any>): value is PluginsPropertiesDTO {
+export function instanceOfPluginsPropertiesDTO(value: object): value is PluginsPropertiesDTO {
     return true;
 }
 

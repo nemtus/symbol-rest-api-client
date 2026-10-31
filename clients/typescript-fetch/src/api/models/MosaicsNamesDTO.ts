@@ -32,8 +32,6 @@ import {
 export interface MosaicsNamesDTO {
     /**
      * Array of namespace name entries resolved for the requested mosaic identifiers in request order.
-     * @type {Array<MosaicNamesDTO>}
-     * @memberof MosaicsNamesDTO
      */
     mosaicNames: Array<MosaicNamesDTO>;
 }
@@ -41,7 +39,7 @@ export interface MosaicsNamesDTO {
 /**
  * Check if a given object implements the MosaicsNamesDTO interface.
  */
-export function instanceOfMosaicsNamesDTO(value: Record<string, any>): value is MosaicsNamesDTO {
+export function instanceOfMosaicsNamesDTO(value: object): value is MosaicsNamesDTO {
     if (!('mosaicNames' in value) || value['mosaicNames'] === undefined) return false;
     return true;
 }

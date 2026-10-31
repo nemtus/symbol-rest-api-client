@@ -21,8 +21,6 @@ import { mapValues } from '../runtime';
 export interface AccountKeyLinkNetworkPropertiesDTO {
     /**
      * to trigger plugin load
-     * @type {string}
-     * @memberof AccountKeyLinkNetworkPropertiesDTO
      */
     dummy?: string;
 }
@@ -30,7 +28,7 @@ export interface AccountKeyLinkNetworkPropertiesDTO {
 /**
  * Check if a given object implements the AccountKeyLinkNetworkPropertiesDTO interface.
  */
-export function instanceOfAccountKeyLinkNetworkPropertiesDTO(value: Record<string, any>): value is AccountKeyLinkNetworkPropertiesDTO {
+export function instanceOfAccountKeyLinkNetworkPropertiesDTO(value: object): value is AccountKeyLinkNetworkPropertiesDTO {
     return true;
 }
 

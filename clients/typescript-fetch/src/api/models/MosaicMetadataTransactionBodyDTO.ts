@@ -26,14 +26,10 @@ export interface MosaicMetadataTransactionBodyDTO {
      * If bit 0 of byte 0 is not set, the value represents a regular address.
      * Otherwise, it represents a namespace ID alias encoded as an unresolved address.
      * 
-     * @type {string}
-     * @memberof MosaicMetadataTransactionBodyDTO
      */
     targetAddress: string;
     /**
      * 64-bit key assigned by the metadata creator to identify the metadata entry within the source and target context.
-     * @type {string}
-     * @memberof MosaicMetadataTransactionBodyDTO
      */
     scopedMetadataKey: string;
     /**
@@ -41,16 +37,12 @@ export interface MosaicMetadataTransactionBodyDTO {
      * If the most significant bit of byte 0 is set, the value contains a namespace ID alias
      * instead of a concrete mosaic ID.
      * 
-     * @type {string}
-     * @memberof MosaicMetadataTransactionBodyDTO
      */
     targetMosaicId: string;
     /**
      * Change in metadata value size, in bytes.
      * Positive values increase the stored value size, negative values decrease it.
      * 
-     * @type {number}
-     * @memberof MosaicMetadataTransactionBodyDTO
      */
     valueSizeDelta: number;
     /**
@@ -59,8 +51,6 @@ export interface MosaicMetadataTransactionBodyDTO {
      * value size after applying the update. When the value shrinks, this is the previous stored value size
      * before truncation.
      * 
-     * @type {number}
-     * @memberof MosaicMetadataTransactionBodyDTO
      */
     valueSize: number;
     /**
@@ -69,8 +59,6 @@ export interface MosaicMetadataTransactionBodyDTO {
      * When no previous value exists, it contains the new value.
      * When updating existing metadata, it contains the byte-wise XOR of the previous value and the new value.
      * 
-     * @type {string}
-     * @memberof MosaicMetadataTransactionBodyDTO
      */
     value: string;
 }
@@ -78,7 +66,7 @@ export interface MosaicMetadataTransactionBodyDTO {
 /**
  * Check if a given object implements the MosaicMetadataTransactionBodyDTO interface.
  */
-export function instanceOfMosaicMetadataTransactionBodyDTO(value: Record<string, any>): value is MosaicMetadataTransactionBodyDTO {
+export function instanceOfMosaicMetadataTransactionBodyDTO(value: object): value is MosaicMetadataTransactionBodyDTO {
     if (!('targetAddress' in value) || value['targetAddress'] === undefined) return false;
     if (!('scopedMetadataKey' in value) || value['scopedMetadataKey'] === undefined) return false;
     if (!('targetMosaicId' in value) || value['targetMosaicId'] === undefined) return false;

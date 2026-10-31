@@ -21,14 +21,10 @@ import { mapValues } from '../runtime';
 export interface HashLockNetworkPropertiesDTO {
     /**
      * Amount that has to be locked per aggregate in partial cache.
-     * @type {string}
-     * @memberof HashLockNetworkPropertiesDTO
      */
     lockedFundsPerAggregate?: string;
     /**
      * Maximum number of blocks for which a hash lock can exist.
-     * @type {string}
-     * @memberof HashLockNetworkPropertiesDTO
      */
     maxHashLockDuration?: string;
 }
@@ -36,7 +32,7 @@ export interface HashLockNetworkPropertiesDTO {
 /**
  * Check if a given object implements the HashLockNetworkPropertiesDTO interface.
  */
-export function instanceOfHashLockNetworkPropertiesDTO(value: Record<string, any>): value is HashLockNetworkPropertiesDTO {
+export function instanceOfHashLockNetworkPropertiesDTO(value: object): value is HashLockNetworkPropertiesDTO {
     return true;
 }
 

@@ -21,8 +21,6 @@ import { mapValues } from '../runtime';
 export interface MosaicIds {
     /**
      * Array of mosaic identifiers.
-     * @type {Array<string>}
-     * @memberof MosaicIds
      */
     mosaicIds?: Array<string>;
 }
@@ -30,7 +28,7 @@ export interface MosaicIds {
 /**
  * Check if a given object implements the MosaicIds interface.
  */
-export function instanceOfMosaicIds(value: Record<string, any>): value is MosaicIds {
+export function instanceOfMosaicIds(value: object): value is MosaicIds {
     return true;
 }
 

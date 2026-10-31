@@ -32,65 +32,34 @@ import { mapValues } from '../runtime';
  */
 export interface TransactionMetaDTO {
     /**
-     * Height of the block containing the referenced transaction or parent aggregate transaction.
-     * Returned as a decimal string. The value is `"0"` when the transaction is not included in a
-     * block yet, for example for unconfirmed transactions and partial aggregate transactions.
-     * 
-     * @type {string}
-     * @memberof TransactionMetaDTO
+     * Height of the block that contains the transaction. For unconfirmed top-level transactions, this value is `"0"`.
      */
     height: string;
     /**
-     * 256-bit hash encoded as a 64-character hexadecimal string.
-     * @type {string}
-     * @memberof TransactionMetaDTO
+     * Hash of the top-level transaction.
      */
     hash: string;
     /**
-     * 256-bit hash encoded as a 64-character hexadecimal string.
-     * @type {string}
-     * @memberof TransactionMetaDTO
+     * Merkle component hash of the top-level transaction used in block transaction proofs.
+     * For unconfirmed top-level transactions, this value matches `hash`.
+     * 
      */
     merkleComponentHash: string;
     /**
      * Transaction index within the block. For unconfirmed top-level transactions, this value is `0`.
      * 
-     * @type {number}
-     * @memberof TransactionMetaDTO
      */
     index: number;
     /**
-     * Network timestamp in **milliseconds** since the creation of the nemesis (first) block.
-     * Used for block timestamps, transaction deadlines, and time synchronization.
+     * Timestamp of the block that contains the transaction, in milliseconds since the creation of the
+     * nemesis (first) block. This field is absent for unconfirmed top-level transactions.
      * 
-     * **Finding the nemesis block time:** The `epochAdjustment` field returned by the
-     * [`/network/properties`] endpoint gives the nemesis block creation time in seconds since the
-     * [UNIX epoch](https://en.wikipedia.org/wiki/Unix_time). For Symbol MAINNET this is
-     * always `1615853185` (15 March 2021, 00:06:25 UTC).
-     * 
-     * **Converting to real time:** Add this timestamp (ms) to `epochAdjustment × 1000` (ms), then use standard date functions.
-     * Note: `epochAdjustment` may be returned as a string like `"1615853185s"`; use the numeric part.
-     * 
-     * @type {string}
-     * @memberof TransactionMetaDTO
      */
     timestamp?: string;
     /**
-     * Fee multiplier applied to the size of a transaction to obtain its fee, in
-     * [absolute units](https://docs.symbol.dev/concepts/mosaic.html#divisibility).
-     * Set by the harvester when creating a block; stored in the block header.
+     * Fee multiplier of the block that contains the transaction.
+     * This field is absent for unconfirmed top-level transactions.
      * 
-     * The effective fee for a transaction is:
-     * 
-     * `effectiveFee = transaction.size × block.feeMultiplier`
-     * 
-     * Node owners can configure the fee multiplier to any non-negative value (including zero).
-     * For transaction senders, the median fee multiplier over recent blocks is available
-     * via `/network/fees/transaction`; using `medianFeeMultiplier` or higher
-     * improves chances of inclusion. See the [fees documentation](https://docs.symbol.dev/concepts/fees.html).
-     * 
-     * @type {number}
-     * @memberof TransactionMetaDTO
      */
     feeMultiplier?: number;
 }
@@ -98,7 +67,7 @@ export interface TransactionMetaDTO {
 /**
  * Check if a given object implements the TransactionMetaDTO interface.
  */
-export function instanceOfTransactionMetaDTO(value: Record<string, any>): value is TransactionMetaDTO {
+export function instanceOfTransactionMetaDTO(value: object): value is TransactionMetaDTO {
     if (!('height' in value) || value['height'] === undefined) return false;
     if (!('hash' in value) || value['hash'] === undefined) return false;
     if (!('merkleComponentHash' in value) || value['merkleComponentHash'] === undefined) return false;

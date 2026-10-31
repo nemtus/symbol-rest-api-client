@@ -35,27 +35,19 @@ import {
  */
 export interface EmbeddedSecretLockTransactionDTO {
     /**
-     * 256-bit public key encoded as a hexadecimal string (64 hex characters).
-     * @type {string}
-     * @memberof EmbeddedSecretLockTransactionDTO
+     * Public key of the account that signed the entity (e.g. block harvester, transaction signer).
      */
     signerPublicKey: string;
     /**
      * Entity version. Indicates the schema variant for serialization and validation.
-     * @type {number}
-     * @memberof EmbeddedSecretLockTransactionDTO
      */
     version: number;
     /**
      * Network type (mainnet or testnet). Ensures the entity targets the correct network.
-     * @type {NetworkTypeEnum}
-     * @memberof EmbeddedSecretLockTransactionDTO
      */
     network: NetworkTypeEnum;
     /**
      * Entity type identifier (e.g. transaction type code, block type). Determines the entity schema.
-     * @type {number}
-     * @memberof EmbeddedSecretLockTransactionDTO
      */
     type: number;
     /**
@@ -63,14 +55,10 @@ export interface EmbeddedSecretLockTransactionDTO {
      * If bit 0 of byte 0 is not set, the value represents a regular address.
      * Otherwise, it represents a namespace ID alias encoded as an unresolved address.
      * 
-     * @type {string}
-     * @memberof EmbeddedSecretLockTransactionDTO
      */
     recipientAddress: string;
     /**
      * 256-bit hash encoded as a 64-character hexadecimal string.
-     * @type {string}
-     * @memberof EmbeddedSecretLockTransactionDTO
      */
     secret: string;
     /**
@@ -78,8 +66,6 @@ export interface EmbeddedSecretLockTransactionDTO {
      * If the most significant bit of byte 0 is set, the value contains a namespace ID alias
      * instead of a concrete mosaic ID.
      * 
-     * @type {string}
-     * @memberof EmbeddedSecretLockTransactionDTO
      */
     mosaicId: string;
     /**
@@ -88,20 +74,14 @@ export interface EmbeddedSecretLockTransactionDTO {
      * `123.456789` whole units. Encoded as a string to preserve precision, since the value
      * is an unsigned 64-bit integer.
      * 
-     * @type {string}
-     * @memberof EmbeddedSecretLockTransactionDTO
      */
     amount: string;
     /**
      * Duration expressed in number of blocks.
-     * @type {string}
-     * @memberof EmbeddedSecretLockTransactionDTO
      */
     duration: string;
     /**
      * 
-     * @type {LockHashAlgorithmEnum}
-     * @memberof EmbeddedSecretLockTransactionDTO
      */
     hashAlgorithm: LockHashAlgorithmEnum;
 }
@@ -111,7 +91,7 @@ export interface EmbeddedSecretLockTransactionDTO {
 /**
  * Check if a given object implements the EmbeddedSecretLockTransactionDTO interface.
  */
-export function instanceOfEmbeddedSecretLockTransactionDTO(value: Record<string, any>): value is EmbeddedSecretLockTransactionDTO {
+export function instanceOfEmbeddedSecretLockTransactionDTO(value: object): value is EmbeddedSecretLockTransactionDTO {
     if (!('signerPublicKey' in value) || value['signerPublicKey'] === undefined) return false;
     if (!('version' in value) || value['version'] === undefined) return false;
     if (!('network' in value) || value['network'] === undefined) return false;

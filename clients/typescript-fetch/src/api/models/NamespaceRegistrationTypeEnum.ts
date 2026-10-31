@@ -27,7 +27,7 @@
  */
 export const NamespaceRegistrationTypeEnum = {
     NUMBER_0: 0,
-    NUMBER_1: 1
+    NUMBER_1: 1,
 } as const;
 export type NamespaceRegistrationTypeEnum = typeof NamespaceRegistrationTypeEnum[keyof typeof NamespaceRegistrationTypeEnum];
 

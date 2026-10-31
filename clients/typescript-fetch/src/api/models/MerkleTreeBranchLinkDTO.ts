@@ -23,14 +23,10 @@ import { mapValues } from '../runtime';
 export interface MerkleTreeBranchLinkDTO {
     /**
      * Nibble index (0 to 15) identifying this child slot (hex).
-     * @type {string}
-     * @memberof MerkleTreeBranchLinkDTO
      */
     bit: string;
     /**
-     * 256-bit hash encoded as a 64-character hexadecimal string.
-     * @type {string}
-     * @memberof MerkleTreeBranchLinkDTO
+     * Hash of the child node.
      */
     link: string;
 }
@@ -38,7 +34,7 @@ export interface MerkleTreeBranchLinkDTO {
 /**
  * Check if a given object implements the MerkleTreeBranchLinkDTO interface.
  */
-export function instanceOfMerkleTreeBranchLinkDTO(value: Record<string, any>): value is MerkleTreeBranchLinkDTO {
+export function instanceOfMerkleTreeBranchLinkDTO(value: object): value is MerkleTreeBranchLinkDTO {
     if (!('bit' in value) || value['bit'] === undefined) return false;
     if (!('link' in value) || value['link'] === undefined) return false;
     return true;

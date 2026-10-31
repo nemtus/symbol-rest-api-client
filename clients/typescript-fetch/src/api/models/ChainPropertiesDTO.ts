@@ -21,190 +21,122 @@ import { mapValues } from '../runtime';
 export interface ChainPropertiesDTO {
     /**
      * Set to true if block chain should calculate state hashes so that state is fully verifiable at each block.
-     * @type {boolean}
-     * @memberof ChainPropertiesDTO
      */
     enableVerifiableState?: boolean;
     /**
      * Set to true if block chain should calculate receipts so that state changes are fully verifiable at each block.
-     * @type {boolean}
-     * @memberof ChainPropertiesDTO
      */
     enableVerifiableReceipts?: boolean;
     /**
      * Mosaic ID used as primary chain currency.
-     * @type {string}
-     * @memberof ChainPropertiesDTO
      */
     currencyMosaicId?: string;
     /**
      * Mosaic ID used to provide harvesting ability.
-     * @type {string}
-     * @memberof ChainPropertiesDTO
      */
     harvestingMosaicId?: string;
     /**
      * Targeted time between blocks.
-     * @type {string}
-     * @memberof ChainPropertiesDTO
      */
     blockGenerationTargetTime?: string;
     /**
      * A higher value makes the network more biased.
-     * @type {string}
-     * @memberof ChainPropertiesDTO
      */
     blockTimeSmoothingFactor?: string;
     /**
      * Number of blocks between successive finalization attempts.
-     * @type {string}
-     * @memberof ChainPropertiesDTO
      */
     blockFinalizationInterval?: string;
     /**
      * Number of blocks that should be treated as a group for importance purposes.
-     * @type {string}
-     * @memberof ChainPropertiesDTO
      */
     importanceGrouping?: string;
     /**
      * Percentage of importance resulting from fee generation and beneficiary usage.
-     * @type {string}
-     * @memberof ChainPropertiesDTO
      */
     importanceActivityPercentage?: string;
     /**
      * Maximum number of blocks that can be rolled back.
-     * @type {string}
-     * @memberof ChainPropertiesDTO
      */
     maxRollbackBlocks?: string;
     /**
      * Maximum number of blocks to use in a difficulty calculation.
-     * @type {string}
-     * @memberof ChainPropertiesDTO
      */
     maxDifficultyBlocks?: string;
     /**
      * Default multiplier to use for dynamic fees.
-     * @type {string}
-     * @memberof ChainPropertiesDTO
      */
     defaultDynamicFeeMultiplier?: string;
     /**
      * Maximum lifetime a transaction can have before it expires.
-     * @type {string}
-     * @memberof ChainPropertiesDTO
      */
     maxTransactionLifetime?: string;
     /**
      * Maximum future time of a block that can be accepted.
-     * @type {string}
-     * @memberof ChainPropertiesDTO
      */
     maxBlockFutureTime?: string;
     /**
      * Initial currency atomic units available in the network.
-     * @type {string}
-     * @memberof ChainPropertiesDTO
      */
     initialCurrencyAtomicUnits?: string;
     /**
      * Maximum atomic units (total-supply * 10 ^ divisibility) of a mosaic allowed in the network.
-     * @type {string}
-     * @memberof ChainPropertiesDTO
      */
     maxMosaicAtomicUnits?: string;
     /**
      * Total whole importance units available in the network.
-     * @type {string}
-     * @memberof ChainPropertiesDTO
      */
     totalChainImportance?: string;
     /**
      * Minimum number of harvesting mosaic atomic units needed for an account to be eligible for harvesting.
-     * @type {string}
-     * @memberof ChainPropertiesDTO
      */
     minHarvesterBalance?: string;
     /**
      * Maximum number of harvesting mosaic atomic units needed for an account to be eligible for harvesting.
-     * @type {string}
-     * @memberof ChainPropertiesDTO
      */
     maxHarvesterBalance?: string;
     /**
      * Minimum number of harvesting mosaic atomic units needed for an account to be eligible for voting.
-     * @type {string}
-     * @memberof ChainPropertiesDTO
      */
     minVoterBalance?: string;
     /**
      * Number of blocks per finalization epoch (defines epoch duration for voting).
-     * @type {string}
-     * @memberof ChainPropertiesDTO
      */
     votingSetGrouping?: string;
     /**
      * Maximum number of voting keys that can be registered at once per account.
-     * @type {string}
-     * @memberof ChainPropertiesDTO
      */
     maxVotingKeysPerAccount?: string;
     /**
      * Minimum number of finalization rounds for which voting key can be registered.
-     * @type {string}
-     * @memberof ChainPropertiesDTO
      */
     minVotingKeyLifetime?: string;
     /**
      * Maximum number of finalization rounds for which voting key can be registered.
-     * @type {string}
-     * @memberof ChainPropertiesDTO
      */
     maxVotingKeyLifetime?: string;
     /**
      * Percentage of the harvested fee that is collected by the beneficiary account.
-     * @type {string}
-     * @memberof ChainPropertiesDTO
      */
     harvestBeneficiaryPercentage?: string;
     /**
      * Percentage of the harvested fee that is collected by the network.
-     * @type {string}
-     * @memberof ChainPropertiesDTO
      */
     harvestNetworkPercentage?: string;
     /**
-     * Represents a unique account address in Base32 format. The first character indicates the network
-     * (`T` for testnet, `N` for mainnet). Addresses are 39 characters long, Base32-encoded,
-     * and include an embedded 3-byte checksum. The node validates this checksum, so an address
-     * with even a single altered character will be rejected.
-     * 
-     * @type {string}
-     * @memberof ChainPropertiesDTO
+     * Legacy (V1) address (in Base32 format) of the harvest network fee sink account. May be absent on newer networks.
      */
     harvestNetworkFeeSinkAddressV1?: string;
     /**
-     * Represents a unique account address in Base32 format. The first character indicates the network
-     * (`T` for testnet, `N` for mainnet). Addresses are 39 characters long, Base32-encoded,
-     * and include an embedded 3-byte checksum. The node validates this checksum, so an address
-     * with even a single altered character will be rejected.
-     * 
-     * @type {string}
-     * @memberof ChainPropertiesDTO
+     * Address (in Base32 format) of the harvest network fee sink account.
      */
     harvestNetworkFeeSinkAddress?: string;
     /**
      * Number of blocks between cache pruning.
-     * @type {string}
-     * @memberof ChainPropertiesDTO
      */
     blockPruneInterval?: string;
     /**
      * Maximum number of transactions per block.
-     * @type {string}
-     * @memberof ChainPropertiesDTO
      */
     maxTransactionsPerBlock?: string;
 }
@@ -212,7 +144,7 @@ export interface ChainPropertiesDTO {
 /**
  * Check if a given object implements the ChainPropertiesDTO interface.
  */
-export function instanceOfChainPropertiesDTO(value: Record<string, any>): value is ChainPropertiesDTO {
+export function instanceOfChainPropertiesDTO(value: object): value is ChainPropertiesDTO {
     return true;
 }
 

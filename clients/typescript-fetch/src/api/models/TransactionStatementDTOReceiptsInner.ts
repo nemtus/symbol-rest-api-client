@@ -64,66 +64,34 @@ import {
 export interface TransactionStatementDTOReceiptsInner {
     /**
      * Version of the receipt format.
-     * @type {number}
-     * @memberof TransactionStatementDTOReceiptsInner
      */
     version: number;
     /**
      * 
-     * @type {ReceiptTypeEnum}
-     * @memberof TransactionStatementDTOReceiptsInner
      */
     type: ReceiptTypeEnum;
     /**
-     * Unique [mosaic](https://docs.symbol.dev/concepts/mosaic.html) identifier.
-     * A 64-bit unsigned integer derived from the creator's address and a registration nonce,
-     * encoded as a 16-character hexadecimal string.
-     * 
-     * @type {string}
-     * @memberof TransactionStatementDTOReceiptsInner
+     * Identifier of the network currency mosaic created by inflation.
      */
     mosaicId: string;
     /**
-     * Absolute amount expressed in the mosaic's smallest (atomic) unit, with no decimal point.
-     * For example, an amount of `123456789` for a mosaic with divisibility 6 represents
-     * `123.456789` whole units. Encoded as a string to preserve precision, since the value
-     * is an unsigned 64-bit integer.
-     * 
-     * @type {string}
-     * @memberof TransactionStatementDTOReceiptsInner
+     * Amount of mosaic units created by inflation, expressed in the mosaic's smallest (atomic) unit.
      */
     amount: string;
     /**
-     * Address encoded as a 48-character hexadecimal string (24 bytes).
-     * The REST API returns addresses in this format. For Base32-encoded addresses (39 chars) see `Address`.
-     * 
-     * @type {string}
-     * @memberof TransactionStatementDTOReceiptsInner
+     * Address from which the mosaic balance was transferred.
      */
     senderAddress: string;
     /**
-     * Address encoded as a 48-character hexadecimal string (24 bytes).
-     * The REST API returns addresses in this format. For Base32-encoded addresses (39 chars) see `Address`.
-     * 
-     * @type {string}
-     * @memberof TransactionStatementDTOReceiptsInner
+     * Address that received the mosaic balance.
      */
     recipientAddress: string;
     /**
-     * Address encoded as a 48-character hexadecimal string (24 bytes).
-     * The REST API returns addresses in this format. For Base32-encoded addresses (39 chars) see `Address`.
-     * 
-     * @type {string}
-     * @memberof TransactionStatementDTOReceiptsInner
+     * Address whose balance was affected.
      */
     targetAddress: string;
     /**
-     * Unique [mosaic](https://docs.symbol.dev/concepts/mosaic.html) identifier.
-     * A 64-bit unsigned integer derived from the creator's address and a registration nonce,
-     * encoded as a 16-character hexadecimal string.
-     * 
-     * @type {string}
-     * @memberof TransactionStatementDTOReceiptsInner
+     * Identifier of the expired mosaic.
      */
     artifactId: string;
 }
@@ -133,7 +101,7 @@ export interface TransactionStatementDTOReceiptsInner {
 /**
  * Check if a given object implements the TransactionStatementDTOReceiptsInner interface.
  */
-export function instanceOfTransactionStatementDTOReceiptsInner(value: Record<string, any>): value is TransactionStatementDTOReceiptsInner {
+export function instanceOfTransactionStatementDTOReceiptsInner(value: object): value is TransactionStatementDTOReceiptsInner {
     if (!('version' in value) || value['version'] === undefined) return false;
     if (!('type' in value) || value['type'] === undefined) return false;
     if (!('mosaicId' in value) || value['mosaicId'] === undefined) return false;

@@ -32,8 +32,6 @@ export interface FinalizationProofDTO {
     /**
      * Proof format version. Incremented when the binary structure of the finalization proof changes.
      * 
-     * @type {number}
-     * @memberof FinalizationProofDTO
      */
     version: number;
     /**
@@ -41,38 +39,28 @@ export interface FinalizationProofDTO {
      * integer. Each epoch groups a set of blocks for finalization voting; the interval is defined
      * by the `votingSetGrouping` network property (e.g. 1440 blocks, ~12h on mainnet).
      * 
-     * @type {number}
-     * @memberof FinalizationProofDTO
      */
     finalizationEpoch: number;
     /**
      * Finalization point within an epoch. Each [epoch](https://docs.symbol.dev/concepts/block.html#finalization)
      * is divided into multiple points; blocks are finalized at specific points.
      * 
-     * @type {number}
-     * @memberof FinalizationProofDTO
      */
     finalizationPoint: number;
     /**
      * Height of a block in the blockchain. Starts at 1 and increments by one per block.
      * Represented as a string to preserve precision, since the value is an unsigned 64-bit integer.
      * 
-     * @type {string}
-     * @memberof FinalizationProofDTO
      */
     height: string;
     /**
      * 256-bit hash encoded as a 64-character hexadecimal string.
-     * @type {string}
-     * @memberof FinalizationProofDTO
      */
     hash: string;
     /**
      * Message groups from the finalization voting process: prevote, precommit, and count stages.
      * Each group contains block hashes and BLS signatures from the finalizers attesting to the vote.
      * 
-     * @type {Array<MessageGroup>}
-     * @memberof FinalizationProofDTO
      */
     messageGroups: Array<MessageGroup>;
 }
@@ -80,7 +68,7 @@ export interface FinalizationProofDTO {
 /**
  * Check if a given object implements the FinalizationProofDTO interface.
  */
-export function instanceOfFinalizationProofDTO(value: Record<string, any>): value is FinalizationProofDTO {
+export function instanceOfFinalizationProofDTO(value: object): value is FinalizationProofDTO {
     if (!('version' in value) || value['version'] === undefined) return false;
     if (!('finalizationEpoch' in value) || value['finalizationEpoch'] === undefined) return false;
     if (!('finalizationPoint' in value) || value['finalizationPoint'] === undefined) return false;

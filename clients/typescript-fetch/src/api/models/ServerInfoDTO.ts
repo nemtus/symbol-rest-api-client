@@ -31,8 +31,6 @@ import {
 export interface ServerInfoDTO {
     /**
      * 
-     * @type {ServerDTO}
-     * @memberof ServerInfoDTO
      */
     serverInfo: ServerDTO;
 }
@@ -40,7 +38,7 @@ export interface ServerInfoDTO {
 /**
  * Check if a given object implements the ServerInfoDTO interface.
  */
-export function instanceOfServerInfoDTO(value: Record<string, any>): value is ServerInfoDTO {
+export function instanceOfServerInfoDTO(value: object): value is ServerInfoDTO {
     if (!('serverInfo' in value) || value['serverInfo'] === undefined) return false;
     return true;
 }

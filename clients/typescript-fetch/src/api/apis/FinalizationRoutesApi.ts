@@ -12,24 +12,31 @@
  * Do not edit the class manually.
  */
 
-
 import * as runtime from '../runtime';
-import type {
-  FinalizationProofDTO,
-  ModelError,
-} from '../models/index';
 import {
+    type FinalizationProofDTO,
     FinalizationProofDTOFromJSON,
     FinalizationProofDTOToJSON,
+} from '../models/FinalizationProofDTO';
+import {
+    type ModelError,
     ModelErrorFromJSON,
     ModelErrorToJSON,
-} from '../models/index';
+} from '../models/ModelError';
 
 export interface GetFinalizationProofAtEpochRequest {
+    /**
+     * The finalization epoch is a sequential integer. Each epoch groups a set of blocks
+     * for finalization voting (interval defined by network config, e.g. 1440 blocks for mainnet).
+     * 
+     */
     epoch: number;
 }
 
 export interface GetFinalizationProofAtHeightRequest {
+    /**
+     * Filter by block height (include). Sequential block position in the chain; starts at 1 and increments by one.
+     */
     height: string;
 }
 
@@ -39,10 +46,9 @@ export interface GetFinalizationProofAtHeightRequest {
 export class FinalizationRoutesApi extends runtime.BaseAPI {
 
     /**
-     * Returns the finalization proof for the greatest block height associated with the given finalization epoch.
-     * Get finalization proof at epoch
+     * Creates request options for getFinalizationProofAtEpoch without sending the request
      */
-    async getFinalizationProofAtEpochRaw(requestParameters: GetFinalizationProofAtEpochRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<FinalizationProofDTO>> {
+    async getFinalizationProofAtEpochRequestOpts(requestParameters: GetFinalizationProofAtEpochRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['epoch'] == null) {
             throw new runtime.RequiredError(
                 'epoch',
@@ -56,14 +62,23 @@ export class FinalizationRoutesApi extends runtime.BaseAPI {
 
 
         let urlPath = `/finalization/proof/epoch/{epoch}`;
-        urlPath = urlPath.replace(`{${"epoch"}}`, encodeURIComponent(String(requestParameters['epoch'])));
+        urlPath = urlPath.replace('{epoch}', encodeURIComponent(String(requestParameters['epoch'])));
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Returns the finalization proof for the greatest block height associated with the given finalization epoch.
+     * Get finalization proof at epoch
+     */
+    async getFinalizationProofAtEpochRaw(requestParameters: GetFinalizationProofAtEpochRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<FinalizationProofDTO>> {
+        const requestOptions = await this.getFinalizationProofAtEpochRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => FinalizationProofDTOFromJSON(jsonValue));
     }
@@ -78,10 +93,9 @@ export class FinalizationRoutesApi extends runtime.BaseAPI {
     }
 
     /**
-     * Returns the finalization proof for the block at the given height.
-     * Get finalization proof at height
+     * Creates request options for getFinalizationProofAtHeight without sending the request
      */
-    async getFinalizationProofAtHeightRaw(requestParameters: GetFinalizationProofAtHeightRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<FinalizationProofDTO>> {
+    async getFinalizationProofAtHeightRequestOpts(requestParameters: GetFinalizationProofAtHeightRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['height'] == null) {
             throw new runtime.RequiredError(
                 'height',
@@ -95,14 +109,23 @@ export class FinalizationRoutesApi extends runtime.BaseAPI {
 
 
         let urlPath = `/finalization/proof/height/{height}`;
-        urlPath = urlPath.replace(`{${"height"}}`, encodeURIComponent(String(requestParameters['height'])));
+        urlPath = urlPath.replace('{height}', encodeURIComponent(String(requestParameters['height'])));
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Returns the finalization proof for the block at the given height.
+     * Get finalization proof at height
+     */
+    async getFinalizationProofAtHeightRaw(requestParameters: GetFinalizationProofAtHeightRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<FinalizationProofDTO>> {
+        const requestOptions = await this.getFinalizationProofAtHeightRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => FinalizationProofDTOFromJSON(jsonValue));
     }

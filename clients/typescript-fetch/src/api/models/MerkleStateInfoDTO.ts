@@ -35,14 +35,10 @@ export interface MerkleStateInfoDTO {
      * See [Symbol Technical Reference](https://symbol.github.io/symbol-technicalref/main.pdf)
      * chapter 4.3 for the tree structure specification.
      * 
-     * @type {string}
-     * @memberof MerkleStateInfoDTO
      */
     raw: string;
     /**
      * Merkle tree parsed from Merkle tree raw.
-     * @type {Array<MerkleStateInfoDTOTreeInner>}
-     * @memberof MerkleStateInfoDTO
      */
     tree: Array<MerkleStateInfoDTOTreeInner>;
 }
@@ -50,7 +46,7 @@ export interface MerkleStateInfoDTO {
 /**
  * Check if a given object implements the MerkleStateInfoDTO interface.
  */
-export function instanceOfMerkleStateInfoDTO(value: Record<string, any>): value is MerkleStateInfoDTO {
+export function instanceOfMerkleStateInfoDTO(value: object): value is MerkleStateInfoDTO {
     if (!('raw' in value) || value['raw'] === undefined) return false;
     if (!('tree' in value) || value['tree'] === undefined) return false;
     return true;

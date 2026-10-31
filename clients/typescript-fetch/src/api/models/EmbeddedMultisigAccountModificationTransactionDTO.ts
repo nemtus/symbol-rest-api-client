@@ -28,27 +28,19 @@ import {
  */
 export interface EmbeddedMultisigAccountModificationTransactionDTO {
     /**
-     * 256-bit public key encoded as a hexadecimal string (64 hex characters).
-     * @type {string}
-     * @memberof EmbeddedMultisigAccountModificationTransactionDTO
+     * Public key of the account that signed the entity (e.g. block harvester, transaction signer).
      */
     signerPublicKey: string;
     /**
      * Entity version. Indicates the schema variant for serialization and validation.
-     * @type {number}
-     * @memberof EmbeddedMultisigAccountModificationTransactionDTO
      */
     version: number;
     /**
      * Network type (mainnet or testnet). Ensures the entity targets the correct network.
-     * @type {NetworkTypeEnum}
-     * @memberof EmbeddedMultisigAccountModificationTransactionDTO
      */
     network: NetworkTypeEnum;
     /**
      * Entity type identifier (e.g. transaction type code, block type). Determines the entity schema.
-     * @type {number}
-     * @memberof EmbeddedMultisigAccountModificationTransactionDTO
      */
     type: number;
     /**
@@ -56,8 +48,6 @@ export interface EmbeddedMultisigAccountModificationTransactionDTO {
      * cosignatory. When converting a regular account into a multisig account, the initial value is
      * derived from this delta because the previous threshold is zero.
      * 
-     * @type {number}
-     * @memberof EmbeddedMultisigAccountModificationTransactionDTO
      */
     minRemovalDelta: number;
     /**
@@ -65,22 +55,16 @@ export interface EmbeddedMultisigAccountModificationTransactionDTO {
      * transaction. When converting a regular account into a multisig account, the initial value is
      * derived from this delta because the previous threshold is zero.
      * 
-     * @type {number}
-     * @memberof EmbeddedMultisigAccountModificationTransactionDTO
      */
     minApprovalDelta: number;
     /**
      * Cosignatory addresses to add to the multisig account.
      * Newly added cosignatories must opt in by cosigning the aggregate transaction.
      * 
-     * @type {Array<string>}
-     * @memberof EmbeddedMultisigAccountModificationTransactionDTO
      */
     addressAdditions: Array<string>;
     /**
      * Cosignatory addresses to remove from the multisig account.
-     * @type {Array<string>}
-     * @memberof EmbeddedMultisigAccountModificationTransactionDTO
      */
     addressDeletions: Array<string>;
 }
@@ -90,7 +74,7 @@ export interface EmbeddedMultisigAccountModificationTransactionDTO {
 /**
  * Check if a given object implements the EmbeddedMultisigAccountModificationTransactionDTO interface.
  */
-export function instanceOfEmbeddedMultisigAccountModificationTransactionDTO(value: Record<string, any>): value is EmbeddedMultisigAccountModificationTransactionDTO {
+export function instanceOfEmbeddedMultisigAccountModificationTransactionDTO(value: object): value is EmbeddedMultisigAccountModificationTransactionDTO {
     if (!('signerPublicKey' in value) || value['signerPublicKey'] === undefined) return false;
     if (!('version' in value) || value['version'] === undefined) return false;
     if (!('network' in value) || value['network'] === undefined) return false;

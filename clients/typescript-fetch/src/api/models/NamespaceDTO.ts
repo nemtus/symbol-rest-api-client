@@ -39,88 +39,48 @@ export interface NamespaceDTO {
      * schema of the entity changes (e.g. new fields are added), allowing the node to
      * deserialize entries written under earlier formats.
      * 
-     * @type {number}
-     * @memberof NamespaceDTO
      */
     version: number;
     /**
      * 
-     * @type {NamespaceRegistrationTypeEnum}
-     * @memberof NamespaceDTO
      */
     registrationType: NamespaceRegistrationTypeEnum;
     /**
      * Number of levels present in the namespace path.
      * This matches how many namespace IDs are defined across `level0`, `level1`, and `level2`.
      * 
-     * @type {number}
-     * @memberof NamespaceDTO
      */
     depth: number;
     /**
-     * Unique [namespace](https://docs.symbol.dev/concepts/namespaces.html) identifier.
-     * A 64-bit unsigned integer derived from the namespace name and its parent namespace ID,
-     * encoded as a 16-character hexadecimal string.
-     * 
-     * @type {string}
-     * @memberof NamespaceDTO
+     * Namespace identifier of the root namespace.
      */
     level0: string;
     /**
-     * Unique [namespace](https://docs.symbol.dev/concepts/namespaces.html) identifier.
-     * A 64-bit unsigned integer derived from the namespace name and its parent namespace ID,
-     * encoded as a 16-character hexadecimal string.
-     * 
-     * @type {string}
-     * @memberof NamespaceDTO
+     * Namespace identifier of the first subnamespace level, when present.
      */
     level1?: string;
     /**
-     * Unique [namespace](https://docs.symbol.dev/concepts/namespaces.html) identifier.
-     * A 64-bit unsigned integer derived from the namespace name and its parent namespace ID,
-     * encoded as a 16-character hexadecimal string.
-     * 
-     * @type {string}
-     * @memberof NamespaceDTO
+     * Namespace identifier of the second subnamespace level, when present.
      */
     level2?: string;
     /**
      * 
-     * @type {AliasDTO}
-     * @memberof NamespaceDTO
      */
     alias: AliasDTO;
     /**
-     * Unique [namespace](https://docs.symbol.dev/concepts/namespaces.html) identifier.
-     * A 64-bit unsigned integer derived from the namespace name and its parent namespace ID,
-     * encoded as a 16-character hexadecimal string.
-     * 
-     * @type {string}
-     * @memberof NamespaceDTO
+     * Parent namespace identifier for a subnamespace.
      */
     parentId: string;
     /**
-     * Address encoded as a 48-character hexadecimal string (24 bytes).
-     * The REST API returns addresses in this format. For Base32-encoded addresses (39 chars) see `Address`.
-     * 
-     * @type {string}
-     * @memberof NamespaceDTO
+     * Address of the account that owns the namespace.
      */
     ownerAddress: string;
     /**
-     * Height of a block in the blockchain. Starts at 1 and increments by one per block.
-     * Represented as a string to preserve precision, since the value is an unsigned 64-bit integer.
-     * 
-     * @type {string}
-     * @memberof NamespaceDTO
+     * Block height at which the namespace became active.
      */
     startHeight: string;
     /**
-     * Height of a block in the blockchain. Starts at 1 and increments by one per block.
-     * Represented as a string to preserve precision, since the value is an unsigned 64-bit integer.
-     * 
-     * @type {string}
-     * @memberof NamespaceDTO
+     * Block height at which the namespace expires.
      */
     endHeight: string;
 }
@@ -130,7 +90,7 @@ export interface NamespaceDTO {
 /**
  * Check if a given object implements the NamespaceDTO interface.
  */
-export function instanceOfNamespaceDTO(value: Record<string, any>): value is NamespaceDTO {
+export function instanceOfNamespaceDTO(value: object): value is NamespaceDTO {
     if (!('version' in value) || value['version'] === undefined) return false;
     if (!('registrationType' in value) || value['registrationType'] === undefined) return false;
     if (!('depth' in value) || value['depth'] === undefined) return false;

@@ -36,44 +36,22 @@ import {
 export interface TransactionStatusDTO {
     /**
      * 
-     * @type {TransactionGroupEnum}
-     * @memberof TransactionStatusDTO
      */
     group: TransactionGroupEnum;
     /**
      * 
-     * @type {TransactionStatusEnum}
-     * @memberof TransactionStatusDTO
      */
     code?: TransactionStatusEnum;
     /**
-     * 256-bit hash encoded as a 64-character hexadecimal string.
-     * @type {string}
-     * @memberof TransactionStatusDTO
+     * Hash of the transaction.
      */
     hash: string;
     /**
-     * Network timestamp in **milliseconds** since the creation of the nemesis (first) block.
-     * Used for block timestamps, transaction deadlines, and time synchronization.
-     * 
-     * **Finding the nemesis block time:** The `epochAdjustment` field returned by the
-     * [`/network/properties`] endpoint gives the nemesis block creation time in seconds since the
-     * [UNIX epoch](https://en.wikipedia.org/wiki/Unix_time). For Symbol MAINNET this is
-     * always `1615853185` (15 March 2021, 00:06:25 UTC).
-     * 
-     * **Converting to real time:** Add this timestamp (ms) to `epochAdjustment × 1000` (ms), then use standard date functions.
-     * Note: `epochAdjustment` may be returned as a string like `"1615853185s"`; use the numeric part.
-     * 
-     * @type {string}
-     * @memberof TransactionStatusDTO
+     * Deadline specified by the transaction, expressed in milliseconds since the creation of the nemesis (first) block.
      */
     deadline: string;
     /**
-     * Height of a block in the blockchain. Starts at 1 and increments by one per block.
-     * Represented as a string to preserve precision, since the value is an unsigned 64-bit integer.
-     * 
-     * @type {string}
-     * @memberof TransactionStatusDTO
+     * Block height at which the transaction was confirmed, when available.
      */
     height?: string;
 }
@@ -83,7 +61,7 @@ export interface TransactionStatusDTO {
 /**
  * Check if a given object implements the TransactionStatusDTO interface.
  */
-export function instanceOfTransactionStatusDTO(value: Record<string, any>): value is TransactionStatusDTO {
+export function instanceOfTransactionStatusDTO(value: object): value is TransactionStatusDTO {
     if (!('group' in value) || value['group'] === undefined) return false;
     if (!('hash' in value) || value['hash'] === undefined) return false;
     if (!('deadline' in value) || value['deadline'] === undefined) return false;

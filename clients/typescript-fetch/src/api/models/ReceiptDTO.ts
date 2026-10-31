@@ -29,14 +29,10 @@ import {
 export interface ReceiptDTO {
     /**
      * Version of the receipt format.
-     * @type {number}
-     * @memberof ReceiptDTO
      */
     version: number;
     /**
      * 
-     * @type {ReceiptTypeEnum}
-     * @memberof ReceiptDTO
      */
     type: ReceiptTypeEnum;
 }
@@ -46,7 +42,7 @@ export interface ReceiptDTO {
 /**
  * Check if a given object implements the ReceiptDTO interface.
  */
-export function instanceOfReceiptDTO(value: Record<string, any>): value is ReceiptDTO {
+export function instanceOfReceiptDTO(value: object): value is ReceiptDTO {
     if (!('version' in value) || value['version'] === undefined) return false;
     if (!('type' in value) || value['type'] === undefined) return false;
     return true;

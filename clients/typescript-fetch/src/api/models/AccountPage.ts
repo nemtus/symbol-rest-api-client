@@ -36,14 +36,10 @@ import {
 export interface AccountPage {
     /**
      * Array of account information objects.
-     * @type {Array<AccountInfoDTO>}
-     * @memberof AccountPage
      */
     data: Array<AccountInfoDTO>;
     /**
      * 
-     * @type {Pagination}
-     * @memberof AccountPage
      */
     pagination: Pagination;
 }
@@ -51,7 +47,7 @@ export interface AccountPage {
 /**
  * Check if a given object implements the AccountPage interface.
  */
-export function instanceOfAccountPage(value: Record<string, any>): value is AccountPage {
+export function instanceOfAccountPage(value: object): value is AccountPage {
     if (!('data' in value) || value['data'] === undefined) return false;
     if (!('pagination' in value) || value['pagination'] === undefined) return false;
     return true;

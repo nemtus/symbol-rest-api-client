@@ -36,14 +36,10 @@ import {
 export interface MosaicRestrictionsPage {
     /**
      * Array of mosaic restrictions.
-     * @type {Array<MosaicRestrictionsPageDataInner>}
-     * @memberof MosaicRestrictionsPage
      */
     data: Array<MosaicRestrictionsPageDataInner>;
     /**
      * 
-     * @type {Pagination}
-     * @memberof MosaicRestrictionsPage
      */
     pagination: Pagination;
 }
@@ -51,7 +47,7 @@ export interface MosaicRestrictionsPage {
 /**
  * Check if a given object implements the MosaicRestrictionsPage interface.
  */
-export function instanceOfMosaicRestrictionsPage(value: Record<string, any>): value is MosaicRestrictionsPage {
+export function instanceOfMosaicRestrictionsPage(value: object): value is MosaicRestrictionsPage {
     if (!('data' in value) || value['data'] === undefined) return false;
     if (!('pagination' in value) || value['pagination'] === undefined) return false;
     return true;

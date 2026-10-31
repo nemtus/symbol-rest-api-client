@@ -24,8 +24,6 @@ export interface UnresolvedMosaic {
      * If the most significant bit of byte 0 is set, the value contains a namespace ID alias
      * instead of a concrete mosaic ID.
      * 
-     * @type {string}
-     * @memberof UnresolvedMosaic
      */
     id: string;
     /**
@@ -34,8 +32,6 @@ export interface UnresolvedMosaic {
      * `123.456789` whole units. Encoded as a string to preserve precision, since the value
      * is an unsigned 64-bit integer.
      * 
-     * @type {string}
-     * @memberof UnresolvedMosaic
      */
     amount: string;
 }
@@ -43,7 +39,7 @@ export interface UnresolvedMosaic {
 /**
  * Check if a given object implements the UnresolvedMosaic interface.
  */
-export function instanceOfUnresolvedMosaic(value: Record<string, any>): value is UnresolvedMosaic {
+export function instanceOfUnresolvedMosaic(value: object): value is UnresolvedMosaic {
     if (!('id' in value) || value['id'] === undefined) return false;
     if (!('amount' in value) || value['amount'] === undefined) return false;
     return true;

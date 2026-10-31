@@ -35,55 +35,30 @@ export interface HashLockEntryDTO {
      * schema of the entity changes (e.g. new fields are added), allowing the node to
      * deserialize entries written under earlier formats.
      * 
-     * @type {number}
-     * @memberof HashLockEntryDTO
      */
     version: number;
     /**
-     * Address encoded as a 48-character hexadecimal string (24 bytes).
-     * The REST API returns addresses in this format. For Base32-encoded addresses (39 chars) see `Address`.
-     * 
-     * @type {string}
-     * @memberof HashLockEntryDTO
+     * Address of the account that created the hash lock.
      */
     ownerAddress: string;
     /**
-     * Unique [mosaic](https://docs.symbol.dev/concepts/mosaic.html) identifier.
-     * A 64-bit unsigned integer derived from the creator's address and a registration nonce,
-     * encoded as a 16-character hexadecimal string.
-     * 
-     * @type {string}
-     * @memberof HashLockEntryDTO
+     * Identifier of the locked mosaic.
      */
     mosaicId: string;
     /**
-     * Absolute amount expressed in the mosaic's smallest (atomic) unit, with no decimal point.
-     * For example, an amount of `123456789` for a mosaic with divisibility 6 represents
-     * `123.456789` whole units. Encoded as a string to preserve precision, since the value
-     * is an unsigned 64-bit integer.
-     * 
-     * @type {string}
-     * @memberof HashLockEntryDTO
+     * Amount of locked mosaic units, expressed in the mosaic's smallest (atomic) unit.
      */
     amount: string;
     /**
-     * Height of a block in the blockchain. Starts at 1 and increments by one per block.
-     * Represented as a string to preserve precision, since the value is an unsigned 64-bit integer.
-     * 
-     * @type {string}
-     * @memberof HashLockEntryDTO
+     * Block height at which the hash lock expires if it is not completed earlier.
      */
     endHeight: string;
     /**
      * 
-     * @type {LockStatus}
-     * @memberof HashLockEntryDTO
      */
     status: LockStatus;
     /**
-     * 256-bit hash encoded as a 64-character hexadecimal string.
-     * @type {string}
-     * @memberof HashLockEntryDTO
+     * Hash of the aggregate bonded transaction associated with the lock.
      */
     hash: string;
 }
@@ -93,7 +68,7 @@ export interface HashLockEntryDTO {
 /**
  * Check if a given object implements the HashLockEntryDTO interface.
  */
-export function instanceOfHashLockEntryDTO(value: Record<string, any>): value is HashLockEntryDTO {
+export function instanceOfHashLockEntryDTO(value: object): value is HashLockEntryDTO {
     if (!('version' in value) || value['version'] === undefined) return false;
     if (!('ownerAddress' in value) || value['ownerAddress'] === undefined) return false;
     if (!('mosaicId' in value) || value['mosaicId'] === undefined) return false;

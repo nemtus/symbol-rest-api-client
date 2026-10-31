@@ -22,7 +22,7 @@
  */
 export const AccountOrderByEnum = {
     Id: 'id',
-    Balance: 'balance'
+    Balance: 'balance',
 } as const;
 export type AccountOrderByEnum = typeof AccountOrderByEnum[keyof typeof AccountOrderByEnum];
 

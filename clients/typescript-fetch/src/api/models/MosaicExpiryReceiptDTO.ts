@@ -29,23 +29,14 @@ import {
 export interface MosaicExpiryReceiptDTO {
     /**
      * Version of the receipt format.
-     * @type {number}
-     * @memberof MosaicExpiryReceiptDTO
      */
     version: number;
     /**
      * 
-     * @type {ReceiptTypeEnum}
-     * @memberof MosaicExpiryReceiptDTO
      */
     type: ReceiptTypeEnum;
     /**
-     * Unique [mosaic](https://docs.symbol.dev/concepts/mosaic.html) identifier.
-     * A 64-bit unsigned integer derived from the creator's address and a registration nonce,
-     * encoded as a 16-character hexadecimal string.
-     * 
-     * @type {string}
-     * @memberof MosaicExpiryReceiptDTO
+     * Identifier of the expired mosaic.
      */
     artifactId: string;
 }
@@ -55,7 +46,7 @@ export interface MosaicExpiryReceiptDTO {
 /**
  * Check if a given object implements the MosaicExpiryReceiptDTO interface.
  */
-export function instanceOfMosaicExpiryReceiptDTO(value: Record<string, any>): value is MosaicExpiryReceiptDTO {
+export function instanceOfMosaicExpiryReceiptDTO(value: object): value is MosaicExpiryReceiptDTO {
     if (!('version' in value) || value['version'] === undefined) return false;
     if (!('type' in value) || value['type'] === undefined) return false;
     if (!('artifactId' in value) || value['artifactId'] === undefined) return false;

@@ -32,14 +32,10 @@ import {
 export interface BmTreeSignature {
     /**
      * 
-     * @type {ParentPublicKeySignaturePair}
-     * @memberof BmTreeSignature
      */
     root: ParentPublicKeySignaturePair;
     /**
      * 
-     * @type {ParentPublicKeySignaturePair}
-     * @memberof BmTreeSignature
      */
     bottom: ParentPublicKeySignaturePair;
 }
@@ -47,7 +43,7 @@ export interface BmTreeSignature {
 /**
  * Check if a given object implements the BmTreeSignature interface.
  */
-export function instanceOfBmTreeSignature(value: Record<string, any>): value is BmTreeSignature {
+export function instanceOfBmTreeSignature(value: object): value is BmTreeSignature {
     if (!('root' in value) || value['root'] === undefined) return false;
     if (!('bottom' in value) || value['bottom'] === undefined) return false;
     return true;

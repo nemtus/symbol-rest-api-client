@@ -21,30 +21,18 @@ import { mapValues } from '../runtime';
 export interface BlockMetaDTO {
     /**
      * 256-bit hash encoded as a 64-character hexadecimal string.
-     * @type {string}
-     * @memberof BlockMetaDTO
      */
     hash: string;
     /**
-     * Absolute amount expressed in the mosaic's smallest (atomic) unit, with no decimal point.
-     * For example, an amount of `123456789` for a mosaic with divisibility 6 represents
-     * `123.456789` whole units. Encoded as a string to preserve precision, since the value
-     * is an unsigned 64-bit integer.
-     * 
-     * @type {string}
-     * @memberof BlockMetaDTO
+     * Sum (in smallest/atomic units) of all transaction fees included in the block.
      */
     totalFee: string;
     /**
      * 256-bit hash encoded as a 64-character hexadecimal string.
-     * @type {string}
-     * @memberof BlockMetaDTO
      */
     generationHash: string;
     /**
      * Merkle roots of each sub-cache at this block height.
-     * @type {Array<string>}
-     * @memberof BlockMetaDTO
      */
     stateHashSubCacheMerkleRoots: Array<string>;
     /**
@@ -52,8 +40,6 @@ export interface BlockMetaDTO {
      * confirmed in this block, including *embedded* transactions
      * (i.e. transactions contained within aggregate transactions).
      * 
-     * @type {number}
-     * @memberof BlockMetaDTO
      */
     totalTransactionsCount: number;
     /**
@@ -61,8 +47,6 @@ export interface BlockMetaDTO {
      * confirmed in this block. This does not count *embedded* transactions
      * (i.e. transactions contained within aggregate transactions).
      * 
-     * @type {number}
-     * @memberof BlockMetaDTO
      */
     transactionsCount: number;
     /**
@@ -73,8 +57,6 @@ export interface BlockMetaDTO {
      * [transaction statements](https://docs.symbol.dev/concepts/receipt.html#transaction-statement)
      * are not.
      * 
-     * @type {number}
-     * @memberof BlockMetaDTO
      */
     statementsCount: number;
 }
@@ -82,7 +64,7 @@ export interface BlockMetaDTO {
 /**
  * Check if a given object implements the BlockMetaDTO interface.
  */
-export function instanceOfBlockMetaDTO(value: Record<string, any>): value is BlockMetaDTO {
+export function instanceOfBlockMetaDTO(value: object): value is BlockMetaDTO {
     if (!('hash' in value) || value['hash'] === undefined) return false;
     if (!('totalFee' in value) || value['totalFee'] === undefined) return false;
     if (!('generationHash' in value) || value['generationHash'] === undefined) return false;

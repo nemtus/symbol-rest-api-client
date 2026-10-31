@@ -45,14 +45,10 @@ export interface MosaicRestrictionsPageDataInner {
      * Unique identifier of the object in the node's database (MongoDB ObjectId).
      * Used as the `offset` parameter value for cursor-based pagination.
      * 
-     * @type {string}
-     * @memberof MosaicRestrictionsPageDataInner
      */
     id: string;
     /**
      * 
-     * @type {MosaicGlobalRestrictionEntryWrapperDTO}
-     * @memberof MosaicRestrictionsPageDataInner
      */
     mosaicRestrictionEntry: MosaicGlobalRestrictionEntryWrapperDTO;
 }
@@ -60,7 +56,7 @@ export interface MosaicRestrictionsPageDataInner {
 /**
  * Check if a given object implements the MosaicRestrictionsPageDataInner interface.
  */
-export function instanceOfMosaicRestrictionsPageDataInner(value: Record<string, any>): value is MosaicRestrictionsPageDataInner {
+export function instanceOfMosaicRestrictionsPageDataInner(value: object): value is MosaicRestrictionsPageDataInner {
     if (!('id' in value) || value['id'] === undefined) return false;
     if (!('mosaicRestrictionEntry' in value) || value['mosaicRestrictionEntry'] === undefined) return false;
     return true;

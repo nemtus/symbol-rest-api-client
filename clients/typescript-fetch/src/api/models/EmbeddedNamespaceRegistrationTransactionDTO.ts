@@ -35,33 +35,23 @@ import {
  */
 export interface EmbeddedNamespaceRegistrationTransactionDTO {
     /**
-     * 256-bit public key encoded as a hexadecimal string (64 hex characters).
-     * @type {string}
-     * @memberof EmbeddedNamespaceRegistrationTransactionDTO
+     * Public key of the account that signed the entity (e.g. block harvester, transaction signer).
      */
     signerPublicKey: string;
     /**
      * Entity version. Indicates the schema variant for serialization and validation.
-     * @type {number}
-     * @memberof EmbeddedNamespaceRegistrationTransactionDTO
      */
     version: number;
     /**
      * Network type (mainnet or testnet). Ensures the entity targets the correct network.
-     * @type {NetworkTypeEnum}
-     * @memberof EmbeddedNamespaceRegistrationTransactionDTO
      */
     network: NetworkTypeEnum;
     /**
      * Entity type identifier (e.g. transaction type code, block type). Determines the entity schema.
-     * @type {number}
-     * @memberof EmbeddedNamespaceRegistrationTransactionDTO
      */
     type: number;
     /**
      * Duration expressed in number of blocks.
-     * @type {string}
-     * @memberof EmbeddedNamespaceRegistrationTransactionDTO
      */
     duration?: string;
     /**
@@ -69,8 +59,6 @@ export interface EmbeddedNamespaceRegistrationTransactionDTO {
      * A 64-bit unsigned integer derived from the namespace name and its parent namespace ID,
      * encoded as a 16-character hexadecimal string.
      * 
-     * @type {string}
-     * @memberof EmbeddedNamespaceRegistrationTransactionDTO
      */
     parentId?: string;
     /**
@@ -78,20 +66,14 @@ export interface EmbeddedNamespaceRegistrationTransactionDTO {
      * A 64-bit unsigned integer derived from the namespace name and its parent namespace ID,
      * encoded as a 16-character hexadecimal string.
      * 
-     * @type {string}
-     * @memberof EmbeddedNamespaceRegistrationTransactionDTO
      */
     id: string;
     /**
      * 
-     * @type {NamespaceRegistrationTypeEnum}
-     * @memberof EmbeddedNamespaceRegistrationTransactionDTO
      */
     registrationType: NamespaceRegistrationTypeEnum;
     /**
      * Namespace name.
-     * @type {string}
-     * @memberof EmbeddedNamespaceRegistrationTransactionDTO
      */
     name: string;
 }
@@ -101,7 +83,7 @@ export interface EmbeddedNamespaceRegistrationTransactionDTO {
 /**
  * Check if a given object implements the EmbeddedNamespaceRegistrationTransactionDTO interface.
  */
-export function instanceOfEmbeddedNamespaceRegistrationTransactionDTO(value: Record<string, any>): value is EmbeddedNamespaceRegistrationTransactionDTO {
+export function instanceOfEmbeddedNamespaceRegistrationTransactionDTO(value: object): value is EmbeddedNamespaceRegistrationTransactionDTO {
     if (!('signerPublicKey' in value) || value['signerPublicKey'] === undefined) return false;
     if (!('version' in value) || value['version'] === undefined) return false;
     if (!('network' in value) || value['network'] === undefined) return false;

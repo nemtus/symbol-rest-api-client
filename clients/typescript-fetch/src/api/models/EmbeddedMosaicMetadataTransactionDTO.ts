@@ -28,27 +28,19 @@ import {
  */
 export interface EmbeddedMosaicMetadataTransactionDTO {
     /**
-     * 256-bit public key encoded as a hexadecimal string (64 hex characters).
-     * @type {string}
-     * @memberof EmbeddedMosaicMetadataTransactionDTO
+     * Public key of the account that signed the entity (e.g. block harvester, transaction signer).
      */
     signerPublicKey: string;
     /**
      * Entity version. Indicates the schema variant for serialization and validation.
-     * @type {number}
-     * @memberof EmbeddedMosaicMetadataTransactionDTO
      */
     version: number;
     /**
      * Network type (mainnet or testnet). Ensures the entity targets the correct network.
-     * @type {NetworkTypeEnum}
-     * @memberof EmbeddedMosaicMetadataTransactionDTO
      */
     network: NetworkTypeEnum;
     /**
      * Entity type identifier (e.g. transaction type code, block type). Determines the entity schema.
-     * @type {number}
-     * @memberof EmbeddedMosaicMetadataTransactionDTO
      */
     type: number;
     /**
@@ -56,14 +48,10 @@ export interface EmbeddedMosaicMetadataTransactionDTO {
      * If bit 0 of byte 0 is not set, the value represents a regular address.
      * Otherwise, it represents a namespace ID alias encoded as an unresolved address.
      * 
-     * @type {string}
-     * @memberof EmbeddedMosaicMetadataTransactionDTO
      */
     targetAddress: string;
     /**
      * 64-bit key assigned by the metadata creator to identify the metadata entry within the source and target context.
-     * @type {string}
-     * @memberof EmbeddedMosaicMetadataTransactionDTO
      */
     scopedMetadataKey: string;
     /**
@@ -71,16 +59,12 @@ export interface EmbeddedMosaicMetadataTransactionDTO {
      * If the most significant bit of byte 0 is set, the value contains a namespace ID alias
      * instead of a concrete mosaic ID.
      * 
-     * @type {string}
-     * @memberof EmbeddedMosaicMetadataTransactionDTO
      */
     targetMosaicId: string;
     /**
      * Change in metadata value size, in bytes.
      * Positive values increase the stored value size, negative values decrease it.
      * 
-     * @type {number}
-     * @memberof EmbeddedMosaicMetadataTransactionDTO
      */
     valueSizeDelta: number;
     /**
@@ -89,8 +73,6 @@ export interface EmbeddedMosaicMetadataTransactionDTO {
      * value size after applying the update. When the value shrinks, this is the previous stored value size
      * before truncation.
      * 
-     * @type {number}
-     * @memberof EmbeddedMosaicMetadataTransactionDTO
      */
     valueSize: number;
     /**
@@ -99,8 +81,6 @@ export interface EmbeddedMosaicMetadataTransactionDTO {
      * When no previous value exists, it contains the new value.
      * When updating existing metadata, it contains the byte-wise XOR of the previous value and the new value.
      * 
-     * @type {string}
-     * @memberof EmbeddedMosaicMetadataTransactionDTO
      */
     value: string;
 }
@@ -110,7 +90,7 @@ export interface EmbeddedMosaicMetadataTransactionDTO {
 /**
  * Check if a given object implements the EmbeddedMosaicMetadataTransactionDTO interface.
  */
-export function instanceOfEmbeddedMosaicMetadataTransactionDTO(value: Record<string, any>): value is EmbeddedMosaicMetadataTransactionDTO {
+export function instanceOfEmbeddedMosaicMetadataTransactionDTO(value: object): value is EmbeddedMosaicMetadataTransactionDTO {
     if (!('signerPublicKey' in value) || value['signerPublicKey'] === undefined) return false;
     if (!('version' in value) || value['version'] === undefined) return false;
     if (!('network' in value) || value['network'] === undefined) return false;

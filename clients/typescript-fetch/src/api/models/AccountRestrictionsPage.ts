@@ -36,14 +36,10 @@ import {
 export interface AccountRestrictionsPage {
     /**
      * Account restriction entries matching the requested filters.
-     * @type {Array<AccountRestrictionsInfoDTO>}
-     * @memberof AccountRestrictionsPage
      */
     data: Array<AccountRestrictionsInfoDTO>;
     /**
      * 
-     * @type {Pagination}
-     * @memberof AccountRestrictionsPage
      */
     pagination: Pagination;
 }
@@ -51,7 +47,7 @@ export interface AccountRestrictionsPage {
 /**
  * Check if a given object implements the AccountRestrictionsPage interface.
  */
-export function instanceOfAccountRestrictionsPage(value: Record<string, any>): value is AccountRestrictionsPage {
+export function instanceOfAccountRestrictionsPage(value: object): value is AccountRestrictionsPage {
     if (!('data' in value) || value['data'] === undefined) return false;
     if (!('pagination' in value) || value['pagination'] === undefined) return false;
     return true;

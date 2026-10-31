@@ -29,23 +29,14 @@ import {
 export interface NamespaceExpiryReceiptDTO {
     /**
      * Version of the receipt format.
-     * @type {number}
-     * @memberof NamespaceExpiryReceiptDTO
      */
     version: number;
     /**
      * 
-     * @type {ReceiptTypeEnum}
-     * @memberof NamespaceExpiryReceiptDTO
      */
     type: ReceiptTypeEnum;
     /**
-     * Unique [namespace](https://docs.symbol.dev/concepts/namespaces.html) identifier.
-     * A 64-bit unsigned integer derived from the namespace name and its parent namespace ID,
-     * encoded as a 16-character hexadecimal string.
-     * 
-     * @type {string}
-     * @memberof NamespaceExpiryReceiptDTO
+     * Identifier of the expired namespace.
      */
     artifactId: string;
 }
@@ -55,7 +46,7 @@ export interface NamespaceExpiryReceiptDTO {
 /**
  * Check if a given object implements the NamespaceExpiryReceiptDTO interface.
  */
-export function instanceOfNamespaceExpiryReceiptDTO(value: Record<string, any>): value is NamespaceExpiryReceiptDTO {
+export function instanceOfNamespaceExpiryReceiptDTO(value: object): value is NamespaceExpiryReceiptDTO {
     if (!('version' in value) || value['version'] === undefined) return false;
     if (!('type' in value) || value['type'] === undefined) return false;
     if (!('artifactId' in value) || value['artifactId'] === undefined) return false;

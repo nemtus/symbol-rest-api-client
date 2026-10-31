@@ -30,14 +30,18 @@ This is the Symbol SDK for TypeScript with OpenAPI Generator typescript-fetch. I
    the vulnerable redocly/postman build tooling never enters this repo. Pinning + integrity are handled
    by `package-lock.json` and the `npm audit` gate (replacing the former `fetch-openapi.js` download +
    SHA-256 verification and the older `symbol-openapi` submodule build).
-2. **OpenAPI Generator** - Uses typescript-fetch generator with custom templates (`custom-templates/`)
+2. **OpenAPI Generator** - Uses the typescript-fetch generator at **7.26.0** with **no custom templates**
+   (`openapi-generator-config.yml` sets only `useSingleRequestParameter: true`). There used to be a
+   `custom-templates/` directory with a full copy of the 7.14.0 template set; 28 of its 29 files were
+   byte-identical to stock and the 29th carried a one-line tweak that 7.26.0 no longer needs. Do not
+   reintroduce a `templateDir` override without a reason that stock cannot cover: it freezes those templates
+   at the generator version they were copied from and silently withholds every later upstream fix to them.
 3. **Generated API code** (`src/api/`) - Auto-generated, DO NOT edit manually
 4. **Build outputs** (`dist/`) - Contains CJS, ESM, and CDN bundles
 
 ### Key Components
 - **API Routes** (`src/api/apis/`) - Generated API client classes for each endpoint group
 - **Models** (`src/api/models/`) - Generated TypeScript interfaces and DTOs
-- **Custom Templates** (`custom-templates/`) - Mustache templates for customizing code generation
 - **Test Suites** (`tests/`) - Separate test directories for Node.js JavaScript, TypeScript, and browser CDN
 
 ## Development Commands
@@ -52,7 +56,7 @@ cd symbol-rest-api-client/clients/typescript-fetch
 ```bash
 # Generate API client code (run in root directory)
 npm ci                        # Installs @nemtus/symbol-openapi (the spec) into node_modules
-npm run openapi:set:version   # Set OpenAPI generator version to 7.14.0
+npm run openapi:set:version   # Set OpenAPI generator version to 7.26.0
 npm run openapi:generate      # Generate TypeScript code from node_modules/@nemtus/symbol-openapi/openapi3.yml
 npm run build                 # Build CJS, ESM, and CDN bundles
 ```
@@ -147,7 +151,6 @@ requires a clean working tree, so commit or stash first.
 - **DO NOT manually edit** files in `src/api/` - they are auto-generated
 - The OpenAPI spec comes from the `@nemtus/symbol-openapi` npm package (a devDependency), built and published from the `nemtus/symbol` mirror fork (`dev` branch, `openapi/`); it is pinned via `package-lock.json` and gated by `npm audit` (no HTTP fetch, no git submodule)
 - Java is required for OpenAPI Generator CLI
-- Custom templates in `custom-templates/` modify the default typescript-fetch generation
 - Artifacts in CI/CD use unique naming to prevent conflicts between concurrent builds
 - **Socket supply-chain layer** (free for this public/OSS repo): `socket.yml` configures the Socket GitHub App, which comments on dependency-changing PRs with 70+ risk types (malware, install scripts, typosquats, etc.). It only activates after an org owner installs the Socket App via the GitHub Marketplace. In CI, Socket Firewall Free additionally blocks malicious installs (see the CI section). Both complement — not replace — `npm audit`, `.npmrc` (`min-release-age` / `ignore-scripts`), and pinact.
 

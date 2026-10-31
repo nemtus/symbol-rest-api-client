@@ -20,17 +20,11 @@ import { mapValues } from '../runtime';
  */
 export interface AccountNamesDTO {
     /**
-     * Address encoded as a 48-character hexadecimal string (24 bytes).
-     * The REST API returns addresses in this format. For Base32-encoded addresses (39 chars) see `Address`.
-     * 
-     * @type {string}
-     * @memberof AccountNamesDTO
+     * Account address for which namespace names were resolved.
      */
     address: string;
     /**
      * Namespace names currently linked to the account.
-     * @type {Array<string>}
-     * @memberof AccountNamesDTO
      */
     names: Array<string>;
 }
@@ -38,7 +32,7 @@ export interface AccountNamesDTO {
 /**
  * Check if a given object implements the AccountNamesDTO interface.
  */
-export function instanceOfAccountNamesDTO(value: Record<string, any>): value is AccountNamesDTO {
+export function instanceOfAccountNamesDTO(value: object): value is AccountNamesDTO {
     if (!('address' in value) || value['address'] === undefined) return false;
     if (!('names' in value) || value['names'] === undefined) return false;
     return true;

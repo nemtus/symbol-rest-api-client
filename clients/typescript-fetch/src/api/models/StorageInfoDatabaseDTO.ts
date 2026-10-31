@@ -33,16 +33,12 @@ export interface StorageInfoDatabaseDTO {
      * Total number of indexes across all collections in the database.
      * Represented as BSON Long with `low` / `high` / `unsigned` fields.
      * 
-     * @type {BsonLongDTO}
-     * @memberof StorageInfoDatabaseDTO
      */
     numIndexes: BsonLongDTO;
     /**
      * Approximate number of documents (objects) stored in the database.
      * Represented as BSON Long with `low` / `high` / `unsigned` fields.
      * 
-     * @type {BsonLongDTO}
-     * @memberof StorageInfoDatabaseDTO
      */
     numObjects: BsonLongDTO;
     /**
@@ -50,8 +46,6 @@ export interface StorageInfoDatabaseDTO {
      * This reflects document payload size and excludes index allocation.
      * Useful as an estimate of raw data footprint, not on-disk usage.
      * 
-     * @type {number}
-     * @memberof StorageInfoDatabaseDTO
      */
     dataSize: number;
     /**
@@ -59,8 +53,6 @@ export interface StorageInfoDatabaseDTO {
      * This includes index structures across collections and grows with
      * both document count and the number of distinct indexed values.
      * 
-     * @type {number}
-     * @memberof StorageInfoDatabaseDTO
      */
     indexSize: number;
     /**
@@ -68,8 +60,6 @@ export interface StorageInfoDatabaseDTO {
      * data, in bytes. This is an allocation metric and can differ from
      * `dataSize` because it includes engine overhead and internal padding.
      * 
-     * @type {number}
-     * @memberof StorageInfoDatabaseDTO
      */
     storageSize: number;
 }
@@ -77,7 +67,7 @@ export interface StorageInfoDatabaseDTO {
 /**
  * Check if a given object implements the StorageInfoDatabaseDTO interface.
  */
-export function instanceOfStorageInfoDatabaseDTO(value: Record<string, any>): value is StorageInfoDatabaseDTO {
+export function instanceOfStorageInfoDatabaseDTO(value: object): value is StorageInfoDatabaseDTO {
     if (!('numIndexes' in value) || value['numIndexes'] === undefined) return false;
     if (!('numObjects' in value) || value['numObjects'] === undefined) return false;
     if (!('dataSize' in value) || value['dataSize'] === undefined) return false;

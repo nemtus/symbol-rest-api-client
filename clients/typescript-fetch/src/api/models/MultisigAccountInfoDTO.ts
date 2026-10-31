@@ -29,8 +29,6 @@ import {
 export interface MultisigAccountInfoDTO {
     /**
      * Full multisig state for the requested account.
-     * @type {MultisigDTO}
-     * @memberof MultisigAccountInfoDTO
      */
     multisig: MultisigDTO;
 }
@@ -38,7 +36,7 @@ export interface MultisigAccountInfoDTO {
 /**
  * Check if a given object implements the MultisigAccountInfoDTO interface.
  */
-export function instanceOfMultisigAccountInfoDTO(value: Record<string, any>): value is MultisigAccountInfoDTO {
+export function instanceOfMultisigAccountInfoDTO(value: object): value is MultisigAccountInfoDTO {
     if (!('multisig' in value) || value['multisig'] === undefined) return false;
     return true;
 }

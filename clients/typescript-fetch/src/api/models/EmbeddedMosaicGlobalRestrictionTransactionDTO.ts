@@ -35,27 +35,19 @@ import {
  */
 export interface EmbeddedMosaicGlobalRestrictionTransactionDTO {
     /**
-     * 256-bit public key encoded as a hexadecimal string (64 hex characters).
-     * @type {string}
-     * @memberof EmbeddedMosaicGlobalRestrictionTransactionDTO
+     * Public key of the account that signed the entity (e.g. block harvester, transaction signer).
      */
     signerPublicKey: string;
     /**
      * Entity version. Indicates the schema variant for serialization and validation.
-     * @type {number}
-     * @memberof EmbeddedMosaicGlobalRestrictionTransactionDTO
      */
     version: number;
     /**
      * Network type (mainnet or testnet). Ensures the entity targets the correct network.
-     * @type {NetworkTypeEnum}
-     * @memberof EmbeddedMosaicGlobalRestrictionTransactionDTO
      */
     network: NetworkTypeEnum;
     /**
      * Entity type identifier (e.g. transaction type code, block type). Determines the entity schema.
-     * @type {number}
-     * @memberof EmbeddedMosaicGlobalRestrictionTransactionDTO
      */
     type: number;
     /**
@@ -63,8 +55,6 @@ export interface EmbeddedMosaicGlobalRestrictionTransactionDTO {
      * If the most significant bit of byte 0 is set, the value contains a namespace ID alias
      * instead of a concrete mosaic ID.
      * 
-     * @type {string}
-     * @memberof EmbeddedMosaicGlobalRestrictionTransactionDTO
      */
     mosaicId: string;
     /**
@@ -72,14 +62,10 @@ export interface EmbeddedMosaicGlobalRestrictionTransactionDTO {
      * If the most significant bit of byte 0 is set, the value contains a namespace ID alias
      * instead of a concrete mosaic ID.
      * 
-     * @type {string}
-     * @memberof EmbeddedMosaicGlobalRestrictionTransactionDTO
      */
     referenceMosaicId: string;
     /**
      * Restriction key represented as a 64-bit hexadecimal value.
-     * @type {string}
-     * @memberof EmbeddedMosaicGlobalRestrictionTransactionDTO
      */
     restrictionKey: string;
     /**
@@ -87,8 +73,6 @@ export interface EmbeddedMosaicGlobalRestrictionTransactionDTO {
      * For address restrictions, it is the value assigned to the target address;
      * for global restrictions, it is the threshold evaluated with the restriction type.
      * 
-     * @type {string}
-     * @memberof EmbeddedMosaicGlobalRestrictionTransactionDTO
      */
     previousRestrictionValue: string;
     /**
@@ -96,20 +80,14 @@ export interface EmbeddedMosaicGlobalRestrictionTransactionDTO {
      * For address restrictions, it is the value assigned to the target address;
      * for global restrictions, it is the threshold evaluated with the restriction type.
      * 
-     * @type {string}
-     * @memberof EmbeddedMosaicGlobalRestrictionTransactionDTO
      */
     newRestrictionValue: string;
     /**
      * 
-     * @type {MosaicRestrictionTypeEnum}
-     * @memberof EmbeddedMosaicGlobalRestrictionTransactionDTO
      */
     previousRestrictionType: MosaicRestrictionTypeEnum;
     /**
      * 
-     * @type {MosaicRestrictionTypeEnum}
-     * @memberof EmbeddedMosaicGlobalRestrictionTransactionDTO
      */
     newRestrictionType: MosaicRestrictionTypeEnum;
 }
@@ -119,7 +97,7 @@ export interface EmbeddedMosaicGlobalRestrictionTransactionDTO {
 /**
  * Check if a given object implements the EmbeddedMosaicGlobalRestrictionTransactionDTO interface.
  */
-export function instanceOfEmbeddedMosaicGlobalRestrictionTransactionDTO(value: Record<string, any>): value is EmbeddedMosaicGlobalRestrictionTransactionDTO {
+export function instanceOfEmbeddedMosaicGlobalRestrictionTransactionDTO(value: object): value is EmbeddedMosaicGlobalRestrictionTransactionDTO {
     if (!('signerPublicKey' in value) || value['signerPublicKey'] === undefined) return false;
     if (!('version' in value) || value['version'] === undefined) return false;
     if (!('network' in value) || value['network'] === undefined) return false;

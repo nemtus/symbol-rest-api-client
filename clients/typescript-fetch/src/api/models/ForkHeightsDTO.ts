@@ -27,16 +27,12 @@ export interface ForkHeightsDTO {
      * active voting keys registered for the current finalization epoch.
      * More: https://hackmd.io/@syndicate/postmortem-140921.
      * 
-     * @type {string}
-     * @memberof ForkHeightsDTO
      */
     totalVotingBalanceCalculationFix?: string;
     /**
      * The block height of the Cyprus hard fork that implemented treasury reissuance according to the governance decision.
      * More: https://hackmd.io/@syndicate/governance.
      * 
-     * @type {string}
-     * @memberof ForkHeightsDTO
      */
     treasuryReissuance?: string;
     /**
@@ -45,8 +41,6 @@ export interface ForkHeightsDTO {
      * Merkle tree algorithm; legacy/buggy hash formats are rejected.
      * More: https://hackmd.io/@syndicate/postmortem-251022.
      * 
-     * @type {string}
-     * @memberof ForkHeightsDTO
      */
     strictAggregateTransactionHash?: string;
     /**
@@ -54,8 +48,6 @@ export interface ForkHeightsDTO {
      * during synchronization to reproduce historical (incorrect) chain behavior.
      * More: https://thesymbolsyndicate.notion.site/april-2024-secret-locks-e3afb825d2ac4a029f88f74dfe6f02d8?pvs=74.
      * 
-     * @type {string}
-     * @memberof ForkHeightsDTO
      */
     skipSecretLockUniquenessChecks?: string;
     /**
@@ -63,8 +55,6 @@ export interface ForkHeightsDTO {
      * be skipped during synchronization to reproduce historical (incorrect) chain behavior.
      * More: https://thesymbolsyndicate.notion.site/april-2024-secret-locks-e3afb825d2ac4a029f88f74dfe6f02d8?pvs=74.
      * 
-     * @type {string}
-     * @memberof ForkHeightsDTO
      */
     skipSecretLockExpirations?: string;
     /**
@@ -72,8 +62,6 @@ export interface ForkHeightsDTO {
      * be forcibly executed during synchronization to reproduce historical (incorrect) chain behavior.
      * More: https://thesymbolsyndicate.notion.site/april-2024-secret-locks-e3afb825d2ac4a029f88f74dfe6f02d8?pvs=74.
      * 
-     * @type {string}
-     * @memberof ForkHeightsDTO
      */
     forceSecretLockExpirations?: string;
     /**
@@ -81,8 +69,6 @@ export interface ForkHeightsDTO {
      * in the aggregate transaction hash calculation, ensuring unique transaction hashes.
      * More: https://thesymbolsyndicate.notion.site/post-mortem-october-25.
      * 
-     * @type {string}
-     * @memberof ForkHeightsDTO
      */
     uniqueAggregateTransactionHash?: string;
 }
@@ -90,7 +76,7 @@ export interface ForkHeightsDTO {
 /**
  * Check if a given object implements the ForkHeightsDTO interface.
  */
-export function instanceOfForkHeightsDTO(value: Record<string, any>): value is ForkHeightsDTO {
+export function instanceOfForkHeightsDTO(value: object): value is ForkHeightsDTO {
     return true;
 }
 

@@ -37,14 +37,12 @@ of CI. See "Security: axios floor & monitoring" below.
    spec. Pinning is now ordinary npm dependency pinning — the package version replaces `SPEC_VERSION` and the
    `package-lock.json` integrity hash replaces `SPEC_SHA256` (verified by `npm ci`). It is a `devDependency`
    (generation-time only) and never ships to consumers.
-2. **OpenAPI Generator** - Uses the typescript-axios generator. `openapi-generator-config.yml` sets
-   `useSingleRequestParameter: true` and `templateDir: ./custom-templates`, which holds exactly **one**
-   override: `common.mustache`. `templateDir` falls back to the generator's built-in resources for every
-   template it does not contain, so adding that one file changes only `src/api/common.ts` (verified: a
-   regeneration diff of 2 lines). The override is a verbatim v7.14.0 copy carrying one backported v7.26.0
-   fix — an explicit `: Promise<R>` return annotation on `createRequestFunction`, without which
-   `type:check` fails with TS2527 against axios >= 1.19.0. The template header documents the mechanism and
-   says to delete it once `openapi:set:version` reaches >= 7.26.0.
+2. **OpenAPI Generator** - Uses the typescript-axios generator at **7.26.0**, with **no custom templates**:
+   `openapi-generator-config.yml` sets only `useSingleRequestParameter: true`. 7.26.0 ships the explicit
+   `: Promise<R>` return annotation on `createRequestFunction` that axios >= 1.19.0 needs (without it
+   `type:check` fails with TS2527), so the short-lived `custom-templates/common.mustache` backport that
+   carried it on 7.14.0 is gone. Keep it that way: a `templateDir` override freezes that template at the
+   generator version it was copied from and silently withholds every later upstream fix to it.
 3. **Generated API code** (`src/api/`) - Auto-generated, DO NOT edit manually.
 4. **Build outputs** (`dist/`) - Contains CJS, ESM, and CDN bundles. The CDN bundle is self-contained: webpack
    bundles axios into `index.min.js`.
@@ -54,8 +52,6 @@ of CI. See "Security: axios floor & monitoring" below.
 - **Runtime base** (`src/api/base.ts`, `common.ts`, `configuration.ts`) - `BaseAPI`, `Configuration`, the
   request builder, and `RequiredError`. The barrel (`src/api/index.ts`) re-exports `./api` + `./configuration`
   (the low-level `base.ts` internals are intentionally not re-exported).
-- **Custom Templates** (`custom-templates/`) - A single `common.mustache` override; see the pipeline note
-  above before touching or removing it.
 - **Test Suites** (`tests/`) - Separate npm projects for Node.js JavaScript, TypeScript, and browser CDN.
 
 ## Development Commands
@@ -64,7 +60,7 @@ of CI. See "Security: axios floor & monitoring" below.
 ```bash
 # Generate API client code (run in root directory)
 npm ci                        # Installs @nemtus/symbol-openapi (the spec) + tooling
-npm run openapi:set:version   # Set OpenAPI generator version to 7.14.0
+npm run openapi:set:version   # Set OpenAPI generator version to 7.26.0
 npm run openapi:generate      # Generate TypeScript code from @nemtus/symbol-openapi's openapi3.yml
 npm run build                 # Build CJS, ESM, and CDN bundles
 ```
@@ -160,7 +156,7 @@ Both workflows:
   the resolved axios version; no such assertion exists in `src/**.spec.ts` — do not rely on it.)
 - **Never cap axios to dodge a type error.** `>=1.17.0 <1.19.0` was added in 2026-08 to work around TS2527
   from axios 1.19.0's non-exported `unique symbol`; by 2026-10 that cap was the only thing blocking all
-  twelve advisories above. The fix belongs in `custom-templates/common.mustache` (see below), not in the
+  twelve advisories above. The fix belonged in the generator template (it is in stock 7.26.0), not in the
   dependency range.
 - **On every spec/dependency change, re-verify**: `npm audit` (optionally `--omit=dev` just to read the
   prod-only subset locally), the GitHub Advisory Database for `axios` / `form-data` / `follow-redirects`, and

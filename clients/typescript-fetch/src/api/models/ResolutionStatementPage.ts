@@ -36,14 +36,10 @@ import {
 export interface ResolutionStatementPage {
     /**
      * Resolution statements matching the requested filters.
-     * @type {Array<ResolutionStatementInfoDTO>}
-     * @memberof ResolutionStatementPage
      */
     data: Array<ResolutionStatementInfoDTO>;
     /**
      * 
-     * @type {Pagination}
-     * @memberof ResolutionStatementPage
      */
     pagination: Pagination;
 }
@@ -51,7 +47,7 @@ export interface ResolutionStatementPage {
 /**
  * Check if a given object implements the ResolutionStatementPage interface.
  */
-export function instanceOfResolutionStatementPage(value: Record<string, any>): value is ResolutionStatementPage {
+export function instanceOfResolutionStatementPage(value: object): value is ResolutionStatementPage {
     if (!('data' in value) || value['data'] === undefined) return false;
     if (!('pagination' in value) || value['pagination'] === undefined) return false;
     return true;

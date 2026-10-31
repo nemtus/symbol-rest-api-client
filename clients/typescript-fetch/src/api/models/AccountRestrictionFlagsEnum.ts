@@ -43,7 +43,7 @@ export const AccountRestrictionFlagsEnum = {
     NUMBER_32769: 32769,
     NUMBER_32770: 32770,
     NUMBER_49153: 49153,
-    NUMBER_49156: 49156
+    NUMBER_49156: 49156,
 } as const;
 export type AccountRestrictionFlagsEnum = typeof AccountRestrictionFlagsEnum[keyof typeof AccountRestrictionFlagsEnum];
 

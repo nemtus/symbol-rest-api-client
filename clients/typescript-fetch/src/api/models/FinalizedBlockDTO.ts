@@ -26,30 +26,22 @@ export interface FinalizedBlockDTO {
      * integer. Each epoch groups a set of blocks for finalization voting; the interval is defined
      * by the `votingSetGrouping` network property (e.g. 1440 blocks, ~12h on mainnet).
      * 
-     * @type {number}
-     * @memberof FinalizedBlockDTO
      */
     finalizationEpoch: number;
     /**
      * Finalization point within an epoch. Each [epoch](https://docs.symbol.dev/concepts/block.html#finalization)
      * is divided into multiple points; blocks are finalized at specific points.
      * 
-     * @type {number}
-     * @memberof FinalizedBlockDTO
      */
     finalizationPoint: number;
     /**
      * Height of a block in the blockchain. Starts at 1 and increments by one per block.
      * Represented as a string to preserve precision, since the value is an unsigned 64-bit integer.
      * 
-     * @type {string}
-     * @memberof FinalizedBlockDTO
      */
     height: string;
     /**
      * 256-bit hash encoded as a 64-character hexadecimal string.
-     * @type {string}
-     * @memberof FinalizedBlockDTO
      */
     hash: string;
 }
@@ -57,7 +49,7 @@ export interface FinalizedBlockDTO {
 /**
  * Check if a given object implements the FinalizedBlockDTO interface.
  */
-export function instanceOfFinalizedBlockDTO(value: Record<string, any>): value is FinalizedBlockDTO {
+export function instanceOfFinalizedBlockDTO(value: object): value is FinalizedBlockDTO {
     if (!('finalizationEpoch' in value) || value['finalizationEpoch'] === undefined) return false;
     if (!('finalizationPoint' in value) || value['finalizationPoint'] === undefined) return false;
     if (!('height' in value) || value['height'] === undefined) return false;

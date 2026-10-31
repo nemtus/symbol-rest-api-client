@@ -29,14 +29,10 @@ import {
 export interface VrfKeyLinkTransactionBodyDTO {
     /**
      * 256-bit public key encoded as a hexadecimal string (64 hex characters).
-     * @type {string}
-     * @memberof VrfKeyLinkTransactionBodyDTO
      */
     linkedPublicKey: string;
     /**
      * 
-     * @type {LinkActionEnum}
-     * @memberof VrfKeyLinkTransactionBodyDTO
      */
     linkAction: LinkActionEnum;
 }
@@ -46,7 +42,7 @@ export interface VrfKeyLinkTransactionBodyDTO {
 /**
  * Check if a given object implements the VrfKeyLinkTransactionBodyDTO interface.
  */
-export function instanceOfVrfKeyLinkTransactionBodyDTO(value: Record<string, any>): value is VrfKeyLinkTransactionBodyDTO {
+export function instanceOfVrfKeyLinkTransactionBodyDTO(value: object): value is VrfKeyLinkTransactionBodyDTO {
     if (!('linkedPublicKey' in value) || value['linkedPublicKey'] === undefined) return false;
     if (!('linkAction' in value) || value['linkAction'] === undefined) return false;
     return true;

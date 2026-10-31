@@ -12,48 +12,115 @@
  * Do not edit the class manually.
  */
 
-
 import * as runtime from '../runtime';
-import type {
-  AccountRestrictionsInfoDTO,
-  AccountRestrictionsPage,
-  Addresses,
-  MerkleStateInfoDTO,
-  ModelError,
-  Order,
-} from '../models/index';
 import {
+    type AccountRestrictionsInfoDTO,
     AccountRestrictionsInfoDTOFromJSON,
     AccountRestrictionsInfoDTOToJSON,
+} from '../models/AccountRestrictionsInfoDTO';
+import {
+    type AccountRestrictionsPage,
     AccountRestrictionsPageFromJSON,
     AccountRestrictionsPageToJSON,
+} from '../models/AccountRestrictionsPage';
+import {
+    type Addresses,
     AddressesFromJSON,
     AddressesToJSON,
+} from '../models/Addresses';
+import {
+    type MerkleStateInfoDTO,
     MerkleStateInfoDTOFromJSON,
     MerkleStateInfoDTOToJSON,
+} from '../models/MerkleStateInfoDTO';
+import {
+    type ModelError,
     ModelErrorFromJSON,
     ModelErrorToJSON,
+} from '../models/ModelError';
+import {
+    type Order,
     OrderFromJSON,
     OrderToJSON,
-} from '../models/index';
+} from '../models/Order';
 
 export interface GetAccountRestrictionsRequest {
+    /**
+     * Account address in Base32-encoded format.
+     */
     address: string;
 }
 
 export interface GetAccountRestrictionsBatchRequest {
+    /**
+     * 
+     */
     addresses: Addresses;
 }
 
 export interface GetAccountRestrictionsMerkleRequest {
+    /**
+     * Account address in Base32-encoded format.
+     */
     address: string;
 }
 
 export interface SearchAccountRestrictionsRequest {
+    /**
+     * Filter by address (include), in Base32 format.
+     * 
+     * The exact meaning depends on the endpoint:
+     * - transaction search: returns transactions where the address appears as the sender, recipient, or cosigner
+     * - account search: matches the account address
+     * - account restriction search: matches the restricted account address
+     * - hash lock and secret lock search: matches the lock owner address
+     * 
+     * On transaction search endpoints, this filter cannot be combined with `recipientAddress` and
+     * `signerPublicKey`.
+     * 
+     */
     address?: string;
+    /**
+     * Select the number of entries to return per page.
+     * Values outside the allowed range are clamped to the schema minimum or maximum.
+     * 
+     */
     pageSize?: number;
+    /**
+     * Page number for numbered pagination (1-based).
+     * 
+     * Numbered and cursor pagination can be combined, but this is not recommended because the semantics
+     * are harder to reason about. For cursor-style flows, keep `pageNumber=1` and advance pages by
+     * updating only `offset`. For numbered pagination flows, omit `offset` and advance pages by
+     * incrementing `pageNumber`.
+     * 
+     */
     pageNumber?: number;
+    /**
+     * Cursor for pagination. Provide the value of the sort field (`orderBy`) from the
+     * last entry of the previous page. **The offset type must match `orderBy`:**
+     * - `orderBy=id`: use the entry's `id` (ObjectId, 24-char hex).
+     * - `orderBy=height`: use the block height (string, e.g. `"17592"`).
+     * - `orderBy=balance`: use the mosaic balance amount (string, e.g. `"1000000"`).
+     * 
+     * Allowed `orderBy` values depend on the endpoint. If `orderBy` is omitted, `id` is used by default.
+     * 
+     * Set `offset` to the sort-field value of the last entry from the previous page. Across pages,
+     * this value decreases with `order=desc` and increases with `order=asc`.
+     * 
+     * Numbered and cursor pagination can be combined, but this is not recommended because the semantics
+     * are harder to reason about. For cursor-style flows, keep `pageNumber=1` and advance pages by
+     * updating only `offset`. For numbered pagination flows, omit `offset` and advance pages by
+     * incrementing `pageNumber`.
+     * 
+     */
     offset?: string;
+    /**
+     * Sort responses in ascending or descending order based on the collection property set on the param `orderBy`.
+     * If the request does not specify `orderBy`, REST returns the collection ordered by id.
+     * The default sort direction depends on the endpoint implementation.
+     * 
+     */
     order?: Order;
 }
 
@@ -63,10 +130,9 @@ export interface SearchAccountRestrictionsRequest {
 export class RestrictionAccountRoutesApi extends runtime.BaseAPI {
 
     /**
-     * Returns the account restriction entry associated with the given account address.
-     * Get account restrictions
+     * Creates request options for getAccountRestrictions without sending the request
      */
-    async getAccountRestrictionsRaw(requestParameters: GetAccountRestrictionsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<AccountRestrictionsInfoDTO>> {
+    async getAccountRestrictionsRequestOpts(requestParameters: GetAccountRestrictionsRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['address'] == null) {
             throw new runtime.RequiredError(
                 'address',
@@ -80,14 +146,23 @@ export class RestrictionAccountRoutesApi extends runtime.BaseAPI {
 
 
         let urlPath = `/restrictions/account/{address}`;
-        urlPath = urlPath.replace(`{${"address"}}`, encodeURIComponent(String(requestParameters['address'])));
+        urlPath = urlPath.replace('{address}', encodeURIComponent(String(requestParameters['address'])));
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Returns the account restriction entry associated with the given account address.
+     * Get account restrictions
+     */
+    async getAccountRestrictionsRaw(requestParameters: GetAccountRestrictionsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<AccountRestrictionsInfoDTO>> {
+        const requestOptions = await this.getAccountRestrictionsRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => AccountRestrictionsInfoDTOFromJSON(jsonValue));
     }
@@ -102,10 +177,9 @@ export class RestrictionAccountRoutesApi extends runtime.BaseAPI {
     }
 
     /**
-     * Returns account restriction entries for the given account addresses.
-     * Get account restrictions for an array of addresses
+     * Creates request options for getAccountRestrictionsBatch without sending the request
      */
-    async getAccountRestrictionsBatchRaw(requestParameters: GetAccountRestrictionsBatchRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<AccountRestrictionsInfoDTO>>> {
+    async getAccountRestrictionsBatchRequestOpts(requestParameters: GetAccountRestrictionsBatchRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['addresses'] == null) {
             throw new runtime.RequiredError(
                 'addresses',
@@ -122,13 +196,22 @@ export class RestrictionAccountRoutesApi extends runtime.BaseAPI {
 
         let urlPath = `/restrictions/account`;
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
             body: AddressesToJSON(requestParameters['addresses']),
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Returns account restriction entries for the given account addresses.
+     * Get account restrictions for an array of addresses
+     */
+    async getAccountRestrictionsBatchRaw(requestParameters: GetAccountRestrictionsBatchRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<AccountRestrictionsInfoDTO>>> {
+        const requestOptions = await this.getAccountRestrictionsBatchRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(AccountRestrictionsInfoDTOFromJSON));
     }
@@ -143,10 +226,9 @@ export class RestrictionAccountRoutesApi extends runtime.BaseAPI {
     }
 
     /**
-     * Returns the Merkle state proof for the account restriction entry associated with the given account address. If no account restriction entry exists for the supplied address, the endpoint still returns a Merkle proof response, but it is a negative proof showing that no account restriction state entry exists for the requested address. 
-     * Get account restrictions Merkle information
+     * Creates request options for getAccountRestrictionsMerkle without sending the request
      */
-    async getAccountRestrictionsMerkleRaw(requestParameters: GetAccountRestrictionsMerkleRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<MerkleStateInfoDTO>> {
+    async getAccountRestrictionsMerkleRequestOpts(requestParameters: GetAccountRestrictionsMerkleRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['address'] == null) {
             throw new runtime.RequiredError(
                 'address',
@@ -160,14 +242,23 @@ export class RestrictionAccountRoutesApi extends runtime.BaseAPI {
 
 
         let urlPath = `/restrictions/account/{address}/merkle`;
-        urlPath = urlPath.replace(`{${"address"}}`, encodeURIComponent(String(requestParameters['address'])));
+        urlPath = urlPath.replace('{address}', encodeURIComponent(String(requestParameters['address'])));
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Returns the Merkle state proof for the account restriction entry associated with the given account address. If no account restriction entry exists for the supplied address, the endpoint still returns a Merkle proof response, but it is a negative proof showing that no account restriction state entry exists for the requested address. 
+     * Get account restrictions Merkle information
+     */
+    async getAccountRestrictionsMerkleRaw(requestParameters: GetAccountRestrictionsMerkleRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<MerkleStateInfoDTO>> {
+        const requestOptions = await this.getAccountRestrictionsMerkleRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => MerkleStateInfoDTOFromJSON(jsonValue));
     }
@@ -182,10 +273,9 @@ export class RestrictionAccountRoutesApi extends runtime.BaseAPI {
     }
 
     /**
-     * Returns a paginated list of account restriction entries, optionally filtered by account address.
-     * Search account restrictions
+     * Creates request options for searchAccountRestrictions without sending the request
      */
-    async searchAccountRestrictionsRaw(requestParameters: SearchAccountRestrictionsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<AccountRestrictionsPage>> {
+    async searchAccountRestrictionsRequestOpts(requestParameters: SearchAccountRestrictionsRequest): Promise<runtime.RequestOpts> {
         const queryParameters: any = {};
 
         if (requestParameters['address'] != null) {
@@ -213,12 +303,21 @@ export class RestrictionAccountRoutesApi extends runtime.BaseAPI {
 
         let urlPath = `/restrictions/account`;
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Returns a paginated list of account restriction entries, optionally filtered by account address.
+     * Search account restrictions
+     */
+    async searchAccountRestrictionsRaw(requestParameters: SearchAccountRestrictionsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<AccountRestrictionsPage>> {
+        const requestOptions = await this.searchAccountRestrictionsRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => AccountRestrictionsPageFromJSON(jsonValue));
     }
