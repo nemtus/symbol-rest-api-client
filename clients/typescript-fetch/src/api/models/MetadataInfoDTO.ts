@@ -31,14 +31,10 @@ export interface MetadataInfoDTO {
      * Unique identifier of the object in the node's database (MongoDB ObjectId).
      * Used as the `offset` parameter value for cursor-based pagination.
      * 
-     * @type {string}
-     * @memberof MetadataInfoDTO
      */
     id: string;
     /**
      * 
-     * @type {MetadataEntryDTO}
-     * @memberof MetadataInfoDTO
      */
     metadataEntry: MetadataEntryDTO;
 }
@@ -46,7 +42,7 @@ export interface MetadataInfoDTO {
 /**
  * Check if a given object implements the MetadataInfoDTO interface.
  */
-export function instanceOfMetadataInfoDTO(value: Record<string, any>): value is MetadataInfoDTO {
+export function instanceOfMetadataInfoDTO(value: object): value is MetadataInfoDTO {
     if (!('id' in value) || value['id'] === undefined) return false;
     if (!('metadataEntry' in value) || value['metadataEntry'] === undefined) return false;
     return true;

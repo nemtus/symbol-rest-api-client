@@ -12,53 +12,134 @@
  * Do not edit the class manually.
  */
 
-
 import * as runtime from '../runtime';
-import type {
-  AccountIds,
-  AccountInfoDTO,
-  AccountOrderByEnum,
-  AccountPage,
-  MerkleStateInfoDTO,
-  ModelError,
-  Order,
-} from '../models/index';
 import {
+    type AccountIds,
     AccountIdsFromJSON,
     AccountIdsToJSON,
+} from '../models/AccountIds';
+import {
+    type AccountInfoDTO,
     AccountInfoDTOFromJSON,
     AccountInfoDTOToJSON,
+} from '../models/AccountInfoDTO';
+import {
+    type AccountOrderByEnum,
     AccountOrderByEnumFromJSON,
     AccountOrderByEnumToJSON,
+} from '../models/AccountOrderByEnum';
+import {
+    type AccountPage,
     AccountPageFromJSON,
     AccountPageToJSON,
+} from '../models/AccountPage';
+import {
+    type MerkleStateInfoDTO,
     MerkleStateInfoDTOFromJSON,
     MerkleStateInfoDTOToJSON,
+} from '../models/MerkleStateInfoDTO';
+import {
+    type ModelError,
     ModelErrorFromJSON,
     ModelErrorToJSON,
+} from '../models/ModelError';
+import {
+    type Order,
     OrderFromJSON,
     OrderToJSON,
-} from '../models/index';
+} from '../models/Order';
 
 export interface GetAccountInfoRequest {
+    /**
+     * Account public key as 64 hexadecimal characters, or account address as 39 Base32
+     * (network prefix `T` for testnet, `N` for mainnet).
+     * 
+     */
     accountId: string;
 }
 
 export interface GetAccountInfoMerkleRequest {
+    /**
+     * Account public key as 64 hexadecimal characters, or account address as 39 Base32
+     * (network prefix `T` for testnet, `N` for mainnet).
+     * 
+     */
     accountId: string;
 }
 
 export interface GetAccountsInfoRequest {
+    /**
+     * 
+     */
     accountIds?: AccountIds;
 }
 
 export interface SearchAccountsRequest {
+    /**
+     * Filter by address (include), in Base32 format.
+     * 
+     * The exact meaning depends on the endpoint:
+     * - transaction search: returns transactions where the address appears as the sender, recipient, or cosigner
+     * - account search: matches the account address
+     * - account restriction search: matches the restricted account address
+     * - hash lock and secret lock search: matches the lock owner address
+     * 
+     * On transaction search endpoints, this filter cannot be combined with `recipientAddress` and
+     * `signerPublicKey`.
+     * 
+     */
     address?: string;
+    /**
+     * Select the number of entries to return per page.
+     * Values outside the allowed range are clamped to the schema minimum or maximum.
+     * 
+     */
     pageSize?: number;
+    /**
+     * Page number for numbered pagination (1-based).
+     * 
+     * Numbered and cursor pagination can be combined, but this is not recommended because the semantics
+     * are harder to reason about. For cursor-style flows, keep `pageNumber=1` and advance pages by
+     * updating only `offset`. For numbered pagination flows, omit `offset` and advance pages by
+     * incrementing `pageNumber`.
+     * 
+     */
     pageNumber?: number;
+    /**
+     * Cursor for pagination. Provide the value of the sort field (`orderBy`) from the
+     * last entry of the previous page. **The offset type must match `orderBy`:**
+     * - `orderBy=id`: use the entry's `id` (ObjectId, 24-char hex).
+     * - `orderBy=height`: use the block height (string, e.g. `"17592"`).
+     * - `orderBy=balance`: use the mosaic balance amount (string, e.g. `"1000000"`).
+     * 
+     * Allowed `orderBy` values depend on the endpoint. If `orderBy` is omitted, `id` is used by default.
+     * 
+     * Set `offset` to the sort-field value of the last entry from the previous page. Across pages,
+     * this value decreases with `order=desc` and increases with `order=asc`.
+     * 
+     * Numbered and cursor pagination can be combined, but this is not recommended because the semantics
+     * are harder to reason about. For cursor-style flows, keep `pageNumber=1` and advance pages by
+     * updating only `offset`. For numbered pagination flows, omit `offset` and advance pages by
+     * incrementing `pageNumber`.
+     * 
+     */
     offset?: string;
+    /**
+     * Sort responses in ascending or descending order based on the collection property set on the param `orderBy`.
+     * If the request does not specify `orderBy`, REST returns the collection ordered by id.
+     * The default sort direction depends on the endpoint implementation.
+     * 
+     */
     order?: Order;
+    /**
+     * Sort responses by the property set.
+     * If `balance` option is selected, the request must define the `mosaicId` filter.
+     * 
+     */
     orderBy?: AccountOrderByEnum;
+    /**
+     * Filter by mosaic identifier (include).
+     */
     mosaicId?: string;
 }
 
@@ -68,10 +149,9 @@ export interface SearchAccountsRequest {
 export class AccountRoutesApi extends runtime.BaseAPI {
 
     /**
-     * Retrieves account data for a given account identifier. The response contains the account state including balance, importance, public key, linked keys, and activity buckets.  The `accountId` path parameter accepts either a public key or a Base32-encoded address. 
-     * Get account information
+     * Creates request options for getAccountInfo without sending the request
      */
-    async getAccountInfoRaw(requestParameters: GetAccountInfoRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<AccountInfoDTO>> {
+    async getAccountInfoRequestOpts(requestParameters: GetAccountInfoRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['accountId'] == null) {
             throw new runtime.RequiredError(
                 'accountId',
@@ -85,14 +165,23 @@ export class AccountRoutesApi extends runtime.BaseAPI {
 
 
         let urlPath = `/accounts/{accountId}`;
-        urlPath = urlPath.replace(`{${"accountId"}}`, encodeURIComponent(String(requestParameters['accountId'])));
+        urlPath = urlPath.replace('{accountId}', encodeURIComponent(String(requestParameters['accountId'])));
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Retrieves account data for a given account identifier. The response contains the account state including balance, importance, public key, linked keys, and activity buckets.  The `accountId` path parameter accepts either a public key or a Base32-encoded address. 
+     * Get account information
+     */
+    async getAccountInfoRaw(requestParameters: GetAccountInfoRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<AccountInfoDTO>> {
+        const requestOptions = await this.getAccountInfoRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => AccountInfoDTOFromJSON(jsonValue));
     }
@@ -107,10 +196,9 @@ export class AccountRoutesApi extends runtime.BaseAPI {
     }
 
     /**
-     * Retrieves the Merkle proof data for a given account. The Merkle path can be used to independently verify that the account state is included in the block state hash.  If no account state entry exists for the supplied account ID, the endpoint still returns a Merkle proof response, but it is a negative proof showing that no account state entry exists for the requested account.  The `accountId` path parameter accepts either a public key or a Base32-encoded address. 
-     * Get account Merkle information
+     * Creates request options for getAccountInfoMerkle without sending the request
      */
-    async getAccountInfoMerkleRaw(requestParameters: GetAccountInfoMerkleRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<MerkleStateInfoDTO>> {
+    async getAccountInfoMerkleRequestOpts(requestParameters: GetAccountInfoMerkleRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['accountId'] == null) {
             throw new runtime.RequiredError(
                 'accountId',
@@ -124,14 +212,23 @@ export class AccountRoutesApi extends runtime.BaseAPI {
 
 
         let urlPath = `/accounts/{accountId}/merkle`;
-        urlPath = urlPath.replace(`{${"accountId"}}`, encodeURIComponent(String(requestParameters['accountId'])));
+        urlPath = urlPath.replace('{accountId}', encodeURIComponent(String(requestParameters['accountId'])));
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Retrieves the Merkle proof data for a given account. The Merkle path can be used to independently verify that the account state is included in the block state hash.  If no account state entry exists for the supplied account ID, the endpoint still returns a Merkle proof response, but it is a negative proof showing that no account state entry exists for the requested account.  The `accountId` path parameter accepts either a public key or a Base32-encoded address. 
+     * Get account Merkle information
+     */
+    async getAccountInfoMerkleRaw(requestParameters: GetAccountInfoMerkleRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<MerkleStateInfoDTO>> {
+        const requestOptions = await this.getAccountInfoMerkleRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => MerkleStateInfoDTOFromJSON(jsonValue));
     }
@@ -146,10 +243,9 @@ export class AccountRoutesApi extends runtime.BaseAPI {
     }
 
     /**
-     * Retrieves account data for multiple accounts in a single request. This is the batch equivalent of the single-account endpoint.  The request body accepts either an array of public keys or an array of addresses (not both). If both `publicKeys` and `addresses` are provided, the request is invalid and the server returns `409` error. 
-     * Get accounts information
+     * Creates request options for getAccountsInfo without sending the request
      */
-    async getAccountsInfoRaw(requestParameters: GetAccountsInfoRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<AccountInfoDTO>>> {
+    async getAccountsInfoRequestOpts(requestParameters: GetAccountsInfoRequest): Promise<runtime.RequestOpts> {
         const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -159,13 +255,22 @@ export class AccountRoutesApi extends runtime.BaseAPI {
 
         let urlPath = `/accounts`;
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
             body: AccountIdsToJSON(requestParameters['accountIds']),
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Retrieves account data for multiple accounts in a single request. This is the batch equivalent of the single-account endpoint.  The request body accepts either an array of public keys or an array of addresses (not both). If both `publicKeys` and `addresses` are provided, the request is invalid and the server returns `409` error. 
+     * Get accounts information
+     */
+    async getAccountsInfoRaw(requestParameters: GetAccountsInfoRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<AccountInfoDTO>>> {
+        const requestOptions = await this.getAccountsInfoRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(AccountInfoDTOFromJSON));
     }
@@ -180,10 +285,9 @@ export class AccountRoutesApi extends runtime.BaseAPI {
     }
 
     /**
-     * Returns a paginated list of accounts matching the given criteria.  Results can be filtered by `address` and `mosaicId` (mosaic ownership), and ordered by `id` or `balance`. Standard pagination parameters (`pageSize`, `pageNumber`, `offset`, `order`) apply. The `orderBy` parameter supports `id` and `balance`; when using `orderBy=balance`, the `mosaicId` filter is required. The `offset` value must match the `orderBy` field. 
-     * Search accounts
+     * Creates request options for searchAccounts without sending the request
      */
-    async searchAccountsRaw(requestParameters: SearchAccountsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<AccountPage>> {
+    async searchAccountsRequestOpts(requestParameters: SearchAccountsRequest): Promise<runtime.RequestOpts> {
         const queryParameters: any = {};
 
         if (requestParameters['address'] != null) {
@@ -219,12 +323,21 @@ export class AccountRoutesApi extends runtime.BaseAPI {
 
         let urlPath = `/accounts`;
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Returns a paginated list of accounts matching the given criteria.  Results can be filtered by `address` and `mosaicId` (mosaic ownership), and ordered by `id` or `balance`. Standard pagination parameters (`pageSize`, `pageNumber`, `offset`, `order`) apply. The `orderBy` parameter supports `id` and `balance`; when using `orderBy=balance`, the `mosaicId` filter is required. The `offset` value must match the `orderBy` field. 
+     * Search accounts
+     */
+    async searchAccountsRaw(requestParameters: SearchAccountsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<AccountPage>> {
+        const requestOptions = await this.searchAccountsRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => AccountPageFromJSON(jsonValue));
     }

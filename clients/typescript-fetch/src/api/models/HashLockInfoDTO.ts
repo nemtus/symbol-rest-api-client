@@ -31,14 +31,10 @@ export interface HashLockInfoDTO {
      * Unique identifier of the object in the node's database (MongoDB ObjectId).
      * Used as the `offset` parameter value for cursor-based pagination.
      * 
-     * @type {string}
-     * @memberof HashLockInfoDTO
      */
     id: string;
     /**
      * 
-     * @type {HashLockEntryDTO}
-     * @memberof HashLockInfoDTO
      */
     lock: HashLockEntryDTO;
 }
@@ -46,7 +42,7 @@ export interface HashLockInfoDTO {
 /**
  * Check if a given object implements the HashLockInfoDTO interface.
  */
-export function instanceOfHashLockInfoDTO(value: Record<string, any>): value is HashLockInfoDTO {
+export function instanceOfHashLockInfoDTO(value: object): value is HashLockInfoDTO {
     if (!('id' in value) || value['id'] === undefined) return false;
     if (!('lock' in value) || value['lock'] === undefined) return false;
     return true;

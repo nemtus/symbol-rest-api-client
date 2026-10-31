@@ -29,8 +29,6 @@ import {
 export interface MerkleProofInfoDTO {
     /**
      * List of complementary Merkle path items needed to recalculate the Merkle root.
-     * @type {Array<MerklePathItemDTO>}
-     * @memberof MerkleProofInfoDTO
      */
     merklePath?: Array<MerklePathItemDTO>;
 }
@@ -38,7 +36,7 @@ export interface MerkleProofInfoDTO {
 /**
  * Check if a given object implements the MerkleProofInfoDTO interface.
  */
-export function instanceOfMerkleProofInfoDTO(value: Record<string, any>): value is MerkleProofInfoDTO {
+export function instanceOfMerkleProofInfoDTO(value: object): value is MerkleProofInfoDTO {
     return true;
 }
 

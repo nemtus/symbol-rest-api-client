@@ -35,45 +35,31 @@ import {
  */
 export interface EmbeddedAccountAddressRestrictionTransactionDTO {
     /**
-     * 256-bit public key encoded as a hexadecimal string (64 hex characters).
-     * @type {string}
-     * @memberof EmbeddedAccountAddressRestrictionTransactionDTO
+     * Public key of the account that signed the entity (e.g. block harvester, transaction signer).
      */
     signerPublicKey: string;
     /**
      * Entity version. Indicates the schema variant for serialization and validation.
-     * @type {number}
-     * @memberof EmbeddedAccountAddressRestrictionTransactionDTO
      */
     version: number;
     /**
      * Network type (mainnet or testnet). Ensures the entity targets the correct network.
-     * @type {NetworkTypeEnum}
-     * @memberof EmbeddedAccountAddressRestrictionTransactionDTO
      */
     network: NetworkTypeEnum;
     /**
      * Entity type identifier (e.g. transaction type code, block type). Determines the entity schema.
-     * @type {number}
-     * @memberof EmbeddedAccountAddressRestrictionTransactionDTO
      */
     type: number;
     /**
      * 
-     * @type {AccountRestrictionFlagsEnum}
-     * @memberof EmbeddedAccountAddressRestrictionTransactionDTO
      */
     restrictionFlags: AccountRestrictionFlagsEnum;
     /**
      * Account restriction additions.
-     * @type {Array<string>}
-     * @memberof EmbeddedAccountAddressRestrictionTransactionDTO
      */
     restrictionAdditions: Array<string>;
     /**
      * Account restriction deletions.
-     * @type {Array<string>}
-     * @memberof EmbeddedAccountAddressRestrictionTransactionDTO
      */
     restrictionDeletions: Array<string>;
 }
@@ -83,7 +69,7 @@ export interface EmbeddedAccountAddressRestrictionTransactionDTO {
 /**
  * Check if a given object implements the EmbeddedAccountAddressRestrictionTransactionDTO interface.
  */
-export function instanceOfEmbeddedAccountAddressRestrictionTransactionDTO(value: Record<string, any>): value is EmbeddedAccountAddressRestrictionTransactionDTO {
+export function instanceOfEmbeddedAccountAddressRestrictionTransactionDTO(value: object): value is EmbeddedAccountAddressRestrictionTransactionDTO {
     if (!('signerPublicKey' in value) || value['signerPublicKey'] === undefined) return false;
     if (!('version' in value) || value['version'] === undefined) return false;
     if (!('network' in value) || value['network'] === undefined) return false;

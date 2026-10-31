@@ -21,84 +21,46 @@ import { mapValues } from '../runtime';
 export interface NamespaceNetworkPropertiesDTO {
     /**
      * Maximum namespace name size.
-     * @type {string}
-     * @memberof NamespaceNetworkPropertiesDTO
      */
     maxNameSize?: string;
     /**
      * Maximum number of children for a root namespace.
-     * @type {string}
-     * @memberof NamespaceNetworkPropertiesDTO
      */
     maxChildNamespaces?: string;
     /**
      * Maximum namespace depth.
-     * @type {string}
-     * @memberof NamespaceNetworkPropertiesDTO
      */
     maxNamespaceDepth?: string;
     /**
      * Minimum namespace duration.
-     * @type {string}
-     * @memberof NamespaceNetworkPropertiesDTO
      */
     minNamespaceDuration?: string;
     /**
      * Maximum namespace duration.
-     * @type {string}
-     * @memberof NamespaceNetworkPropertiesDTO
      */
     maxNamespaceDuration?: string;
     /**
      * Grace period during which time only the previous owner can renew an expired namespace.
-     * @type {string}
-     * @memberof NamespaceNetworkPropertiesDTO
      */
     namespaceGracePeriodDuration?: string;
     /**
      * Comma-separated list of reserved root namespace names that cannot be claimed.
-     * @type {string}
-     * @memberof NamespaceNetworkPropertiesDTO
      */
     reservedRootNamespaceNames?: string;
     /**
-     * Represents a unique account address in Base32 format. The first character indicates the network
-     * (`T` for testnet, `N` for mainnet). Addresses are 39 characters long, Base32-encoded,
-     * and include an embedded 3-byte checksum. The node validates this checksum, so an address
-     * with even a single altered character will be rejected.
-     * 
-     * @type {string}
-     * @memberof NamespaceNetworkPropertiesDTO
+     * Legacy (V1) address (in Base32 format) of the namespace rental fee sink. May be absent on newer networks.
      */
     namespaceRentalFeeSinkAddressV1?: string;
     /**
-     * Represents a unique account address in Base32 format. The first character indicates the network
-     * (`T` for testnet, `N` for mainnet). Addresses are 39 characters long, Base32-encoded,
-     * and include an embedded 3-byte checksum. The node validates this checksum, so an address
-     * with even a single altered character will be rejected.
-     * 
-     * @type {string}
-     * @memberof NamespaceNetworkPropertiesDTO
+     * Address of the namespace rental fee sink account.
      */
     namespaceRentalFeeSinkAddress?: string;
     /**
-     * Absolute amount expressed in the mosaic's smallest (atomic) unit, with no decimal point.
-     * For example, an amount of `123456789` for a mosaic with divisibility 6 represents
-     * `123.456789` whole units. Encoded as a string to preserve precision, since the value
-     * is an unsigned 64-bit integer.
-     * 
-     * @type {string}
-     * @memberof NamespaceNetworkPropertiesDTO
+     * Root namespace rental fee per block in atomic units.
      */
     rootNamespaceRentalFeePerBlock?: string;
     /**
-     * Absolute amount expressed in the mosaic's smallest (atomic) unit, with no decimal point.
-     * For example, an amount of `123456789` for a mosaic with divisibility 6 represents
-     * `123.456789` whole units. Encoded as a string to preserve precision, since the value
-     * is an unsigned 64-bit integer.
-     * 
-     * @type {string}
-     * @memberof NamespaceNetworkPropertiesDTO
+     * Child namespace rental fee in atomic units.
      */
     childNamespaceRentalFee?: string;
 }
@@ -106,7 +68,7 @@ export interface NamespaceNetworkPropertiesDTO {
 /**
  * Check if a given object implements the NamespaceNetworkPropertiesDTO interface.
  */
-export function instanceOfNamespaceNetworkPropertiesDTO(value: Record<string, any>): value is NamespaceNetworkPropertiesDTO {
+export function instanceOfNamespaceNetworkPropertiesDTO(value: object): value is NamespaceNetworkPropertiesDTO {
     return true;
 }
 

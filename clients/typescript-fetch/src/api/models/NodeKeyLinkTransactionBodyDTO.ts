@@ -29,14 +29,10 @@ import {
 export interface NodeKeyLinkTransactionBodyDTO {
     /**
      * 256-bit public key encoded as a hexadecimal string (64 hex characters).
-     * @type {string}
-     * @memberof NodeKeyLinkTransactionBodyDTO
      */
     linkedPublicKey: string;
     /**
      * 
-     * @type {LinkActionEnum}
-     * @memberof NodeKeyLinkTransactionBodyDTO
      */
     linkAction: LinkActionEnum;
 }
@@ -46,7 +42,7 @@ export interface NodeKeyLinkTransactionBodyDTO {
 /**
  * Check if a given object implements the NodeKeyLinkTransactionBodyDTO interface.
  */
-export function instanceOfNodeKeyLinkTransactionBodyDTO(value: Record<string, any>): value is NodeKeyLinkTransactionBodyDTO {
+export function instanceOfNodeKeyLinkTransactionBodyDTO(value: object): value is NodeKeyLinkTransactionBodyDTO {
     if (!('linkedPublicKey' in value) || value['linkedPublicKey'] === undefined) return false;
     if (!('linkAction' in value) || value['linkAction'] === undefined) return false;
     return true;

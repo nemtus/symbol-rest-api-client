@@ -31,20 +31,14 @@ import {
 export interface NodeInfoDTO {
     /**
      * Version of the application.
-     * @type {number}
-     * @memberof NodeInfoDTO
      */
     version: number;
     /**
      * 256-bit public key encoded as a hexadecimal string (64 hex characters).
-     * @type {string}
-     * @memberof NodeInfoDTO
      */
     publicKey: string;
     /**
      * 256-bit hash encoded as a 64-character hexadecimal string.
-     * @type {string}
-     * @memberof NodeInfoDTO
      */
     networkGenerationHashSeed: string;
     /**
@@ -64,38 +58,26 @@ export interface NodeInfoDTO {
      * - `7` = Peer, API and Voting.
      * - `65` = IPv4 and Peer.
      * 
-     * @type {number}
-     * @memberof NodeInfoDTO
      */
     roles: number;
     /**
      * Port used for the communication.
-     * @type {number}
-     * @memberof NodeInfoDTO
      */
     port: number;
     /**
      * 
-     * @type {NetworkTypeEnum}
-     * @memberof NodeInfoDTO
      */
     networkIdentifier: NetworkTypeEnum;
     /**
      * Node friendly name.
-     * @type {string}
-     * @memberof NodeInfoDTO
      */
     friendlyName: string;
     /**
      * Node IP address.
-     * @type {string}
-     * @memberof NodeInfoDTO
      */
     host: string;
     /**
      * 256-bit public key encoded as a hexadecimal string (64 hex characters).
-     * @type {string}
-     * @memberof NodeInfoDTO
      */
     nodePublicKey?: string;
 }
@@ -105,7 +87,7 @@ export interface NodeInfoDTO {
 /**
  * Check if a given object implements the NodeInfoDTO interface.
  */
-export function instanceOfNodeInfoDTO(value: Record<string, any>): value is NodeInfoDTO {
+export function instanceOfNodeInfoDTO(value: object): value is NodeInfoDTO {
     if (!('version' in value) || value['version'] === undefined) return false;
     if (!('publicKey' in value) || value['publicKey'] === undefined) return false;
     if (!('networkGenerationHashSeed' in value) || value['networkGenerationHashSeed'] === undefined) return false;

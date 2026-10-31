@@ -36,14 +36,10 @@ import {
 export interface ResolutionEntryDTO {
     /**
      * Transaction source for which the unresolved alias resolved to this value.
-     * @type {SourceDTO}
-     * @memberof ResolutionEntryDTO
      */
     source: SourceDTO;
     /**
      * 
-     * @type {ResolutionEntryDTOResolved}
-     * @memberof ResolutionEntryDTO
      */
     resolved: ResolutionEntryDTOResolved;
 }
@@ -51,7 +47,7 @@ export interface ResolutionEntryDTO {
 /**
  * Check if a given object implements the ResolutionEntryDTO interface.
  */
-export function instanceOfResolutionEntryDTO(value: Record<string, any>): value is ResolutionEntryDTO {
+export function instanceOfResolutionEntryDTO(value: object): value is ResolutionEntryDTO {
     if (!('source' in value) || value['source'] === undefined) return false;
     if (!('resolved' in value) || value['resolved'] === undefined) return false;
     return true;

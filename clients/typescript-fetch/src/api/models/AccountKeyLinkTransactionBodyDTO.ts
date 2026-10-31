@@ -29,14 +29,10 @@ import {
 export interface AccountKeyLinkTransactionBodyDTO {
     /**
      * 256-bit public key encoded as a hexadecimal string (64 hex characters).
-     * @type {string}
-     * @memberof AccountKeyLinkTransactionBodyDTO
      */
     linkedPublicKey: string;
     /**
      * 
-     * @type {LinkActionEnum}
-     * @memberof AccountKeyLinkTransactionBodyDTO
      */
     linkAction: LinkActionEnum;
 }
@@ -46,7 +42,7 @@ export interface AccountKeyLinkTransactionBodyDTO {
 /**
  * Check if a given object implements the AccountKeyLinkTransactionBodyDTO interface.
  */
-export function instanceOfAccountKeyLinkTransactionBodyDTO(value: Record<string, any>): value is AccountKeyLinkTransactionBodyDTO {
+export function instanceOfAccountKeyLinkTransactionBodyDTO(value: object): value is AccountKeyLinkTransactionBodyDTO {
     if (!('linkedPublicKey' in value) || value['linkedPublicKey'] === undefined) return false;
     if (!('linkAction' in value) || value['linkAction'] === undefined) return false;
     return true;

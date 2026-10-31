@@ -36,14 +36,10 @@ import {
 export interface MetadataPage {
     /**
      * Array of metadata entries.
-     * @type {Array<MetadataInfoDTO>}
-     * @memberof MetadataPage
      */
     data: Array<MetadataInfoDTO>;
     /**
      * 
-     * @type {Pagination}
-     * @memberof MetadataPage
      */
     pagination: Pagination;
 }
@@ -51,7 +47,7 @@ export interface MetadataPage {
 /**
  * Check if a given object implements the MetadataPage interface.
  */
-export function instanceOfMetadataPage(value: Record<string, any>): value is MetadataPage {
+export function instanceOfMetadataPage(value: object): value is MetadataPage {
     if (!('data' in value) || value['data'] === undefined) return false;
     if (!('pagination' in value) || value['pagination'] === undefined) return false;
     return true;

@@ -33,14 +33,10 @@ export interface MultisigAccountGraphInfoDTO {
      * account acts as a cosignatory, and positive levels are multisig relationships reached through
      * cosignatories.
      * 
-     * @type {number}
-     * @memberof MultisigAccountGraphInfoDTO
      */
     level: number;
     /**
      * Multisig state entries discovered at this graph level.
-     * @type {Array<MultisigAccountInfoDTO>}
-     * @memberof MultisigAccountGraphInfoDTO
      */
     multisigEntries: Array<MultisigAccountInfoDTO>;
 }
@@ -48,7 +44,7 @@ export interface MultisigAccountGraphInfoDTO {
 /**
  * Check if a given object implements the MultisigAccountGraphInfoDTO interface.
  */
-export function instanceOfMultisigAccountGraphInfoDTO(value: Record<string, any>): value is MultisigAccountGraphInfoDTO {
+export function instanceOfMultisigAccountGraphInfoDTO(value: object): value is MultisigAccountGraphInfoDTO {
     if (!('level' in value) || value['level'] === undefined) return false;
     if (!('multisigEntries' in value) || value['multisigEntries'] === undefined) return false;
     return true;

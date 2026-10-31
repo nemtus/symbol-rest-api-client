@@ -12,80 +12,173 @@
  * Do not edit the class manually.
  */
 
-
 import * as runtime from '../runtime';
-import type {
-  AccountsNamesDTO,
-  Addresses,
-  AliasTypeEnum,
-  MerkleStateInfoDTO,
-  ModelError,
-  MosaicIds,
-  MosaicsNamesDTO,
-  NamespaceIds,
-  NamespaceInfoDTO,
-  NamespaceNameDTO,
-  NamespacePage,
-  NamespaceRegistrationTypeEnum,
-  Order,
-} from '../models/index';
 import {
+    type AccountsNamesDTO,
     AccountsNamesDTOFromJSON,
     AccountsNamesDTOToJSON,
+} from '../models/AccountsNamesDTO';
+import {
+    type Addresses,
     AddressesFromJSON,
     AddressesToJSON,
+} from '../models/Addresses';
+import {
+    type AliasTypeEnum,
     AliasTypeEnumFromJSON,
     AliasTypeEnumToJSON,
+} from '../models/AliasTypeEnum';
+import {
+    type MerkleStateInfoDTO,
     MerkleStateInfoDTOFromJSON,
     MerkleStateInfoDTOToJSON,
+} from '../models/MerkleStateInfoDTO';
+import {
+    type ModelError,
     ModelErrorFromJSON,
     ModelErrorToJSON,
+} from '../models/ModelError';
+import {
+    type MosaicIds,
     MosaicIdsFromJSON,
     MosaicIdsToJSON,
+} from '../models/MosaicIds';
+import {
+    type MosaicsNamesDTO,
     MosaicsNamesDTOFromJSON,
     MosaicsNamesDTOToJSON,
+} from '../models/MosaicsNamesDTO';
+import {
+    type NamespaceIds,
     NamespaceIdsFromJSON,
     NamespaceIdsToJSON,
+} from '../models/NamespaceIds';
+import {
+    type NamespaceInfoDTO,
     NamespaceInfoDTOFromJSON,
     NamespaceInfoDTOToJSON,
+} from '../models/NamespaceInfoDTO';
+import {
+    type NamespaceNameDTO,
     NamespaceNameDTOFromJSON,
     NamespaceNameDTOToJSON,
+} from '../models/NamespaceNameDTO';
+import {
+    type NamespacePage,
     NamespacePageFromJSON,
     NamespacePageToJSON,
+} from '../models/NamespacePage';
+import {
+    type NamespaceRegistrationTypeEnum,
     NamespaceRegistrationTypeEnumFromJSON,
     NamespaceRegistrationTypeEnumToJSON,
+} from '../models/NamespaceRegistrationTypeEnum';
+import {
+    type Order,
     OrderFromJSON,
     OrderToJSON,
-} from '../models/index';
+} from '../models/Order';
 
 export interface GetAccountsNamesRequest {
+    /**
+     * 
+     */
     addresses: Addresses;
 }
 
 export interface GetMosaicsNamesRequest {
+    /**
+     * 
+     */
     mosaicIds: MosaicIds;
 }
 
 export interface GetNamespaceRequest {
+    /**
+     * Namespace identifier encoded as a 16-character hexadecimal string.
+     */
     namespaceId: string;
 }
 
 export interface GetNamespaceMerkleRequest {
+    /**
+     * Namespace identifier encoded as a 16-character hexadecimal string.
+     */
     namespaceId: string;
 }
 
 export interface GetNamespacesNamesRequest {
+    /**
+     * 
+     */
     namespaceIds: NamespaceIds;
 }
 
 export interface SearchNamespacesRequest {
+    /**
+     * Filter by owner address in Base32 format (include).
+     */
     ownerAddress?: string;
+    /**
+     * Filter by namespace registration type (include).
+     * - 0: Root namespace.
+     * - 1: Subnamespace.
+     * 
+     */
     registrationType?: NamespaceRegistrationTypeEnum;
+    /**
+     * Filter by the root namespace identifier (include).
+     */
     level0?: string;
+    /**
+     * Filter by alias type (include).
+     * - 0: Namespace has no alias.
+     * - 1: Namespace is linked to a mosaic ID.
+     * - 2: Namespace is linked to an address.
+     * 
+     */
     aliasType?: AliasTypeEnum;
+    /**
+     * Select the number of entries to return per page.
+     * Values outside the allowed range are clamped to the schema minimum or maximum.
+     * 
+     */
     pageSize?: number;
+    /**
+     * Page number for numbered pagination (1-based).
+     * 
+     * Numbered and cursor pagination can be combined, but this is not recommended because the semantics
+     * are harder to reason about. For cursor-style flows, keep `pageNumber=1` and advance pages by
+     * updating only `offset`. For numbered pagination flows, omit `offset` and advance pages by
+     * incrementing `pageNumber`.
+     * 
+     */
     pageNumber?: number;
+    /**
+     * Cursor for pagination. Provide the value of the sort field (`orderBy`) from the
+     * last entry of the previous page. **The offset type must match `orderBy`:**
+     * - `orderBy=id`: use the entry's `id` (ObjectId, 24-char hex).
+     * - `orderBy=height`: use the block height (string, e.g. `"17592"`).
+     * - `orderBy=balance`: use the mosaic balance amount (string, e.g. `"1000000"`).
+     * 
+     * Allowed `orderBy` values depend on the endpoint. If `orderBy` is omitted, `id` is used by default.
+     * 
+     * Set `offset` to the sort-field value of the last entry from the previous page. Across pages,
+     * this value decreases with `order=desc` and increases with `order=asc`.
+     * 
+     * Numbered and cursor pagination can be combined, but this is not recommended because the semantics
+     * are harder to reason about. For cursor-style flows, keep `pageNumber=1` and advance pages by
+     * updating only `offset`. For numbered pagination flows, omit `offset` and advance pages by
+     * incrementing `pageNumber`.
+     * 
+     */
     offset?: string;
+    /**
+     * Sort responses in ascending or descending order based on the collection property set on the param `orderBy`.
+     * If the request does not specify `orderBy`, REST returns the collection ordered by id.
+     * The default sort direction depends on the endpoint implementation.
+     * 
+     */
     order?: Order;
 }
 
@@ -95,10 +188,9 @@ export interface SearchNamespacesRequest {
 export class NamespaceRoutesApi extends runtime.BaseAPI {
 
     /**
-     * Resolves namespace names linked to account addresses.  Submit an array of addresses in the request body. For each address, the response returns the namespace names currently linked to that account. 
-     * Get readable names for a set of accounts
+     * Creates request options for getAccountsNames without sending the request
      */
-    async getAccountsNamesRaw(requestParameters: GetAccountsNamesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<AccountsNamesDTO>> {
+    async getAccountsNamesRequestOpts(requestParameters: GetAccountsNamesRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['addresses'] == null) {
             throw new runtime.RequiredError(
                 'addresses',
@@ -115,13 +207,22 @@ export class NamespaceRoutesApi extends runtime.BaseAPI {
 
         let urlPath = `/namespaces/account/names`;
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
             body: AddressesToJSON(requestParameters['addresses']),
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Resolves namespace names linked to account addresses.  Submit an array of addresses in the request body. For each address, the response returns the namespace names currently linked to that account. 
+     * Get readable names for a set of accounts
+     */
+    async getAccountsNamesRaw(requestParameters: GetAccountsNamesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<AccountsNamesDTO>> {
+        const requestOptions = await this.getAccountsNamesRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => AccountsNamesDTOFromJSON(jsonValue));
     }
@@ -136,10 +237,9 @@ export class NamespaceRoutesApi extends runtime.BaseAPI {
     }
 
     /**
-     * Resolves namespace names linked to mosaic identifiers.  Submit an array of mosaic identifiers in the request body. For each requested mosaic identifier, the response returns one entry in the same order as the request. Each entry contains the namespace names currently linked to that identifier. An empty `names` array means no namespace aliases were resolved for that identifier. 
-     * Get readable names for a set of mosaics
+     * Creates request options for getMosaicsNames without sending the request
      */
-    async getMosaicsNamesRaw(requestParameters: GetMosaicsNamesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<MosaicsNamesDTO>> {
+    async getMosaicsNamesRequestOpts(requestParameters: GetMosaicsNamesRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['mosaicIds'] == null) {
             throw new runtime.RequiredError(
                 'mosaicIds',
@@ -156,13 +256,22 @@ export class NamespaceRoutesApi extends runtime.BaseAPI {
 
         let urlPath = `/namespaces/mosaic/names`;
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
             body: MosaicIdsToJSON(requestParameters['mosaicIds']),
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Resolves namespace names linked to mosaic identifiers.  Submit an array of mosaic identifiers in the request body. For each requested mosaic identifier, the response returns one entry in the same order as the request. Each entry contains the namespace names currently linked to that identifier. An empty `names` array means no namespace aliases were resolved for that identifier. 
+     * Get readable names for a set of mosaics
+     */
+    async getMosaicsNamesRaw(requestParameters: GetMosaicsNamesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<MosaicsNamesDTO>> {
+        const requestOptions = await this.getMosaicsNamesRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => MosaicsNamesDTOFromJSON(jsonValue));
     }
@@ -177,10 +286,9 @@ export class NamespaceRoutesApi extends runtime.BaseAPI {
     }
 
     /**
-     * Retrieves the current on-chain state for a namespace.
-     * Get namespace information
+     * Creates request options for getNamespace without sending the request
      */
-    async getNamespaceRaw(requestParameters: GetNamespaceRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<NamespaceInfoDTO>> {
+    async getNamespaceRequestOpts(requestParameters: GetNamespaceRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['namespaceId'] == null) {
             throw new runtime.RequiredError(
                 'namespaceId',
@@ -194,14 +302,23 @@ export class NamespaceRoutesApi extends runtime.BaseAPI {
 
 
         let urlPath = `/namespaces/{namespaceId}`;
-        urlPath = urlPath.replace(`{${"namespaceId"}}`, encodeURIComponent(String(requestParameters['namespaceId'])));
+        urlPath = urlPath.replace('{namespaceId}', encodeURIComponent(String(requestParameters['namespaceId'])));
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Retrieves the current on-chain state for a namespace.
+     * Get namespace information
+     */
+    async getNamespaceRaw(requestParameters: GetNamespaceRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<NamespaceInfoDTO>> {
+        const requestOptions = await this.getNamespaceRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => NamespaceInfoDTOFromJSON(jsonValue));
     }
@@ -216,10 +333,9 @@ export class NamespaceRoutesApi extends runtime.BaseAPI {
     }
 
     /**
-     * Returns the [Merkle proof](https://docs.symbol.dev/concepts/data-validation.html#merkle-proof) for a namespace.  Clients can use this information to verify that the namespace state is included in the node\'s state Merkle tree. If the supplied namespace ID does not exist, the endpoint still returns a Merkle proof response, but it is a negative proof showing that no namespace state entry exists for the requested namespace ID. See [Data Validation](https://docs.symbol.dev/concepts/data-validation.html) for an overview of Patricia Merkle trees and state proofs on Symbol. 
-     * Get namespace Merkle information
+     * Creates request options for getNamespaceMerkle without sending the request
      */
-    async getNamespaceMerkleRaw(requestParameters: GetNamespaceMerkleRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<MerkleStateInfoDTO>> {
+    async getNamespaceMerkleRequestOpts(requestParameters: GetNamespaceMerkleRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['namespaceId'] == null) {
             throw new runtime.RequiredError(
                 'namespaceId',
@@ -233,14 +349,23 @@ export class NamespaceRoutesApi extends runtime.BaseAPI {
 
 
         let urlPath = `/namespaces/{namespaceId}/merkle`;
-        urlPath = urlPath.replace(`{${"namespaceId"}}`, encodeURIComponent(String(requestParameters['namespaceId'])));
+        urlPath = urlPath.replace('{namespaceId}', encodeURIComponent(String(requestParameters['namespaceId'])));
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Returns the [Merkle proof](https://docs.symbol.dev/concepts/data-validation.html#merkle-proof) for a namespace.  Clients can use this information to verify that the namespace state is included in the node\'s state Merkle tree. If the supplied namespace ID does not exist, the endpoint still returns a Merkle proof response, but it is a negative proof showing that no namespace state entry exists for the requested namespace ID. See [Data Validation](https://docs.symbol.dev/concepts/data-validation.html) for an overview of Patricia Merkle trees and state proofs on Symbol. 
+     * Get namespace Merkle information
+     */
+    async getNamespaceMerkleRaw(requestParameters: GetNamespaceMerkleRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<MerkleStateInfoDTO>> {
+        const requestOptions = await this.getNamespaceMerkleRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => MerkleStateInfoDTOFromJSON(jsonValue));
     }
@@ -255,10 +380,9 @@ export class NamespaceRoutesApi extends runtime.BaseAPI {
     }
 
     /**
-     * Resolves human-readable namespace names for namespace identifiers.  Submit an array of namespace identifiers in the request body. For each matching identifier, the response returns the namespace name. When a matching identifier is a subnamespace, the response will also include its parent namespace entry and parent namespace identifier. Identifiers that cannot be resolved are omitted from the response. 
-     * Get readable names for a set of namespaces
+     * Creates request options for getNamespacesNames without sending the request
      */
-    async getNamespacesNamesRaw(requestParameters: GetNamespacesNamesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<NamespaceNameDTO>>> {
+    async getNamespacesNamesRequestOpts(requestParameters: GetNamespacesNamesRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['namespaceIds'] == null) {
             throw new runtime.RequiredError(
                 'namespaceIds',
@@ -275,13 +399,22 @@ export class NamespaceRoutesApi extends runtime.BaseAPI {
 
         let urlPath = `/namespaces/names`;
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
             body: NamespaceIdsToJSON(requestParameters['namespaceIds']),
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Resolves human-readable namespace names for namespace identifiers.  Submit an array of namespace identifiers in the request body. For each matching identifier, the response returns the namespace name. When a matching identifier is a subnamespace, the response will also include its parent namespace entry and parent namespace identifier. Identifiers that cannot be resolved are omitted from the response. 
+     * Get readable names for a set of namespaces
+     */
+    async getNamespacesNamesRaw(requestParameters: GetNamespacesNamesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<NamespaceNameDTO>>> {
+        const requestOptions = await this.getNamespacesNamesRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(NamespaceNameDTOFromJSON));
     }
@@ -296,10 +429,9 @@ export class NamespaceRoutesApi extends runtime.BaseAPI {
     }
 
     /**
-     * Returns a paginated list of namespaces matching the given criteria.
-     * Search namespaces
+     * Creates request options for searchNamespaces without sending the request
      */
-    async searchNamespacesRaw(requestParameters: SearchNamespacesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<NamespacePage>> {
+    async searchNamespacesRequestOpts(requestParameters: SearchNamespacesRequest): Promise<runtime.RequestOpts> {
         const queryParameters: any = {};
 
         if (requestParameters['ownerAddress'] != null) {
@@ -339,12 +471,21 @@ export class NamespaceRoutesApi extends runtime.BaseAPI {
 
         let urlPath = `/namespaces`;
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Returns a paginated list of namespaces matching the given criteria.
+     * Search namespaces
+     */
+    async searchNamespacesRaw(requestParameters: SearchNamespacesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<NamespacePage>> {
+        const requestOptions = await this.searchNamespacesRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => NamespacePageFromJSON(jsonValue));
     }

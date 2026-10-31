@@ -21,8 +21,6 @@ import { mapValues } from '../runtime';
 export interface MetadataNetworkPropertiesDTO {
     /**
      * Maximum metadata value size.
-     * @type {string}
-     * @memberof MetadataNetworkPropertiesDTO
      */
     maxValueSize?: string;
 }
@@ -30,7 +28,7 @@ export interface MetadataNetworkPropertiesDTO {
 /**
  * Check if a given object implements the MetadataNetworkPropertiesDTO interface.
  */
-export function instanceOfMetadataNetworkPropertiesDTO(value: Record<string, any>): value is MetadataNetworkPropertiesDTO {
+export function instanceOfMetadataNetworkPropertiesDTO(value: object): value is MetadataNetworkPropertiesDTO {
     return true;
 }
 

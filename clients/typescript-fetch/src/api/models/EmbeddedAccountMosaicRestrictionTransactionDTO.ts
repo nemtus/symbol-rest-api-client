@@ -35,45 +35,31 @@ import {
  */
 export interface EmbeddedAccountMosaicRestrictionTransactionDTO {
     /**
-     * 256-bit public key encoded as a hexadecimal string (64 hex characters).
-     * @type {string}
-     * @memberof EmbeddedAccountMosaicRestrictionTransactionDTO
+     * Public key of the account that signed the entity (e.g. block harvester, transaction signer).
      */
     signerPublicKey: string;
     /**
      * Entity version. Indicates the schema variant for serialization and validation.
-     * @type {number}
-     * @memberof EmbeddedAccountMosaicRestrictionTransactionDTO
      */
     version: number;
     /**
      * Network type (mainnet or testnet). Ensures the entity targets the correct network.
-     * @type {NetworkTypeEnum}
-     * @memberof EmbeddedAccountMosaicRestrictionTransactionDTO
      */
     network: NetworkTypeEnum;
     /**
      * Entity type identifier (e.g. transaction type code, block type). Determines the entity schema.
-     * @type {number}
-     * @memberof EmbeddedAccountMosaicRestrictionTransactionDTO
      */
     type: number;
     /**
      * 
-     * @type {AccountRestrictionFlagsEnum}
-     * @memberof EmbeddedAccountMosaicRestrictionTransactionDTO
      */
     restrictionFlags: AccountRestrictionFlagsEnum;
     /**
      * Account restriction additions.
-     * @type {Array<string>}
-     * @memberof EmbeddedAccountMosaicRestrictionTransactionDTO
      */
     restrictionAdditions: Array<string>;
     /**
      * Account restriction deletions.
-     * @type {Array<string>}
-     * @memberof EmbeddedAccountMosaicRestrictionTransactionDTO
      */
     restrictionDeletions: Array<string>;
 }
@@ -83,7 +69,7 @@ export interface EmbeddedAccountMosaicRestrictionTransactionDTO {
 /**
  * Check if a given object implements the EmbeddedAccountMosaicRestrictionTransactionDTO interface.
  */
-export function instanceOfEmbeddedAccountMosaicRestrictionTransactionDTO(value: Record<string, any>): value is EmbeddedAccountMosaicRestrictionTransactionDTO {
+export function instanceOfEmbeddedAccountMosaicRestrictionTransactionDTO(value: object): value is EmbeddedAccountMosaicRestrictionTransactionDTO {
     if (!('signerPublicKey' in value) || value['signerPublicKey'] === undefined) return false;
     if (!('version' in value) || value['version'] === undefined) return false;
     if (!('network' in value) || value['network'] === undefined) return false;

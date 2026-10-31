@@ -22,35 +22,13 @@ import { mapValues } from '../runtime';
  */
 export interface CommunicationTimestampsDTO {
     /**
-     * Network timestamp in **milliseconds** since the creation of the nemesis (first) block.
-     * Used for block timestamps, transaction deadlines, and time synchronization.
-     * 
-     * **Finding the nemesis block time:** The `epochAdjustment` field returned by the
-     * [`/network/properties`] endpoint gives the nemesis block creation time in seconds since the
-     * [UNIX epoch](https://en.wikipedia.org/wiki/Unix_time). For Symbol MAINNET this is
-     * always `1615853185` (15 March 2021, 00:06:25 UTC).
-     * 
-     * **Converting to real time:** Add this timestamp (ms) to `epochAdjustment × 1000` (ms), then use standard date functions.
-     * Note: `epochAdjustment` may be returned as a string like `"1615853185s"`; use the numeric part.
-     * 
-     * @type {string}
-     * @memberof CommunicationTimestampsDTO
+     * Node's network time when it sent the response (milliseconds since nemesis block).
      */
     sendTimestamp?: string;
     /**
-     * Network timestamp in **milliseconds** since the creation of the nemesis (first) block.
-     * Used for block timestamps, transaction deadlines, and time synchronization.
+     * Node's network time when it received the client's request (milliseconds since nemesis block).
+     * Typically used when computing transaction deadlines.
      * 
-     * **Finding the nemesis block time:** The `epochAdjustment` field returned by the
-     * [`/network/properties`] endpoint gives the nemesis block creation time in seconds since the
-     * [UNIX epoch](https://en.wikipedia.org/wiki/Unix_time). For Symbol MAINNET this is
-     * always `1615853185` (15 March 2021, 00:06:25 UTC).
-     * 
-     * **Converting to real time:** Add this timestamp (ms) to `epochAdjustment × 1000` (ms), then use standard date functions.
-     * Note: `epochAdjustment` may be returned as a string like `"1615853185s"`; use the numeric part.
-     * 
-     * @type {string}
-     * @memberof CommunicationTimestampsDTO
      */
     receiveTimestamp?: string;
 }
@@ -58,7 +36,7 @@ export interface CommunicationTimestampsDTO {
 /**
  * Check if a given object implements the CommunicationTimestampsDTO interface.
  */
-export function instanceOfCommunicationTimestampsDTO(value: Record<string, any>): value is CommunicationTimestampsDTO {
+export function instanceOfCommunicationTimestampsDTO(value: object): value is CommunicationTimestampsDTO {
     return true;
 }
 

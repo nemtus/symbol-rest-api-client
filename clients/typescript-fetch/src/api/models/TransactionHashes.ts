@@ -21,8 +21,6 @@ import { mapValues } from '../runtime';
 export interface TransactionHashes {
     /**
      * Array of transaction hashes.
-     * @type {Array<string>}
-     * @memberof TransactionHashes
      */
     hashes: Array<string>;
 }
@@ -30,7 +28,7 @@ export interface TransactionHashes {
 /**
  * Check if a given object implements the TransactionHashes interface.
  */
-export function instanceOfTransactionHashes(value: Record<string, any>): value is TransactionHashes {
+export function instanceOfTransactionHashes(value: object): value is TransactionHashes {
     if (!('hashes' in value) || value['hashes'] === undefined) return false;
     return true;
 }

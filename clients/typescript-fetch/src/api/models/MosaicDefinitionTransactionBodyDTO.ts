@@ -24,22 +24,14 @@ export interface MosaicDefinitionTransactionBodyDTO {
      * A 64-bit unsigned integer derived from the creator's address and a registration nonce,
      * encoded as a 16-character hexadecimal string.
      * 
-     * @type {string}
-     * @memberof MosaicDefinitionTransactionBodyDTO
      */
     id: string;
     /**
      * Duration expressed in number of blocks.
-     * @type {string}
-     * @memberof MosaicDefinitionTransactionBodyDTO
      */
     duration: string;
     /**
-     * Unsigned 32-bit integer.
-     * Represented as integer since it fits in JSON number precision.
-     * 
-     * @type {number}
-     * @memberof MosaicDefinitionTransactionBodyDTO
+     * Random nonce used to generate the mosaic ID.
      */
     nonce: number;
     /**
@@ -53,8 +45,6 @@ export interface MosaicDefinitionTransactionBodyDTO {
      * 
      * Example: `3` means `0x01 + 0x02`, so the mosaic is both `supplyMutable` and `transferable`.
      * 
-     * @type {number}
-     * @memberof MosaicDefinitionTransactionBodyDTO
      */
     flags: number;
     /**
@@ -62,8 +52,6 @@ export interface MosaicDefinitionTransactionBodyDTO {
      * Divisibility of 3 means that a mosaic can be divided into smallest parts of 0.001 mosaics.
      * The divisibility must be in the range of 0 and 6.
      * 
-     * @type {number}
-     * @memberof MosaicDefinitionTransactionBodyDTO
      */
     divisibility: number;
 }
@@ -71,7 +59,7 @@ export interface MosaicDefinitionTransactionBodyDTO {
 /**
  * Check if a given object implements the MosaicDefinitionTransactionBodyDTO interface.
  */
-export function instanceOfMosaicDefinitionTransactionBodyDTO(value: Record<string, any>): value is MosaicDefinitionTransactionBodyDTO {
+export function instanceOfMosaicDefinitionTransactionBodyDTO(value: object): value is MosaicDefinitionTransactionBodyDTO {
     if (!('id' in value) || value['id'] === undefined) return false;
     if (!('duration' in value) || value['duration'] === undefined) return false;
     if (!('nonce' in value) || value['nonce'] === undefined) return false;

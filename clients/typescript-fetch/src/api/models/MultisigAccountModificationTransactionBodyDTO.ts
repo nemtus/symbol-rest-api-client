@@ -24,8 +24,6 @@ export interface MultisigAccountModificationTransactionBodyDTO {
      * cosignatory. When converting a regular account into a multisig account, the initial value is
      * derived from this delta because the previous threshold is zero.
      * 
-     * @type {number}
-     * @memberof MultisigAccountModificationTransactionBodyDTO
      */
     minRemovalDelta: number;
     /**
@@ -33,22 +31,16 @@ export interface MultisigAccountModificationTransactionBodyDTO {
      * transaction. When converting a regular account into a multisig account, the initial value is
      * derived from this delta because the previous threshold is zero.
      * 
-     * @type {number}
-     * @memberof MultisigAccountModificationTransactionBodyDTO
      */
     minApprovalDelta: number;
     /**
      * Cosignatory addresses to add to the multisig account.
      * Newly added cosignatories must opt in by cosigning the aggregate transaction.
      * 
-     * @type {Array<string>}
-     * @memberof MultisigAccountModificationTransactionBodyDTO
      */
     addressAdditions: Array<string>;
     /**
      * Cosignatory addresses to remove from the multisig account.
-     * @type {Array<string>}
-     * @memberof MultisigAccountModificationTransactionBodyDTO
      */
     addressDeletions: Array<string>;
 }
@@ -56,7 +48,7 @@ export interface MultisigAccountModificationTransactionBodyDTO {
 /**
  * Check if a given object implements the MultisigAccountModificationTransactionBodyDTO interface.
  */
-export function instanceOfMultisigAccountModificationTransactionBodyDTO(value: Record<string, any>): value is MultisigAccountModificationTransactionBodyDTO {
+export function instanceOfMultisigAccountModificationTransactionBodyDTO(value: object): value is MultisigAccountModificationTransactionBodyDTO {
     if (!('minRemovalDelta' in value) || value['minRemovalDelta'] === undefined) return false;
     if (!('minApprovalDelta' in value) || value['minApprovalDelta'] === undefined) return false;
     if (!('addressAdditions' in value) || value['addressAdditions'] === undefined) return false;

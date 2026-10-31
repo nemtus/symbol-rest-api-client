@@ -252,39 +252,27 @@ import {
  */
 export interface EmbeddedTransactionInfoDTOTransaction {
     /**
-     * 256-bit public key encoded as a hexadecimal string (64 hex characters).
-     * @type {string}
-     * @memberof EmbeddedTransactionInfoDTOTransaction
+     * Public key of the account that signed the entity (e.g. block harvester, transaction signer).
      */
     signerPublicKey: string;
     /**
      * Entity version. Indicates the schema variant for serialization and validation.
-     * @type {number}
-     * @memberof EmbeddedTransactionInfoDTOTransaction
      */
     version: number;
     /**
      * Network type (mainnet or testnet). Ensures the entity targets the correct network.
-     * @type {NetworkTypeEnum}
-     * @memberof EmbeddedTransactionInfoDTOTransaction
      */
     network: NetworkTypeEnum;
     /**
      * Entity type identifier (e.g. transaction type code, block type). Determines the entity schema.
-     * @type {number}
-     * @memberof EmbeddedTransactionInfoDTOTransaction
      */
     type: number;
     /**
      * 32-byte voting public key used for finalization voting.
-     * @type {string}
-     * @memberof EmbeddedTransactionInfoDTOTransaction
      */
     linkedPublicKey: string;
     /**
      * 
-     * @type {LinkActionEnum}
-     * @memberof EmbeddedTransactionInfoDTOTransaction
      */
     linkAction: LinkActionEnum;
     /**
@@ -292,8 +280,6 @@ export interface EmbeddedTransactionInfoDTOTransaction {
      * integer. Each epoch groups a set of blocks for finalization voting; the interval is defined
      * by the `votingSetGrouping` network property (e.g. 1440 blocks, ~12h on mainnet).
      * 
-     * @type {number}
-     * @memberof EmbeddedTransactionInfoDTOTransaction
      */
     startEpoch: number;
     /**
@@ -301,8 +287,6 @@ export interface EmbeddedTransactionInfoDTOTransaction {
      * integer. Each epoch groups a set of blocks for finalization voting; the interval is defined
      * by the `votingSetGrouping` network property (e.g. 1440 blocks, ~12h on mainnet).
      * 
-     * @type {number}
-     * @memberof EmbeddedTransactionInfoDTOTransaction
      */
     endEpoch: number;
     /**
@@ -310,8 +294,6 @@ export interface EmbeddedTransactionInfoDTOTransaction {
      * If the most significant bit of byte 0 is set, the value contains a namespace ID alias
      * instead of a concrete mosaic ID.
      * 
-     * @type {string}
-     * @memberof EmbeddedTransactionInfoDTOTransaction
      */
     mosaicId: string;
     /**
@@ -320,20 +302,14 @@ export interface EmbeddedTransactionInfoDTOTransaction {
      * `123.456789` whole units. Encoded as a string to preserve precision, since the value
      * is an unsigned 64-bit integer.
      * 
-     * @type {string}
-     * @memberof EmbeddedTransactionInfoDTOTransaction
      */
     amount: string;
     /**
      * Duration expressed in number of blocks.
-     * @type {string}
-     * @memberof EmbeddedTransactionInfoDTOTransaction
      */
     duration: string;
     /**
      * 256-bit hash encoded as a 64-character hexadecimal string.
-     * @type {string}
-     * @memberof EmbeddedTransactionInfoDTOTransaction
      */
     hash: string;
     /**
@@ -341,26 +317,18 @@ export interface EmbeddedTransactionInfoDTOTransaction {
      * If bit 0 of byte 0 is not set, the value represents a regular address.
      * Otherwise, it represents a namespace ID alias encoded as an unresolved address.
      * 
-     * @type {string}
-     * @memberof EmbeddedTransactionInfoDTOTransaction
      */
     recipientAddress: string;
     /**
      * 256-bit hash encoded as a 64-character hexadecimal string.
-     * @type {string}
-     * @memberof EmbeddedTransactionInfoDTOTransaction
      */
     secret: string;
     /**
      * 
-     * @type {LockHashAlgorithmEnum}
-     * @memberof EmbeddedTransactionInfoDTOTransaction
      */
     hashAlgorithm: LockHashAlgorithmEnum;
     /**
      * Proof data whose hash, using `hashAlgorithm`, must match `secret`.
-     * @type {string}
-     * @memberof EmbeddedTransactionInfoDTOTransaction
      */
     proof: string;
     /**
@@ -368,22 +336,16 @@ export interface EmbeddedTransactionInfoDTOTransaction {
      * If bit 0 of byte 0 is not set, the value represents a regular address.
      * Otherwise, it represents a namespace ID alias encoded as an unresolved address.
      * 
-     * @type {string}
-     * @memberof EmbeddedTransactionInfoDTOTransaction
      */
     targetAddress: string;
     /**
      * 64-bit key assigned by the metadata creator to identify the metadata entry within the source and target context.
-     * @type {string}
-     * @memberof EmbeddedTransactionInfoDTOTransaction
      */
     scopedMetadataKey: string;
     /**
      * Change in metadata value size, in bytes.
      * Positive values increase the stored value size, negative values decrease it.
      * 
-     * @type {number}
-     * @memberof EmbeddedTransactionInfoDTOTransaction
      */
     valueSizeDelta: number;
     /**
@@ -392,8 +354,6 @@ export interface EmbeddedTransactionInfoDTOTransaction {
      * value size after applying the update. When the value shrinks, this is the previous stored value size
      * before truncation.
      * 
-     * @type {number}
-     * @memberof EmbeddedTransactionInfoDTOTransaction
      */
     valueSize: number;
     /**
@@ -402,8 +362,6 @@ export interface EmbeddedTransactionInfoDTOTransaction {
      * When no previous value exists, it contains the new value.
      * When updating existing metadata, it contains the byte-wise XOR of the previous value and the new value.
      * 
-     * @type {string}
-     * @memberof EmbeddedTransactionInfoDTOTransaction
      */
     value: string;
     /**
@@ -411,8 +369,6 @@ export interface EmbeddedTransactionInfoDTOTransaction {
      * If the most significant bit of byte 0 is set, the value contains a namespace ID alias
      * instead of a concrete mosaic ID.
      * 
-     * @type {string}
-     * @memberof EmbeddedTransactionInfoDTOTransaction
      */
     targetMosaicId: string;
     /**
@@ -420,8 +376,6 @@ export interface EmbeddedTransactionInfoDTOTransaction {
      * A 64-bit unsigned integer derived from the namespace name and its parent namespace ID,
      * encoded as a 16-character hexadecimal string.
      * 
-     * @type {string}
-     * @memberof EmbeddedTransactionInfoDTOTransaction
      */
     targetNamespaceId: string;
     /**
@@ -429,16 +383,10 @@ export interface EmbeddedTransactionInfoDTOTransaction {
      * A 64-bit unsigned integer derived from the namespace name and its parent namespace ID,
      * encoded as a 16-character hexadecimal string.
      * 
-     * @type {string}
-     * @memberof EmbeddedTransactionInfoDTOTransaction
      */
     id: string;
     /**
-     * Unsigned 32-bit integer.
-     * Represented as integer since it fits in JSON number precision.
-     * 
-     * @type {number}
-     * @memberof EmbeddedTransactionInfoDTOTransaction
+     * Random nonce used to generate the mosaic ID.
      */
     nonce: number;
     /**
@@ -452,8 +400,6 @@ export interface EmbeddedTransactionInfoDTOTransaction {
      * 
      * Example: `3` means `0x01 + 0x02`, so the mosaic is both `supplyMutable` and `transferable`.
      * 
-     * @type {number}
-     * @memberof EmbeddedTransactionInfoDTOTransaction
      */
     flags: number;
     /**
@@ -461,8 +407,6 @@ export interface EmbeddedTransactionInfoDTOTransaction {
      * Divisibility of 3 means that a mosaic can be divided into smallest parts of 0.001 mosaics.
      * The divisibility must be in the range of 0 and 6.
      * 
-     * @type {number}
-     * @memberof EmbeddedTransactionInfoDTOTransaction
      */
     divisibility: number;
     /**
@@ -471,14 +415,10 @@ export interface EmbeddedTransactionInfoDTOTransaction {
      * `123.456789` whole units. Encoded as a string to preserve precision, since the value
      * is an unsigned 64-bit integer.
      * 
-     * @type {string}
-     * @memberof EmbeddedTransactionInfoDTOTransaction
      */
     delta: string;
     /**
      * 
-     * @type {MosaicSupplyChangeActionEnum}
-     * @memberof EmbeddedTransactionInfoDTOTransaction
      */
     action: MosaicSupplyChangeActionEnum;
     /**
@@ -486,8 +426,6 @@ export interface EmbeddedTransactionInfoDTOTransaction {
      * If bit 0 of byte 0 is not set, the value represents a regular address.
      * Otherwise, it represents a namespace ID alias encoded as an unresolved address.
      * 
-     * @type {string}
-     * @memberof EmbeddedTransactionInfoDTOTransaction
      */
     sourceAddress: string;
     /**
@@ -495,20 +433,14 @@ export interface EmbeddedTransactionInfoDTOTransaction {
      * A 64-bit unsigned integer derived from the namespace name and its parent namespace ID,
      * encoded as a 16-character hexadecimal string.
      * 
-     * @type {string}
-     * @memberof EmbeddedTransactionInfoDTOTransaction
      */
     parentId?: string;
     /**
      * 
-     * @type {NamespaceRegistrationTypeEnum}
-     * @memberof EmbeddedTransactionInfoDTOTransaction
      */
     registrationType: NamespaceRegistrationTypeEnum;
     /**
      * Namespace name.
-     * @type {string}
-     * @memberof EmbeddedTransactionInfoDTOTransaction
      */
     name: string;
     /**
@@ -516,22 +448,16 @@ export interface EmbeddedTransactionInfoDTOTransaction {
      * A 64-bit unsigned integer derived from the namespace name and its parent namespace ID,
      * encoded as a 16-character hexadecimal string.
      * 
-     * @type {string}
-     * @memberof EmbeddedTransactionInfoDTOTransaction
      */
     namespaceId: string;
     /**
      * Address encoded as a 48-character hexadecimal string (24 bytes).
      * The REST API returns addresses in this format. For Base32-encoded addresses (39 chars) see `Address`.
      * 
-     * @type {string}
-     * @memberof EmbeddedTransactionInfoDTOTransaction
      */
     address: string;
     /**
      * 
-     * @type {AliasActionEnum}
-     * @memberof EmbeddedTransactionInfoDTOTransaction
      */
     aliasAction: AliasActionEnum;
     /**
@@ -539,8 +465,6 @@ export interface EmbeddedTransactionInfoDTOTransaction {
      * cosignatory. When converting a regular account into a multisig account, the initial value is
      * derived from this delta because the previous threshold is zero.
      * 
-     * @type {number}
-     * @memberof EmbeddedTransactionInfoDTOTransaction
      */
     minRemovalDelta: number;
     /**
@@ -548,40 +472,28 @@ export interface EmbeddedTransactionInfoDTOTransaction {
      * transaction. When converting a regular account into a multisig account, the initial value is
      * derived from this delta because the previous threshold is zero.
      * 
-     * @type {number}
-     * @memberof EmbeddedTransactionInfoDTOTransaction
      */
     minApprovalDelta: number;
     /**
      * Cosignatory addresses to add to the multisig account.
      * Newly added cosignatories must opt in by cosigning the aggregate transaction.
      * 
-     * @type {Array<string>}
-     * @memberof EmbeddedTransactionInfoDTOTransaction
      */
     addressAdditions: Array<string>;
     /**
      * Cosignatory addresses to remove from the multisig account.
-     * @type {Array<string>}
-     * @memberof EmbeddedTransactionInfoDTOTransaction
      */
     addressDeletions: Array<string>;
     /**
      * 
-     * @type {AccountRestrictionFlagsEnum}
-     * @memberof EmbeddedTransactionInfoDTOTransaction
      */
     restrictionFlags: AccountRestrictionFlagsEnum;
     /**
      * Account restriction additions.
-     * @type {Array<TransactionTypeEnum>}
-     * @memberof EmbeddedTransactionInfoDTOTransaction
      */
     restrictionAdditions: Array<TransactionTypeEnum>;
     /**
      * Account restriction deletions.
-     * @type {Array<TransactionTypeEnum>}
-     * @memberof EmbeddedTransactionInfoDTOTransaction
      */
     restrictionDeletions: Array<TransactionTypeEnum>;
     /**
@@ -589,14 +501,10 @@ export interface EmbeddedTransactionInfoDTOTransaction {
      * If the most significant bit of byte 0 is set, the value contains a namespace ID alias
      * instead of a concrete mosaic ID.
      * 
-     * @type {string}
-     * @memberof EmbeddedTransactionInfoDTOTransaction
      */
     referenceMosaicId: string;
     /**
      * Restriction key represented as a 64-bit hexadecimal value.
-     * @type {string}
-     * @memberof EmbeddedTransactionInfoDTOTransaction
      */
     restrictionKey: string;
     /**
@@ -604,8 +512,6 @@ export interface EmbeddedTransactionInfoDTOTransaction {
      * For address restrictions, it is the value assigned to the target address;
      * for global restrictions, it is the threshold evaluated with the restriction type.
      * 
-     * @type {string}
-     * @memberof EmbeddedTransactionInfoDTOTransaction
      */
     previousRestrictionValue: string;
     /**
@@ -613,33 +519,23 @@ export interface EmbeddedTransactionInfoDTOTransaction {
      * For address restrictions, it is the value assigned to the target address;
      * for global restrictions, it is the threshold evaluated with the restriction type.
      * 
-     * @type {string}
-     * @memberof EmbeddedTransactionInfoDTOTransaction
      */
     newRestrictionValue: string;
     /**
      * 
-     * @type {MosaicRestrictionTypeEnum}
-     * @memberof EmbeddedTransactionInfoDTOTransaction
      */
     previousRestrictionType: MosaicRestrictionTypeEnum;
     /**
      * 
-     * @type {MosaicRestrictionTypeEnum}
-     * @memberof EmbeddedTransactionInfoDTOTransaction
      */
     newRestrictionType: MosaicRestrictionTypeEnum;
     /**
      * Array of mosaics sent to the recipient.
      * 
-     * @type {Array<UnresolvedMosaic>}
-     * @memberof EmbeddedTransactionInfoDTOTransaction
      */
     mosaics: Array<UnresolvedMosaic>;
     /**
      * Optional transfer message payload, encoded as a hexadecimal string.
-     * @type {string}
-     * @memberof EmbeddedTransactionInfoDTOTransaction
      */
     message?: string;
 }
@@ -649,7 +545,7 @@ export interface EmbeddedTransactionInfoDTOTransaction {
 /**
  * Check if a given object implements the EmbeddedTransactionInfoDTOTransaction interface.
  */
-export function instanceOfEmbeddedTransactionInfoDTOTransaction(value: Record<string, any>): value is EmbeddedTransactionInfoDTOTransaction {
+export function instanceOfEmbeddedTransactionInfoDTOTransaction(value: object): value is EmbeddedTransactionInfoDTOTransaction {
     if (!('signerPublicKey' in value) || value['signerPublicKey'] === undefined) return false;
     if (!('version' in value) || value['version'] === undefined) return false;
     if (!('network' in value) || value['network'] === undefined) return false;

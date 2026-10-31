@@ -21,8 +21,6 @@ import { mapValues } from '../runtime';
 export interface AccountRestrictionNetworkPropertiesDTO {
     /**
      * Maximum number of account restriction values.
-     * @type {string}
-     * @memberof AccountRestrictionNetworkPropertiesDTO
      */
     maxAccountRestrictionValues?: string;
 }
@@ -30,7 +28,7 @@ export interface AccountRestrictionNetworkPropertiesDTO {
 /**
  * Check if a given object implements the AccountRestrictionNetworkPropertiesDTO interface.
  */
-export function instanceOfAccountRestrictionNetworkPropertiesDTO(value: Record<string, any>): value is AccountRestrictionNetworkPropertiesDTO {
+export function instanceOfAccountRestrictionNetworkPropertiesDTO(value: object): value is AccountRestrictionNetworkPropertiesDTO {
     return true;
 }
 

@@ -23,14 +23,10 @@ import { mapValues } from '../runtime';
 export interface Pagination {
     /**
      * Current page number.
-     * @type {number}
-     * @memberof Pagination
      */
     pageNumber: number;
     /**
      * Number of entries per page.
-     * @type {number}
-     * @memberof Pagination
      */
     pageSize: number;
 }
@@ -38,7 +34,7 @@ export interface Pagination {
 /**
  * Check if a given object implements the Pagination interface.
  */
-export function instanceOfPagination(value: Record<string, any>): value is Pagination {
+export function instanceOfPagination(value: object): value is Pagination {
     if (!('pageNumber' in value) || value['pageNumber'] === undefined) return false;
     if (!('pageSize' in value) || value['pageSize'] === undefined) return false;
     return true;

@@ -12,48 +12,105 @@
  * Do not edit the class manually.
  */
 
-
 import * as runtime from '../runtime';
-import type {
-  MerkleStateInfoDTO,
-  ModelError,
-  MosaicIds,
-  MosaicInfoDTO,
-  MosaicPage,
-  Order,
-} from '../models/index';
 import {
+    type MerkleStateInfoDTO,
     MerkleStateInfoDTOFromJSON,
     MerkleStateInfoDTOToJSON,
+} from '../models/MerkleStateInfoDTO';
+import {
+    type ModelError,
     ModelErrorFromJSON,
     ModelErrorToJSON,
+} from '../models/ModelError';
+import {
+    type MosaicIds,
     MosaicIdsFromJSON,
     MosaicIdsToJSON,
+} from '../models/MosaicIds';
+import {
+    type MosaicInfoDTO,
     MosaicInfoDTOFromJSON,
     MosaicInfoDTOToJSON,
+} from '../models/MosaicInfoDTO';
+import {
+    type MosaicPage,
     MosaicPageFromJSON,
     MosaicPageToJSON,
+} from '../models/MosaicPage';
+import {
+    type Order,
     OrderFromJSON,
     OrderToJSON,
-} from '../models/index';
+} from '../models/Order';
 
 export interface GetMosaicRequest {
+    /**
+     * Mosaic identifier encoded as a 16-character hexadecimal string.
+     */
     mosaicId: string;
 }
 
 export interface GetMosaicMerkleRequest {
+    /**
+     * Mosaic identifier encoded as a 16-character hexadecimal string.
+     */
     mosaicId: string;
 }
 
 export interface GetMosaicsRequest {
+    /**
+     * 
+     */
     mosaicIds: MosaicIds;
 }
 
 export interface SearchMosaicsRequest {
+    /**
+     * Filter by owner address in Base32 format (include).
+     */
     ownerAddress?: string;
+    /**
+     * Select the number of entries to return per page.
+     * Values outside the allowed range are clamped to the schema minimum or maximum.
+     * 
+     */
     pageSize?: number;
+    /**
+     * Page number for numbered pagination (1-based).
+     * 
+     * Numbered and cursor pagination can be combined, but this is not recommended because the semantics
+     * are harder to reason about. For cursor-style flows, keep `pageNumber=1` and advance pages by
+     * updating only `offset`. For numbered pagination flows, omit `offset` and advance pages by
+     * incrementing `pageNumber`.
+     * 
+     */
     pageNumber?: number;
+    /**
+     * Cursor for pagination. Provide the value of the sort field (`orderBy`) from the
+     * last entry of the previous page. **The offset type must match `orderBy`:**
+     * - `orderBy=id`: use the entry's `id` (ObjectId, 24-char hex).
+     * - `orderBy=height`: use the block height (string, e.g. `"17592"`).
+     * - `orderBy=balance`: use the mosaic balance amount (string, e.g. `"1000000"`).
+     * 
+     * Allowed `orderBy` values depend on the endpoint. If `orderBy` is omitted, `id` is used by default.
+     * 
+     * Set `offset` to the sort-field value of the last entry from the previous page. Across pages,
+     * this value decreases with `order=desc` and increases with `order=asc`.
+     * 
+     * Numbered and cursor pagination can be combined, but this is not recommended because the semantics
+     * are harder to reason about. For cursor-style flows, keep `pageNumber=1` and advance pages by
+     * updating only `offset`. For numbered pagination flows, omit `offset` and advance pages by
+     * incrementing `pageNumber`.
+     * 
+     */
     offset?: string;
+    /**
+     * Sort responses in ascending or descending order based on the collection property set on the param `orderBy`.
+     * If the request does not specify `orderBy`, REST returns the collection ordered by id.
+     * The default sort direction depends on the endpoint implementation.
+     * 
+     */
     order?: Order;
 }
 
@@ -63,10 +120,9 @@ export interface SearchMosaicsRequest {
 export class MosaicRoutesApi extends runtime.BaseAPI {
 
     /**
-     * Retrieves the current on-chain state for a mosaic. The response includes the mosaic definition, such as supply, divisibility, owner address, duration, and behavior flags. 
-     * Get mosaic information
+     * Creates request options for getMosaic without sending the request
      */
-    async getMosaicRaw(requestParameters: GetMosaicRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<MosaicInfoDTO>> {
+    async getMosaicRequestOpts(requestParameters: GetMosaicRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['mosaicId'] == null) {
             throw new runtime.RequiredError(
                 'mosaicId',
@@ -80,14 +136,23 @@ export class MosaicRoutesApi extends runtime.BaseAPI {
 
 
         let urlPath = `/mosaics/{mosaicId}`;
-        urlPath = urlPath.replace(`{${"mosaicId"}}`, encodeURIComponent(String(requestParameters['mosaicId'])));
+        urlPath = urlPath.replace('{mosaicId}', encodeURIComponent(String(requestParameters['mosaicId'])));
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Retrieves the current on-chain state for a mosaic. The response includes the mosaic definition, such as supply, divisibility, owner address, duration, and behavior flags. 
+     * Get mosaic information
+     */
+    async getMosaicRaw(requestParameters: GetMosaicRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<MosaicInfoDTO>> {
+        const requestOptions = await this.getMosaicRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => MosaicInfoDTOFromJSON(jsonValue));
     }
@@ -102,10 +167,9 @@ export class MosaicRoutesApi extends runtime.BaseAPI {
     }
 
     /**
-     * Returns the [Merkle proof](https://docs.symbol.dev/concepts/data-validation.html#merkle-proof) for a mosaic.  Clients can use this information to verify that the mosaic state is included in the node\'s state Merkle tree. If the supplied mosaic ID does not exist, the endpoint still returns a Merkle proof response, but it is a negative proof showing that no mosaic state entry exists for the requested mosaic ID. See [Data Validation](https://docs.symbol.dev/concepts/data-validation.html) for an overview of Patricia Merkle trees and state proofs on Symbol. 
-     * Get mosaic Merkle information
+     * Creates request options for getMosaicMerkle without sending the request
      */
-    async getMosaicMerkleRaw(requestParameters: GetMosaicMerkleRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<MerkleStateInfoDTO>> {
+    async getMosaicMerkleRequestOpts(requestParameters: GetMosaicMerkleRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['mosaicId'] == null) {
             throw new runtime.RequiredError(
                 'mosaicId',
@@ -119,14 +183,23 @@ export class MosaicRoutesApi extends runtime.BaseAPI {
 
 
         let urlPath = `/mosaics/{mosaicId}/merkle`;
-        urlPath = urlPath.replace(`{${"mosaicId"}}`, encodeURIComponent(String(requestParameters['mosaicId'])));
+        urlPath = urlPath.replace('{mosaicId}', encodeURIComponent(String(requestParameters['mosaicId'])));
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Returns the [Merkle proof](https://docs.symbol.dev/concepts/data-validation.html#merkle-proof) for a mosaic.  Clients can use this information to verify that the mosaic state is included in the node\'s state Merkle tree. If the supplied mosaic ID does not exist, the endpoint still returns a Merkle proof response, but it is a negative proof showing that no mosaic state entry exists for the requested mosaic ID. See [Data Validation](https://docs.symbol.dev/concepts/data-validation.html) for an overview of Patricia Merkle trees and state proofs on Symbol. 
+     * Get mosaic Merkle information
+     */
+    async getMosaicMerkleRaw(requestParameters: GetMosaicMerkleRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<MerkleStateInfoDTO>> {
+        const requestOptions = await this.getMosaicMerkleRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => MerkleStateInfoDTOFromJSON(jsonValue));
     }
@@ -141,10 +214,9 @@ export class MosaicRoutesApi extends runtime.BaseAPI {
     }
 
     /**
-     * Retrieves the current on-chain state for multiple mosaics. The response includes only mosaics that were found, so its length can be smaller than the number of requested identifiers. Response entries are not guaranteed to preserve the order of the requested identifiers. 
-     * Get mosaics information for an array of mosaics
+     * Creates request options for getMosaics without sending the request
      */
-    async getMosaicsRaw(requestParameters: GetMosaicsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<MosaicInfoDTO>>> {
+    async getMosaicsRequestOpts(requestParameters: GetMosaicsRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['mosaicIds'] == null) {
             throw new runtime.RequiredError(
                 'mosaicIds',
@@ -161,13 +233,22 @@ export class MosaicRoutesApi extends runtime.BaseAPI {
 
         let urlPath = `/mosaics`;
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
             body: MosaicIdsToJSON(requestParameters['mosaicIds']),
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Retrieves the current on-chain state for multiple mosaics. The response includes only mosaics that were found, so its length can be smaller than the number of requested identifiers. Response entries are not guaranteed to preserve the order of the requested identifiers. 
+     * Get mosaics information for an array of mosaics
+     */
+    async getMosaicsRaw(requestParameters: GetMosaicsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<MosaicInfoDTO>>> {
+        const requestOptions = await this.getMosaicsRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(MosaicInfoDTOFromJSON));
     }
@@ -182,10 +263,9 @@ export class MosaicRoutesApi extends runtime.BaseAPI {
     }
 
     /**
-     * Returns a paginated list of mosaics matching the given criteria. Results can be filtered by mosaic owner address. Standard pagination parameters apply. 
-     * Search mosaics
+     * Creates request options for searchMosaics without sending the request
      */
-    async searchMosaicsRaw(requestParameters: SearchMosaicsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<MosaicPage>> {
+    async searchMosaicsRequestOpts(requestParameters: SearchMosaicsRequest): Promise<runtime.RequestOpts> {
         const queryParameters: any = {};
 
         if (requestParameters['ownerAddress'] != null) {
@@ -213,12 +293,21 @@ export class MosaicRoutesApi extends runtime.BaseAPI {
 
         let urlPath = `/mosaics`;
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Returns a paginated list of mosaics matching the given criteria. Results can be filtered by mosaic owner address. Standard pagination parameters apply. 
+     * Search mosaics
+     */
+    async searchMosaicsRaw(requestParameters: SearchMosaicsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<MosaicPage>> {
+        const requestOptions = await this.searchMosaicsRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => MosaicPageFromJSON(jsonValue));
     }

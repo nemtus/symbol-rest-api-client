@@ -28,27 +28,19 @@ import {
  */
 export interface EmbeddedHashLockTransactionDTO {
     /**
-     * 256-bit public key encoded as a hexadecimal string (64 hex characters).
-     * @type {string}
-     * @memberof EmbeddedHashLockTransactionDTO
+     * Public key of the account that signed the entity (e.g. block harvester, transaction signer).
      */
     signerPublicKey: string;
     /**
      * Entity version. Indicates the schema variant for serialization and validation.
-     * @type {number}
-     * @memberof EmbeddedHashLockTransactionDTO
      */
     version: number;
     /**
      * Network type (mainnet or testnet). Ensures the entity targets the correct network.
-     * @type {NetworkTypeEnum}
-     * @memberof EmbeddedHashLockTransactionDTO
      */
     network: NetworkTypeEnum;
     /**
      * Entity type identifier (e.g. transaction type code, block type). Determines the entity schema.
-     * @type {number}
-     * @memberof EmbeddedHashLockTransactionDTO
      */
     type: number;
     /**
@@ -56,8 +48,6 @@ export interface EmbeddedHashLockTransactionDTO {
      * If the most significant bit of byte 0 is set, the value contains a namespace ID alias
      * instead of a concrete mosaic ID.
      * 
-     * @type {string}
-     * @memberof EmbeddedHashLockTransactionDTO
      */
     mosaicId: string;
     /**
@@ -66,20 +56,14 @@ export interface EmbeddedHashLockTransactionDTO {
      * `123.456789` whole units. Encoded as a string to preserve precision, since the value
      * is an unsigned 64-bit integer.
      * 
-     * @type {string}
-     * @memberof EmbeddedHashLockTransactionDTO
      */
     amount: string;
     /**
      * Duration expressed in number of blocks.
-     * @type {string}
-     * @memberof EmbeddedHashLockTransactionDTO
      */
     duration: string;
     /**
      * 256-bit hash encoded as a 64-character hexadecimal string.
-     * @type {string}
-     * @memberof EmbeddedHashLockTransactionDTO
      */
     hash: string;
 }
@@ -89,7 +73,7 @@ export interface EmbeddedHashLockTransactionDTO {
 /**
  * Check if a given object implements the EmbeddedHashLockTransactionDTO interface.
  */
-export function instanceOfEmbeddedHashLockTransactionDTO(value: Record<string, any>): value is EmbeddedHashLockTransactionDTO {
+export function instanceOfEmbeddedHashLockTransactionDTO(value: object): value is EmbeddedHashLockTransactionDTO {
     if (!('signerPublicKey' in value) || value['signerPublicKey'] === undefined) return false;
     if (!('version' in value) || value['version'] === undefined) return false;
     if (!('network' in value) || value['network'] === undefined) return false;

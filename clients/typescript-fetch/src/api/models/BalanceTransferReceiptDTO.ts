@@ -33,49 +33,26 @@ import {
 export interface BalanceTransferReceiptDTO {
     /**
      * Version of the receipt format.
-     * @type {number}
-     * @memberof BalanceTransferReceiptDTO
      */
     version: number;
     /**
      * 
-     * @type {ReceiptTypeEnum}
-     * @memberof BalanceTransferReceiptDTO
      */
     type: ReceiptTypeEnum;
     /**
-     * Unique [mosaic](https://docs.symbol.dev/concepts/mosaic.html) identifier.
-     * A 64-bit unsigned integer derived from the creator's address and a registration nonce,
-     * encoded as a 16-character hexadecimal string.
-     * 
-     * @type {string}
-     * @memberof BalanceTransferReceiptDTO
+     * Identifier of the transferred mosaic.
      */
     mosaicId: string;
     /**
-     * Absolute amount expressed in the mosaic's smallest (atomic) unit, with no decimal point.
-     * For example, an amount of `123456789` for a mosaic with divisibility 6 represents
-     * `123.456789` whole units. Encoded as a string to preserve precision, since the value
-     * is an unsigned 64-bit integer.
-     * 
-     * @type {string}
-     * @memberof BalanceTransferReceiptDTO
+     * Amount of mosaic units transferred, expressed in the mosaic's smallest (atomic) unit.
      */
     amount: string;
     /**
-     * Address encoded as a 48-character hexadecimal string (24 bytes).
-     * The REST API returns addresses in this format. For Base32-encoded addresses (39 chars) see `Address`.
-     * 
-     * @type {string}
-     * @memberof BalanceTransferReceiptDTO
+     * Address from which the mosaic balance was transferred.
      */
     senderAddress: string;
     /**
-     * Address encoded as a 48-character hexadecimal string (24 bytes).
-     * The REST API returns addresses in this format. For Base32-encoded addresses (39 chars) see `Address`.
-     * 
-     * @type {string}
-     * @memberof BalanceTransferReceiptDTO
+     * Address that received the mosaic balance.
      */
     recipientAddress: string;
 }
@@ -85,7 +62,7 @@ export interface BalanceTransferReceiptDTO {
 /**
  * Check if a given object implements the BalanceTransferReceiptDTO interface.
  */
-export function instanceOfBalanceTransferReceiptDTO(value: Record<string, any>): value is BalanceTransferReceiptDTO {
+export function instanceOfBalanceTransferReceiptDTO(value: object): value is BalanceTransferReceiptDTO {
     if (!('version' in value) || value['version'] === undefined) return false;
     if (!('type' in value) || value['type'] === undefined) return false;
     if (!('mosaicId' in value) || value['mosaicId'] === undefined) return false;

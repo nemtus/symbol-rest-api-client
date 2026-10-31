@@ -28,27 +28,19 @@ import {
  */
 export interface EmbeddedMosaicSupplyRevocationTransactionDTO {
     /**
-     * 256-bit public key encoded as a hexadecimal string (64 hex characters).
-     * @type {string}
-     * @memberof EmbeddedMosaicSupplyRevocationTransactionDTO
+     * Public key of the account that signed the entity (e.g. block harvester, transaction signer).
      */
     signerPublicKey: string;
     /**
      * Entity version. Indicates the schema variant for serialization and validation.
-     * @type {number}
-     * @memberof EmbeddedMosaicSupplyRevocationTransactionDTO
      */
     version: number;
     /**
      * Network type (mainnet or testnet). Ensures the entity targets the correct network.
-     * @type {NetworkTypeEnum}
-     * @memberof EmbeddedMosaicSupplyRevocationTransactionDTO
      */
     network: NetworkTypeEnum;
     /**
      * Entity type identifier (e.g. transaction type code, block type). Determines the entity schema.
-     * @type {number}
-     * @memberof EmbeddedMosaicSupplyRevocationTransactionDTO
      */
     type: number;
     /**
@@ -56,8 +48,6 @@ export interface EmbeddedMosaicSupplyRevocationTransactionDTO {
      * If bit 0 of byte 0 is not set, the value represents a regular address.
      * Otherwise, it represents a namespace ID alias encoded as an unresolved address.
      * 
-     * @type {string}
-     * @memberof EmbeddedMosaicSupplyRevocationTransactionDTO
      */
     sourceAddress: string;
     /**
@@ -65,8 +55,6 @@ export interface EmbeddedMosaicSupplyRevocationTransactionDTO {
      * If the most significant bit of byte 0 is set, the value contains a namespace ID alias
      * instead of a concrete mosaic ID.
      * 
-     * @type {string}
-     * @memberof EmbeddedMosaicSupplyRevocationTransactionDTO
      */
     mosaicId: string;
     /**
@@ -75,8 +63,6 @@ export interface EmbeddedMosaicSupplyRevocationTransactionDTO {
      * `123.456789` whole units. Encoded as a string to preserve precision, since the value
      * is an unsigned 64-bit integer.
      * 
-     * @type {string}
-     * @memberof EmbeddedMosaicSupplyRevocationTransactionDTO
      */
     amount: string;
 }
@@ -86,7 +72,7 @@ export interface EmbeddedMosaicSupplyRevocationTransactionDTO {
 /**
  * Check if a given object implements the EmbeddedMosaicSupplyRevocationTransactionDTO interface.
  */
-export function instanceOfEmbeddedMosaicSupplyRevocationTransactionDTO(value: Record<string, any>): value is EmbeddedMosaicSupplyRevocationTransactionDTO {
+export function instanceOfEmbeddedMosaicSupplyRevocationTransactionDTO(value: object): value is EmbeddedMosaicSupplyRevocationTransactionDTO {
     if (!('signerPublicKey' in value) || value['signerPublicKey'] === undefined) return false;
     if (!('version' in value) || value['version'] === undefined) return false;
     if (!('network' in value) || value['network'] === undefined) return false;

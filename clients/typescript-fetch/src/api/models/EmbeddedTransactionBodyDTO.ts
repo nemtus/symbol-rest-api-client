@@ -29,8 +29,6 @@ import {
 export interface EmbeddedTransactionBodyDTO {
     /**
      * Array of transactions initiated by different accounts.
-     * @type {Array<EmbeddedTransactionInfoDTO>}
-     * @memberof EmbeddedTransactionBodyDTO
      */
     transactions: Array<EmbeddedTransactionInfoDTO>;
 }
@@ -38,7 +36,7 @@ export interface EmbeddedTransactionBodyDTO {
 /**
  * Check if a given object implements the EmbeddedTransactionBodyDTO interface.
  */
-export function instanceOfEmbeddedTransactionBodyDTO(value: Record<string, any>): value is EmbeddedTransactionBodyDTO {
+export function instanceOfEmbeddedTransactionBodyDTO(value: object): value is EmbeddedTransactionBodyDTO {
     if (!('transactions' in value) || value['transactions'] === undefined) return false;
     return true;
 }

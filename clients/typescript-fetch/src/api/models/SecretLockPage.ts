@@ -36,14 +36,10 @@ import {
 export interface SecretLockPage {
     /**
      * Secret lock entries matching the requested filters.
-     * @type {Array<SecretLockInfoDTO>}
-     * @memberof SecretLockPage
      */
     data: Array<SecretLockInfoDTO>;
     /**
      * 
-     * @type {Pagination}
-     * @memberof SecretLockPage
      */
     pagination: Pagination;
 }
@@ -51,7 +47,7 @@ export interface SecretLockPage {
 /**
  * Check if a given object implements the SecretLockPage interface.
  */
-export function instanceOfSecretLockPage(value: Record<string, any>): value is SecretLockPage {
+export function instanceOfSecretLockPage(value: object): value is SecretLockPage {
     if (!('data' in value) || value['data'] === undefined) return false;
     if (!('pagination' in value) || value['pagination'] === undefined) return false;
     return true;

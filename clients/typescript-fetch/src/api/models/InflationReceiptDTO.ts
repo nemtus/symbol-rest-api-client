@@ -29,33 +29,18 @@ import {
 export interface InflationReceiptDTO {
     /**
      * Version of the receipt format.
-     * @type {number}
-     * @memberof InflationReceiptDTO
      */
     version: number;
     /**
      * 
-     * @type {ReceiptTypeEnum}
-     * @memberof InflationReceiptDTO
      */
     type: ReceiptTypeEnum;
     /**
-     * Unique [mosaic](https://docs.symbol.dev/concepts/mosaic.html) identifier.
-     * A 64-bit unsigned integer derived from the creator's address and a registration nonce,
-     * encoded as a 16-character hexadecimal string.
-     * 
-     * @type {string}
-     * @memberof InflationReceiptDTO
+     * Identifier of the network currency mosaic created by inflation.
      */
     mosaicId: string;
     /**
-     * Absolute amount expressed in the mosaic's smallest (atomic) unit, with no decimal point.
-     * For example, an amount of `123456789` for a mosaic with divisibility 6 represents
-     * `123.456789` whole units. Encoded as a string to preserve precision, since the value
-     * is an unsigned 64-bit integer.
-     * 
-     * @type {string}
-     * @memberof InflationReceiptDTO
+     * Amount of mosaic units created by inflation, expressed in the mosaic's smallest (atomic) unit.
      */
     amount: string;
 }
@@ -65,7 +50,7 @@ export interface InflationReceiptDTO {
 /**
  * Check if a given object implements the InflationReceiptDTO interface.
  */
-export function instanceOfInflationReceiptDTO(value: Record<string, any>): value is InflationReceiptDTO {
+export function instanceOfInflationReceiptDTO(value: object): value is InflationReceiptDTO {
     if (!('version' in value) || value['version'] === undefined) return false;
     if (!('type' in value) || value['type'] === undefined) return false;
     if (!('mosaicId' in value) || value['mosaicId'] === undefined) return false;

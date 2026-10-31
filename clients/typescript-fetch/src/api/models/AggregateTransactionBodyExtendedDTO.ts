@@ -38,20 +38,14 @@ import {
 export interface AggregateTransactionBodyExtendedDTO {
     /**
      * 256-bit hash encoded as a 64-character hexadecimal string.
-     * @type {string}
-     * @memberof AggregateTransactionBodyExtendedDTO
      */
     transactionsHash: string;
     /**
      * Array of transaction cosignatures.
-     * @type {Array<CosignatureDTO>}
-     * @memberof AggregateTransactionBodyExtendedDTO
      */
     cosignatures: Array<CosignatureDTO>;
     /**
      * Array of transactions initiated by different accounts.
-     * @type {Array<EmbeddedTransactionInfoDTO>}
-     * @memberof AggregateTransactionBodyExtendedDTO
      */
     transactions: Array<EmbeddedTransactionInfoDTO>;
 }
@@ -59,7 +53,7 @@ export interface AggregateTransactionBodyExtendedDTO {
 /**
  * Check if a given object implements the AggregateTransactionBodyExtendedDTO interface.
  */
-export function instanceOfAggregateTransactionBodyExtendedDTO(value: Record<string, any>): value is AggregateTransactionBodyExtendedDTO {
+export function instanceOfAggregateTransactionBodyExtendedDTO(value: object): value is AggregateTransactionBodyExtendedDTO {
     if (!('transactionsHash' in value) || value['transactionsHash'] === undefined) return false;
     if (!('cosignatures' in value) || value['cosignatures'] === undefined) return false;
     if (!('transactions' in value) || value['transactions'] === undefined) return false;

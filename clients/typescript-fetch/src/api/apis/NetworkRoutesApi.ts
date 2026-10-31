@@ -12,32 +12,42 @@
  * Do not edit the class manually.
  */
 
-
 import * as runtime from '../runtime';
-import type {
-  ModelError,
-  NetworkConfigurationDTO,
-  NetworkInflationDTO,
-  NetworkTypeDTO,
-  RentalFeesDTO,
-  TransactionFeesDTO,
-} from '../models/index';
 import {
+    type ModelError,
     ModelErrorFromJSON,
     ModelErrorToJSON,
+} from '../models/ModelError';
+import {
+    type NetworkConfigurationDTO,
     NetworkConfigurationDTOFromJSON,
     NetworkConfigurationDTOToJSON,
+} from '../models/NetworkConfigurationDTO';
+import {
+    type NetworkInflationDTO,
     NetworkInflationDTOFromJSON,
     NetworkInflationDTOToJSON,
+} from '../models/NetworkInflationDTO';
+import {
+    type NetworkTypeDTO,
     NetworkTypeDTOFromJSON,
     NetworkTypeDTOToJSON,
+} from '../models/NetworkTypeDTO';
+import {
+    type RentalFeesDTO,
     RentalFeesDTOFromJSON,
     RentalFeesDTOToJSON,
+} from '../models/RentalFeesDTO';
+import {
+    type TransactionFeesDTO,
     TransactionFeesDTOFromJSON,
     TransactionFeesDTOToJSON,
-} from '../models/index';
+} from '../models/TransactionFeesDTO';
 
 export interface GetNetworkInflationAtHeightRequest {
+    /**
+     * Filter by block height (include). Sequential block position in the chain; starts at 1 and increments by one.
+     */
     height: string;
 }
 
@@ -47,10 +57,9 @@ export interface GetNetworkInflationAtHeightRequest {
 export class NetworkRoutesApi extends runtime.BaseAPI {
 
     /**
-     * Returns the current circulating supply of the network currency mosaic.  Circulating supply represents the portion of total on-chain supply that is not held in designated uncirculating or reserved accounts (e.g. nemesis or treasury accounts).  Data sources:   - Mosaic supply and divisibility from blockchain state   - Nemesis signer public key from network properties file   - Uncirculating account public keys defined in rest.json (`uncirculatingAccountPublicKeys`) 
-     * Returns circulating currency supply
+     * Creates request options for getCirculatingCurrencySupply without sending the request
      */
-    async getCirculatingCurrencySupplyRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<string>> {
+    async getCirculatingCurrencySupplyRequestOpts(): Promise<runtime.RequestOpts> {
         const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -58,12 +67,21 @@ export class NetworkRoutesApi extends runtime.BaseAPI {
 
         let urlPath = `/network/currency/supply/circulating`;
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Returns the current circulating supply of the network currency mosaic.  Circulating supply represents the portion of total on-chain supply that is not held in designated uncirculating or reserved accounts (e.g. nemesis or treasury accounts).  Data sources:   - Mosaic supply and divisibility from blockchain state   - Nemesis signer public key from network properties file   - Uncirculating account public keys defined in rest.json (`uncirculatingAccountPublicKeys`) 
+     * Returns circulating currency supply
+     */
+    async getCirculatingCurrencySupplyRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<string>> {
+        const requestOptions = await this.getCirculatingCurrencySupplyRequestOpts();
+        const response = await this.request(requestOptions, initOverrides);
 
         if (this.isJsonMime(response.headers.get('content-type'))) {
             return new runtime.JSONApiResponse<string>(response);
@@ -82,10 +100,9 @@ export class NetworkRoutesApi extends runtime.BaseAPI {
     }
 
     /**
-     * Returns the maximum possible supply of the network currency mosaic.  Data sources:   - Maximum supply (`chain.maxMosaicAtomicUnits`) defined in the network properties file   - Network currency divisibility from blockchain state  This represents the protocol-level supply cap configured for the network currency. 
-     * Returns max currency supply
+     * Creates request options for getMaxCurrencySupply without sending the request
      */
-    async getMaxCurrencySupplyRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<string>> {
+    async getMaxCurrencySupplyRequestOpts(): Promise<runtime.RequestOpts> {
         const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -93,12 +110,21 @@ export class NetworkRoutesApi extends runtime.BaseAPI {
 
         let urlPath = `/network/currency/supply/max`;
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Returns the maximum possible supply of the network currency mosaic.  Data sources:   - Maximum supply (`chain.maxMosaicAtomicUnits`) defined in the network properties file   - Network currency divisibility from blockchain state  This represents the protocol-level supply cap configured for the network currency. 
+     * Returns max currency supply
+     */
+    async getMaxCurrencySupplyRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<string>> {
+        const requestOptions = await this.getMaxCurrencySupplyRequestOpts();
+        const response = await this.request(requestOptions, initOverrides);
 
         if (this.isJsonMime(response.headers.get('content-type'))) {
             return new runtime.JSONApiResponse<string>(response);
@@ -117,10 +143,9 @@ export class NetworkRoutesApi extends runtime.BaseAPI {
     }
 
     /**
-     * Retrieves the network inflation table, where each entry specifies a starting block height and the reward amount applied from that height onward. 
-     * Returns the inflation distribution schedule
+     * Creates request options for getNetworkInflation without sending the request
      */
-    async getNetworkInflationRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<NetworkInflationDTO>>> {
+    async getNetworkInflationRequestOpts(): Promise<runtime.RequestOpts> {
         const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -128,12 +153,21 @@ export class NetworkRoutesApi extends runtime.BaseAPI {
 
         let urlPath = `/network/inflation`;
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Retrieves the network inflation table, where each entry specifies a starting block height and the reward amount applied from that height onward. 
+     * Returns the inflation distribution schedule
+     */
+    async getNetworkInflationRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<NetworkInflationDTO>>> {
+        const requestOptions = await this.getNetworkInflationRequestOpts();
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(NetworkInflationDTOFromJSON));
     }
@@ -148,10 +182,9 @@ export class NetworkRoutesApi extends runtime.BaseAPI {
     }
 
     /**
-     * Retrieves network inflation parameters at a given block height. 
-     * Returns the inflation distribution data at a specific height
+     * Creates request options for getNetworkInflationAtHeight without sending the request
      */
-    async getNetworkInflationAtHeightRaw(requestParameters: GetNetworkInflationAtHeightRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<NetworkInflationDTO>> {
+    async getNetworkInflationAtHeightRequestOpts(requestParameters: GetNetworkInflationAtHeightRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['height'] == null) {
             throw new runtime.RequiredError(
                 'height',
@@ -165,14 +198,23 @@ export class NetworkRoutesApi extends runtime.BaseAPI {
 
 
         let urlPath = `/network/inflation/at/{height}`;
-        urlPath = urlPath.replace(`{${"height"}}`, encodeURIComponent(String(requestParameters['height'])));
+        urlPath = urlPath.replace('{height}', encodeURIComponent(String(requestParameters['height'])));
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Retrieves network inflation parameters at a given block height. 
+     * Returns the inflation distribution data at a specific height
+     */
+    async getNetworkInflationAtHeightRaw(requestParameters: GetNetworkInflationAtHeightRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<NetworkInflationDTO>> {
+        const requestOptions = await this.getNetworkInflationAtHeightRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => NetworkInflationDTOFromJSON(jsonValue));
     }
@@ -187,10 +229,9 @@ export class NetworkRoutesApi extends runtime.BaseAPI {
     }
 
     /**
-     * Returns the content from a catapult-server network configuration file (e.g. `config-network.properties`). To enable this feature, the REST setting `apiNode.networkPropertyFilePath` in the config file (e.g. `rest.json`) must define where the file is located. 
-     * Get the network properties
+     * Creates request options for getNetworkProperties without sending the request
      */
-    async getNetworkPropertiesRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<NetworkConfigurationDTO>> {
+    async getNetworkPropertiesRequestOpts(): Promise<runtime.RequestOpts> {
         const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -198,12 +239,21 @@ export class NetworkRoutesApi extends runtime.BaseAPI {
 
         let urlPath = `/network/properties`;
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Returns the content from a catapult-server network configuration file (e.g. `config-network.properties`). To enable this feature, the REST setting `apiNode.networkPropertyFilePath` in the config file (e.g. `rest.json`) must define where the file is located. 
+     * Get the network properties
+     */
+    async getNetworkPropertiesRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<NetworkConfigurationDTO>> {
+        const requestOptions = await this.getNetworkPropertiesRequestOpts();
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => NetworkConfigurationDTOFromJSON(jsonValue));
     }
@@ -218,10 +268,9 @@ export class NetworkRoutesApi extends runtime.BaseAPI {
     }
 
     /**
-     * Returns the current network type.
-     * Get the current network type of the chain
+     * Creates request options for getNetworkType without sending the request
      */
-    async getNetworkTypeRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<NetworkTypeDTO>> {
+    async getNetworkTypeRequestOpts(): Promise<runtime.RequestOpts> {
         const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -229,12 +278,21 @@ export class NetworkRoutesApi extends runtime.BaseAPI {
 
         let urlPath = `/network`;
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Returns the current network type.
+     * Get the current network type of the chain
+     */
+    async getNetworkTypeRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<NetworkTypeDTO>> {
+        const requestOptions = await this.getNetworkTypeRequestOpts();
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => NetworkTypeDTOFromJSON(jsonValue));
     }
@@ -249,10 +307,9 @@ export class NetworkRoutesApi extends runtime.BaseAPI {
     }
 
     /**
-     * Returns the estimated effective rental fees for namespaces and mosaics. This endpoint is only available if the REST instance has access to catapult-server `resources/config-network.properties` file. To activate this feature, add the setting `network.propertiesFilePath` in the configuration file (`rest/resources/rest.json`). 
-     * Get rental fees information
+     * Creates request options for getRentalFees without sending the request
      */
-    async getRentalFeesRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<RentalFeesDTO>> {
+    async getRentalFeesRequestOpts(): Promise<runtime.RequestOpts> {
         const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -260,12 +317,21 @@ export class NetworkRoutesApi extends runtime.BaseAPI {
 
         let urlPath = `/network/fees/rental`;
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Returns the estimated effective rental fees for namespaces and mosaics. This endpoint is only available if the REST instance has access to catapult-server `resources/config-network.properties` file. To activate this feature, add the setting `network.propertiesFilePath` in the configuration file (`rest/resources/rest.json`). 
+     * Get rental fees information
+     */
+    async getRentalFeesRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<RentalFeesDTO>> {
+        const requestOptions = await this.getRentalFeesRequestOpts();
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => RentalFeesDTOFromJSON(jsonValue));
     }
@@ -280,10 +346,9 @@ export class NetworkRoutesApi extends runtime.BaseAPI {
     }
 
     /**
-     * Returns the total current on-chain supply of the network currency mosaic.  Data sources:   - Mosaic supply and divisibility from blockchain state  This value includes both circulating and uncirculating balances and represents the full issued supply currently recorded on-chain. 
-     * Returns total currency supply
+     * Creates request options for getTotalCurrencySupply without sending the request
      */
-    async getTotalCurrencySupplyRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<string>> {
+    async getTotalCurrencySupplyRequestOpts(): Promise<runtime.RequestOpts> {
         const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -291,12 +356,21 @@ export class NetworkRoutesApi extends runtime.BaseAPI {
 
         let urlPath = `/network/currency/supply/total`;
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Returns the total current on-chain supply of the network currency mosaic.  Data sources:   - Mosaic supply and divisibility from blockchain state  This value includes both circulating and uncirculating balances and represents the full issued supply currently recorded on-chain. 
+     * Returns total currency supply
+     */
+    async getTotalCurrencySupplyRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<string>> {
+        const requestOptions = await this.getTotalCurrencySupplyRequestOpts();
+        const response = await this.request(requestOptions, initOverrides);
 
         if (this.isJsonMime(response.headers.get('content-type'))) {
             return new runtime.JSONApiResponse<string>(response);
@@ -315,10 +389,9 @@ export class NetworkRoutesApi extends runtime.BaseAPI {
     }
 
     /**
-     * Returns the average, median, highest, and lowest fee multiplier over the last `numBlocksTransactionFeeStats` blocks. The setting `numBlocksTransactionFeeStats` is adjustable in the REST configuration file (`rest.json`) per REST instance. 
-     * Get transaction fees information
+     * Creates request options for getTransactionFees without sending the request
      */
-    async getTransactionFeesRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<TransactionFeesDTO>> {
+    async getTransactionFeesRequestOpts(): Promise<runtime.RequestOpts> {
         const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -326,12 +399,21 @@ export class NetworkRoutesApi extends runtime.BaseAPI {
 
         let urlPath = `/network/fees/transaction`;
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Returns the average, median, highest, and lowest fee multiplier over the last `numBlocksTransactionFeeStats` blocks. The setting `numBlocksTransactionFeeStats` is adjustable in the REST configuration file (`rest.json`) per REST instance. 
+     * Get transaction fees information
+     */
+    async getTransactionFeesRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<TransactionFeesDTO>> {
+        const requestOptions = await this.getTransactionFeesRequestOpts();
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => TransactionFeesDTOFromJSON(jsonValue));
     }

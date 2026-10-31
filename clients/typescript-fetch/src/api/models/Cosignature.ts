@@ -20,9 +20,7 @@ import { mapValues } from '../runtime';
  */
 export interface Cosignature {
     /**
-     * 256-bit hash encoded as a 64-character hexadecimal string.
-     * @type {string}
-     * @memberof Cosignature
+     * Hash of the parent aggregate bonded transaction being cosigned.
      */
     parentHash: string;
     /**
@@ -30,22 +28,16 @@ export interface Cosignature {
      * over the serialized entity payload. Can be verified with the signer's public key (`signerPublicKey`).
      * Used for blocks, transactions, and cosignatures.
      * 
-     * @type {string}
-     * @memberof Cosignature
      */
     signature: string;
     /**
-     * 256-bit public key encoded as a hexadecimal string (64 hex characters).
-     * @type {string}
-     * @memberof Cosignature
+     * Public key of the cosigner creating the cosignature.
      */
     signerPublicKey: string;
     /**
      * Version of a detached cosignature attached to an aggregate bonded transaction.
      * Returned and submitted as a string because the value is encoded as an unsigned integer.
      * 
-     * @type {string}
-     * @memberof Cosignature
      */
     version: string;
 }
@@ -53,7 +45,7 @@ export interface Cosignature {
 /**
  * Check if a given object implements the Cosignature interface.
  */
-export function instanceOfCosignature(value: Record<string, any>): value is Cosignature {
+export function instanceOfCosignature(value: object): value is Cosignature {
     if (!('parentHash' in value) || value['parentHash'] === undefined) return false;
     if (!('signature' in value) || value['signature'] === undefined) return false;
     if (!('signerPublicKey' in value) || value['signerPublicKey'] === undefined) return false;

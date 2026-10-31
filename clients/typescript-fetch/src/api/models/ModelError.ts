@@ -27,14 +27,10 @@ export interface ModelError {
      * - `ResourceNotFound`: requested resource does not exist (HTTP 404).
      * - `InvalidArgument`: required arguments missing or unacceptable (HTTP 409).
      * 
-     * @type {string}
-     * @memberof ModelError
      */
     code: string;
     /**
      * Human-readable error description. May include the invalid value or resource identifier.
-     * @type {string}
-     * @memberof ModelError
      */
     message: string;
 }
@@ -42,7 +38,7 @@ export interface ModelError {
 /**
  * Check if a given object implements the ModelError interface.
  */
-export function instanceOfModelError(value: Record<string, any>): value is ModelError {
+export function instanceOfModelError(value: object): value is ModelError {
     if (!('code' in value) || value['code'] === undefined) return false;
     if (!('message' in value) || value['message'] === undefined) return false;
     return true;

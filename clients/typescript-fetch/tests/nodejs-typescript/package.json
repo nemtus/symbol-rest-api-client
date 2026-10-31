@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "vitest run"
+    "test": "node ../../../../scripts/link-dist.mjs && vitest run"
   },
   "keywords": [],
   "author": "yasunori-matsuoka <yasunori.matsuoka@gmail.com>",
@@ -12,9 +12,6 @@
   "devDependencies": {
     "ts-node": "^10.9.1",
     "typescript": "^6.0.3",
-    "vitest": "^4.1.8"
-  },
-  "dependencies": {
-    "@nemtus/symbol-rest-api-client-fetch": "../../dist"
+    "vitest": "^5.0.5"
   }
 }

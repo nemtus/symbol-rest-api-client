@@ -28,12 +28,10 @@ import {
  */
 export interface MosaicGlobalRestrictionEntryRestrictionDTO {
     /**
-     * Unique [mosaic](https://docs.symbol.dev/concepts/mosaic.html) identifier.
-     * A 64-bit unsigned integer derived from the creator's address and a registration nonce,
-     * encoded as a 16-character hexadecimal string.
+     * Mosaic identifier providing the restriction key used by this global restriction rule.
+     * The global restriction for the requested mosaic depends on the rule defined on this reference mosaic.
+     * This value is `0` when the restriction key is defined on the same mosaic.
      * 
-     * @type {string}
-     * @memberof MosaicGlobalRestrictionEntryRestrictionDTO
      */
     referenceMosaicId: string;
     /**
@@ -41,14 +39,10 @@ export interface MosaicGlobalRestrictionEntryRestrictionDTO {
      * For address restrictions, it is the value assigned to the target address;
      * for global restrictions, it is the threshold evaluated with the restriction type.
      * 
-     * @type {string}
-     * @memberof MosaicGlobalRestrictionEntryRestrictionDTO
      */
     restrictionValue: string;
     /**
      * 
-     * @type {MosaicRestrictionTypeEnum}
-     * @memberof MosaicGlobalRestrictionEntryRestrictionDTO
      */
     restrictionType: MosaicRestrictionTypeEnum;
 }
@@ -58,7 +52,7 @@ export interface MosaicGlobalRestrictionEntryRestrictionDTO {
 /**
  * Check if a given object implements the MosaicGlobalRestrictionEntryRestrictionDTO interface.
  */
-export function instanceOfMosaicGlobalRestrictionEntryRestrictionDTO(value: Record<string, any>): value is MosaicGlobalRestrictionEntryRestrictionDTO {
+export function instanceOfMosaicGlobalRestrictionEntryRestrictionDTO(value: object): value is MosaicGlobalRestrictionEntryRestrictionDTO {
     if (!('referenceMosaicId' in value) || value['referenceMosaicId'] === undefined) return false;
     if (!('restrictionValue' in value) || value['restrictionValue'] === undefined) return false;
     if (!('restrictionType' in value) || value['restrictionType'] === undefined) return false;

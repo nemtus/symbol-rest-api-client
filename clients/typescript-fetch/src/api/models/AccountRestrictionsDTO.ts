@@ -32,22 +32,16 @@ export interface AccountRestrictionsDTO {
      * schema of the entity changes (e.g. new fields are added), allowing the node to
      * deserialize entries written under earlier formats.
      * 
-     * @type {number}
-     * @memberof AccountRestrictionsDTO
      */
     version: number;
     /**
      * Address encoded as a 48-character hexadecimal string (24 bytes).
      * The REST API returns addresses in this format. For Base32-encoded addresses (39 chars) see `Address`.
      * 
-     * @type {string}
-     * @memberof AccountRestrictionsDTO
      */
     address: string;
     /**
      * 
-     * @type {Array<AccountRestrictionDTO>}
-     * @memberof AccountRestrictionsDTO
      */
     restrictions: Array<AccountRestrictionDTO>;
 }
@@ -55,7 +49,7 @@ export interface AccountRestrictionsDTO {
 /**
  * Check if a given object implements the AccountRestrictionsDTO interface.
  */
-export function instanceOfAccountRestrictionsDTO(value: Record<string, any>): value is AccountRestrictionsDTO {
+export function instanceOfAccountRestrictionsDTO(value: object): value is AccountRestrictionsDTO {
     if (!('version' in value) || value['version'] === undefined) return false;
     if (!('address' in value) || value['address'] === undefined) return false;
     if (!('restrictions' in value) || value['restrictions'] === undefined) return false;

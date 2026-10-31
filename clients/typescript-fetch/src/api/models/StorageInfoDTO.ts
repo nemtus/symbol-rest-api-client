@@ -35,8 +35,6 @@ export interface StorageInfoDTO {
      * Estimated number of block documents in the `blocks` collection. Under normal
      * operation this tracks chain height; when synchronizing, it lags the network.
      * 
-     * @type {number}
-     * @memberof StorageInfoDTO
      */
     numBlocks: number;
     /**
@@ -44,22 +42,16 @@ export interface StorageInfoDTO {
      * collection. Excludes unconfirmed transactions. For aggregate transactions,
      * each inner transaction is stored as a separate document.
      * 
-     * @type {number}
-     * @memberof StorageInfoDTO
      */
     numTransactions: number;
     /**
      * Estimated number of account documents in the `accounts` collection (addresses
      * with persisted on-chain state).
      * 
-     * @type {number}
-     * @memberof StorageInfoDTO
      */
     numAccounts: number;
     /**
      * 
-     * @type {StorageInfoDatabaseDTO}
-     * @memberof StorageInfoDTO
      */
     database: StorageInfoDatabaseDTO;
 }
@@ -67,7 +59,7 @@ export interface StorageInfoDTO {
 /**
  * Check if a given object implements the StorageInfoDTO interface.
  */
-export function instanceOfStorageInfoDTO(value: Record<string, any>): value is StorageInfoDTO {
+export function instanceOfStorageInfoDTO(value: object): value is StorageInfoDTO {
     if (!('numBlocks' in value) || value['numBlocks'] === undefined) return false;
     if (!('numTransactions' in value) || value['numTransactions'] === undefined) return false;
     if (!('numAccounts' in value) || value['numAccounts'] === undefined) return false;

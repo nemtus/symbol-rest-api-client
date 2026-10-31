@@ -12,27 +12,34 @@
  * Do not edit the class manually.
  */
 
-
 import * as runtime from '../runtime';
-import type {
-  ModelError,
-  TransactionHashes,
-  TransactionStatusDTO,
-} from '../models/index';
 import {
+    type ModelError,
     ModelErrorFromJSON,
     ModelErrorToJSON,
+} from '../models/ModelError';
+import {
+    type TransactionHashes,
     TransactionHashesFromJSON,
     TransactionHashesToJSON,
+} from '../models/TransactionHashes';
+import {
+    type TransactionStatusDTO,
     TransactionStatusDTOFromJSON,
     TransactionStatusDTOToJSON,
-} from '../models/index';
+} from '../models/TransactionStatusDTO';
 
 export interface GetTransactionStatusRequest {
+    /**
+     * Transaction hash encoded as a 64-character hexadecimal string.
+     */
     hash: string;
 }
 
 export interface GetTransactionStatusesRequest {
+    /**
+     * 
+     */
     transactionHashes: TransactionHashes;
 }
 
@@ -42,10 +49,9 @@ export interface GetTransactionStatusesRequest {
 export class TransactionStatusRoutesApi extends runtime.BaseAPI {
 
     /**
-     * Returns the current status of the transaction identified by the given transaction hash.  When checking status after announcing a transaction, it is best to query the same node that received the announce request. If that node rejects the transaction before propagation, only that node may know the detailed rejection reason. Other nodes may not know the transaction at all because it was never propagated. 
-     * Get transaction status
+     * Creates request options for getTransactionStatus without sending the request
      */
-    async getTransactionStatusRaw(requestParameters: GetTransactionStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<TransactionStatusDTO>> {
+    async getTransactionStatusRequestOpts(requestParameters: GetTransactionStatusRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['hash'] == null) {
             throw new runtime.RequiredError(
                 'hash',
@@ -59,14 +65,23 @@ export class TransactionStatusRoutesApi extends runtime.BaseAPI {
 
 
         let urlPath = `/transactionStatus/{hash}`;
-        urlPath = urlPath.replace(`{${"hash"}}`, encodeURIComponent(String(requestParameters['hash'])));
+        urlPath = urlPath.replace('{hash}', encodeURIComponent(String(requestParameters['hash'])));
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Returns the current status of the transaction identified by the given transaction hash.  When checking status after announcing a transaction, it is best to query the same node that received the announce request. If that node rejects the transaction before propagation, only that node may know the detailed rejection reason. Other nodes may not know the transaction at all because it was never propagated. 
+     * Get transaction status
+     */
+    async getTransactionStatusRaw(requestParameters: GetTransactionStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<TransactionStatusDTO>> {
+        const requestOptions = await this.getTransactionStatusRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => TransactionStatusDTOFromJSON(jsonValue));
     }
@@ -81,10 +96,9 @@ export class TransactionStatusRoutesApi extends runtime.BaseAPI {
     }
 
     /**
-     * Returns the current statuses of the transactions identified by the given array of transaction hashes.  When checking status after announcing transactions, it is best to query the same node that received the announce request. If that node rejects a transaction before propagation, only that node may know the detailed rejection reason. Other nodes may not know the transaction at all because it was never propagated. 
-     * Get transaction statuses
+     * Creates request options for getTransactionStatuses without sending the request
      */
-    async getTransactionStatusesRaw(requestParameters: GetTransactionStatusesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<TransactionStatusDTO>>> {
+    async getTransactionStatusesRequestOpts(requestParameters: GetTransactionStatusesRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['transactionHashes'] == null) {
             throw new runtime.RequiredError(
                 'transactionHashes',
@@ -101,13 +115,22 @@ export class TransactionStatusRoutesApi extends runtime.BaseAPI {
 
         let urlPath = `/transactionStatus`;
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
             body: TransactionHashesToJSON(requestParameters['transactionHashes']),
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Returns the current statuses of the transactions identified by the given array of transaction hashes.  When checking status after announcing transactions, it is best to query the same node that received the announce request. If that node rejects a transaction before propagation, only that node may know the detailed rejection reason. Other nodes may not know the transaction at all because it was never propagated. 
+     * Get transaction statuses
+     */
+    async getTransactionStatusesRaw(requestParameters: GetTransactionStatusesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<TransactionStatusDTO>>> {
+        const requestOptions = await this.getTransactionStatusesRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(TransactionStatusDTOFromJSON));
     }

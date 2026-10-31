@@ -37,8 +37,6 @@ import { mapValues } from '../runtime';
 export interface AnnounceTransactionInfoDTO {
     /**
      * Human-readable message returned by the node for the announce request.
-     * @type {string}
-     * @memberof AnnounceTransactionInfoDTO
      */
     message: string;
 }
@@ -46,7 +44,7 @@ export interface AnnounceTransactionInfoDTO {
 /**
  * Check if a given object implements the AnnounceTransactionInfoDTO interface.
  */
-export function instanceOfAnnounceTransactionInfoDTO(value: Record<string, any>): value is AnnounceTransactionInfoDTO {
+export function instanceOfAnnounceTransactionInfoDTO(value: object): value is AnnounceTransactionInfoDTO {
     if (!('message' in value) || value['message'] === undefined) return false;
     return true;
 }

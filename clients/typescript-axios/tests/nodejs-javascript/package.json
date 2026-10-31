@@ -4,19 +4,19 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "vitest run"
+    "test": "node ../../../../scripts/link-dist.mjs && vitest run"
   },
   "keywords": [],
   "author": "yasunori-matsuoka <yasunori.matsuoka@gmail.com>",
   "license": "ISC",
   "dependencies": {
-    "@nemtus/symbol-rest-api-client-axios": "../../dist"
+    "axios": "^1.20.0"
   },
   "devDependencies": {
-    "vitest": "^4.1.8"
+    "vitest": "^5.0.5"
   },
   "overrides": {
     "form-data": ">=4.0.6",
-    "follow-redirects": ">=1.15.6"
+    "follow-redirects": ">=1.16.2"
   }
 }

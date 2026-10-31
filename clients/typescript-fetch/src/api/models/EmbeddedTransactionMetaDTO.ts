@@ -22,66 +22,31 @@ import { mapValues } from '../runtime';
  */
 export interface EmbeddedTransactionMetaDTO {
     /**
-     * Height of the block containing the referenced transaction or parent aggregate transaction.
-     * Returned as a decimal string. The value is `"0"` when the transaction is not included in a
-     * block yet, for example for unconfirmed transactions and partial aggregate transactions.
+     * Height of the block that contains the parent aggregate transaction.
+     * For embedded transactions returned from partial aggregate transactions, this value is `"0"`.
      * 
-     * @type {string}
-     * @memberof EmbeddedTransactionMetaDTO
      */
     height: string;
     /**
-     * 256-bit hash encoded as a 64-character hexadecimal string.
-     * @type {string}
-     * @memberof EmbeddedTransactionMetaDTO
+     * Hash of the parent aggregate transaction.
      */
     aggregateHash: string;
     /**
-     * Unique identifier of the object in the node's database (MongoDB ObjectId).
-     * Used as the `offset` parameter value for cursor-based pagination.
-     * 
-     * @type {string}
-     * @memberof EmbeddedTransactionMetaDTO
+     * Database record ID of the parent aggregate transaction.
      */
     aggregateId: string;
     /**
      * Embedded transaction index within the parent aggregate transaction.
-     * @type {number}
-     * @memberof EmbeddedTransactionMetaDTO
      */
     index: number;
     /**
-     * Network timestamp in **milliseconds** since the creation of the nemesis (first) block.
-     * Used for block timestamps, transaction deadlines, and time synchronization.
+     * Timestamp of the block that contains the parent aggregate transaction,
+     * in milliseconds since the creation of the nemesis (first) block.
      * 
-     * **Finding the nemesis block time:** The `epochAdjustment` field returned by the
-     * [`/network/properties`] endpoint gives the nemesis block creation time in seconds since the
-     * [UNIX epoch](https://en.wikipedia.org/wiki/Unix_time). For Symbol MAINNET this is
-     * always `1615853185` (15 March 2021, 00:06:25 UTC).
-     * 
-     * **Converting to real time:** Add this timestamp (ms) to `epochAdjustment × 1000` (ms), then use standard date functions.
-     * Note: `epochAdjustment` may be returned as a string like `"1615853185s"`; use the numeric part.
-     * 
-     * @type {string}
-     * @memberof EmbeddedTransactionMetaDTO
      */
     timestamp?: string;
     /**
-     * Fee multiplier applied to the size of a transaction to obtain its fee, in
-     * [absolute units](https://docs.symbol.dev/concepts/mosaic.html#divisibility).
-     * Set by the harvester when creating a block; stored in the block header.
-     * 
-     * The effective fee for a transaction is:
-     * 
-     * `effectiveFee = transaction.size × block.feeMultiplier`
-     * 
-     * Node owners can configure the fee multiplier to any non-negative value (including zero).
-     * For transaction senders, the median fee multiplier over recent blocks is available
-     * via `/network/fees/transaction`; using `medianFeeMultiplier` or higher
-     * improves chances of inclusion. See the [fees documentation](https://docs.symbol.dev/concepts/fees.html).
-     * 
-     * @type {number}
-     * @memberof EmbeddedTransactionMetaDTO
+     * Fee multiplier of the block that contains the parent aggregate transaction.
      */
     feeMultiplier?: number;
 }
@@ -89,7 +54,7 @@ export interface EmbeddedTransactionMetaDTO {
 /**
  * Check if a given object implements the EmbeddedTransactionMetaDTO interface.
  */
-export function instanceOfEmbeddedTransactionMetaDTO(value: Record<string, any>): value is EmbeddedTransactionMetaDTO {
+export function instanceOfEmbeddedTransactionMetaDTO(value: object): value is EmbeddedTransactionMetaDTO {
     if (!('height' in value) || value['height'] === undefined) return false;
     if (!('aggregateHash' in value) || value['aggregateHash'] === undefined) return false;
     if (!('aggregateId' in value) || value['aggregateId'] === undefined) return false;

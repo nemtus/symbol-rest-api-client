@@ -30,14 +30,10 @@ import {
 export interface ServerDTO {
     /**
      * catapult-rest component version.
-     * @type {string}
-     * @memberof ServerDTO
      */
     restVersion: string;
     /**
      * 
-     * @type {DeploymentDTO}
-     * @memberof ServerDTO
      */
     deployment: DeploymentDTO;
 }
@@ -45,7 +41,7 @@ export interface ServerDTO {
 /**
  * Check if a given object implements the ServerDTO interface.
  */
-export function instanceOfServerDTO(value: Record<string, any>): value is ServerDTO {
+export function instanceOfServerDTO(value: object): value is ServerDTO {
     if (!('restVersion' in value) || value['restVersion'] === undefined) return false;
     if (!('deployment' in value) || value['deployment'] === undefined) return false;
     return true;

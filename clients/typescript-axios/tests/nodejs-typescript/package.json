@@ -4,21 +4,21 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "vitest run"
+    "test": "node ../../../../scripts/link-dist.mjs && vitest run"
   },
   "keywords": [],
   "author": "yasunori-matsuoka <yasunori.matsuoka@gmail.com>",
   "license": "ISC",
   "devDependencies": {
     "ts-node": "^10.9.1",
-    "typescript": "^5.9.2",
-    "vitest": "^4.1.8"
+    "typescript": "^6.0.3",
+    "vitest": "^5.0.5"
   },
   "dependencies": {
-    "@nemtus/symbol-rest-api-client-axios": "../../dist"
+    "axios": "^1.20.0"
   },
   "overrides": {
     "form-data": ">=4.0.6",
-    "follow-redirects": ">=1.15.6"
+    "follow-redirects": ">=1.16.2"
   }
 }

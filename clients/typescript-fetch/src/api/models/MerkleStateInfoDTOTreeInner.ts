@@ -50,56 +50,38 @@ import {
 export interface MerkleStateInfoDTOTreeInner {
     /**
      * Node type (always leaf).
-     * @type {MerkleTreeNodeTypeEnum}
-     * @memberof MerkleStateInfoDTOTreeInner
      */
     type: MerkleTreeNodeTypeEnum;
     /**
      * Full path (hex) from root to this leaf.
-     * @type {string}
-     * @memberof MerkleStateInfoDTOTreeInner
      */
     path: string;
     /**
      * Compact-encoded path.
-     * @type {string}
-     * @memberof MerkleStateInfoDTOTreeInner
      */
     encodedPath: string;
     /**
      * Number of nibbles in the path.
-     * @type {number}
-     * @memberof MerkleStateInfoDTOTreeInner
      */
     nibbleCount: number;
     /**
      * Bitmask indicating which nibble slots (0 to 15) have child links.
-     * @type {string}
-     * @memberof MerkleStateInfoDTOTreeInner
      */
     linkMask: string;
     /**
      * Child links (max 16, one per nibble).
-     * @type {Array<MerkleTreeBranchLinkDTO>}
-     * @memberof MerkleStateInfoDTOTreeInner
      */
     links: Array<MerkleTreeBranchLinkDTO>;
     /**
-     * 256-bit hash encoded as a 64-character hexadecimal string.
-     * @type {string}
-     * @memberof MerkleStateInfoDTOTreeInner
+     * Hash of the branch node.
      */
     branchHash: string;
     /**
      * Leaf value (SHA3-256 hash of the entity state).
-     * @type {string}
-     * @memberof MerkleStateInfoDTOTreeInner
      */
     value: string;
     /**
-     * 256-bit hash encoded as a 64-character hexadecimal string.
-     * @type {string}
-     * @memberof MerkleStateInfoDTOTreeInner
+     * Hash of the leaf node.
      */
     leafHash: string;
 }
@@ -109,7 +91,7 @@ export interface MerkleStateInfoDTOTreeInner {
 /**
  * Check if a given object implements the MerkleStateInfoDTOTreeInner interface.
  */
-export function instanceOfMerkleStateInfoDTOTreeInner(value: Record<string, any>): value is MerkleStateInfoDTOTreeInner {
+export function instanceOfMerkleStateInfoDTOTreeInner(value: object): value is MerkleStateInfoDTOTreeInner {
     if (!('type' in value) || value['type'] === undefined) return false;
     if (!('path' in value) || value['path'] === undefined) return false;
     if (!('encodedPath' in value) || value['encodedPath'] === undefined) return false;

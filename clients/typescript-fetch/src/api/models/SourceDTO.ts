@@ -20,19 +20,21 @@ import { mapValues } from '../runtime';
  */
 export interface SourceDTO {
     /**
-     * Unsigned 32-bit integer.
-     * Represented as integer since it fits in JSON number precision.
+     * Index of the top-level transaction within the block.
+     * A top-level transaction is a transaction that appears directly in the block,
+     * not one that is embedded inside an aggregate transaction.
+     * Indexing is `1`-based, so the first top-level transaction in the block has `primaryId = 1`.
+     * This value can be `0` when the statement does not refer to a specific transaction source.
+     * Use this value to locate the block transaction that produced the receipt or resolution entry.
      * 
-     * @type {number}
-     * @memberof SourceDTO
      */
     primaryId: number;
     /**
-     * Unsigned 32-bit integer.
-     * Represented as integer since it fits in JSON number precision.
+     * Index of the embedded transaction within the aggregate transaction.
+     * Indexing is `1`-based, so the first embedded transaction has `secondaryId = 1`.
+     * If the source is not an embedded transaction, this value is `0`.
+     * Use this together with `primaryId` to pinpoint the exact embedded transaction inside an aggregate.
      * 
-     * @type {number}
-     * @memberof SourceDTO
      */
     secondaryId: number;
 }
@@ -40,7 +42,7 @@ export interface SourceDTO {
 /**
  * Check if a given object implements the SourceDTO interface.
  */
-export function instanceOfSourceDTO(value: Record<string, any>): value is SourceDTO {
+export function instanceOfSourceDTO(value: object): value is SourceDTO {
     if (!('primaryId' in value) || value['primaryId'] === undefined) return false;
     if (!('secondaryId' in value) || value['secondaryId'] === undefined) return false;
     return true;

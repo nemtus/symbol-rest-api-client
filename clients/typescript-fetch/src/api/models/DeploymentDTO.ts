@@ -22,20 +22,14 @@ import { mapValues } from '../runtime';
 export interface DeploymentDTO {
     /**
      * The tool used to create, maintain and deploy the node.
-     * @type {string}
-     * @memberof DeploymentDTO
      */
     deploymentTool: string;
     /**
      * The version of the tool used to create, maintain and deploy the node.
-     * @type {string}
-     * @memberof DeploymentDTO
      */
     deploymentToolVersion: string;
     /**
      * When was the node last upgraded.
-     * @type {string}
-     * @memberof DeploymentDTO
      */
     lastUpdatedDate: string;
 }
@@ -43,7 +37,7 @@ export interface DeploymentDTO {
 /**
  * Check if a given object implements the DeploymentDTO interface.
  */
-export function instanceOfDeploymentDTO(value: Record<string, any>): value is DeploymentDTO {
+export function instanceOfDeploymentDTO(value: object): value is DeploymentDTO {
     if (!('deploymentTool' in value) || value['deploymentTool'] === undefined) return false;
     if (!('deploymentToolVersion' in value) || value['deploymentToolVersion'] === undefined) return false;
     if (!('lastUpdatedDate' in value) || value['lastUpdatedDate'] === undefined) return false;

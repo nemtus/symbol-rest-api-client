@@ -38,20 +38,14 @@ export interface BlockInfoDTO {
      * Unique identifier of the object in the node's database (MongoDB ObjectId).
      * Used as the `offset` parameter value for cursor-based pagination.
      * 
-     * @type {string}
-     * @memberof BlockInfoDTO
      */
     id: string;
     /**
      * 
-     * @type {BlockMetaDTO}
-     * @memberof BlockInfoDTO
      */
     meta: BlockMetaDTO;
     /**
      * 
-     * @type {BlockInfoDTOBlock}
-     * @memberof BlockInfoDTO
      */
     block: BlockInfoDTOBlock;
 }
@@ -59,7 +53,7 @@ export interface BlockInfoDTO {
 /**
  * Check if a given object implements the BlockInfoDTO interface.
  */
-export function instanceOfBlockInfoDTO(value: Record<string, any>): value is BlockInfoDTO {
+export function instanceOfBlockInfoDTO(value: object): value is BlockInfoDTO {
     if (!('id' in value) || value['id'] === undefined) return false;
     if (!('meta' in value) || value['meta'] === undefined) return false;
     if (!('block' in value) || value['block'] === undefined) return false;

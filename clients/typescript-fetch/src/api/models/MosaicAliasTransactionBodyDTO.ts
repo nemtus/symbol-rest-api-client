@@ -32,8 +32,6 @@ export interface MosaicAliasTransactionBodyDTO {
      * A 64-bit unsigned integer derived from the namespace name and its parent namespace ID,
      * encoded as a 16-character hexadecimal string.
      * 
-     * @type {string}
-     * @memberof MosaicAliasTransactionBodyDTO
      */
     namespaceId: string;
     /**
@@ -41,14 +39,10 @@ export interface MosaicAliasTransactionBodyDTO {
      * A 64-bit unsigned integer derived from the creator's address and a registration nonce,
      * encoded as a 16-character hexadecimal string.
      * 
-     * @type {string}
-     * @memberof MosaicAliasTransactionBodyDTO
      */
     mosaicId: string;
     /**
      * 
-     * @type {AliasActionEnum}
-     * @memberof MosaicAliasTransactionBodyDTO
      */
     aliasAction: AliasActionEnum;
 }
@@ -58,7 +52,7 @@ export interface MosaicAliasTransactionBodyDTO {
 /**
  * Check if a given object implements the MosaicAliasTransactionBodyDTO interface.
  */
-export function instanceOfMosaicAliasTransactionBodyDTO(value: Record<string, any>): value is MosaicAliasTransactionBodyDTO {
+export function instanceOfMosaicAliasTransactionBodyDTO(value: object): value is MosaicAliasTransactionBodyDTO {
     if (!('namespaceId' in value) || value['namespaceId'] === undefined) return false;
     if (!('mosaicId' in value) || value['mosaicId'] === undefined) return false;
     if (!('aliasAction' in value) || value['aliasAction'] === undefined) return false;

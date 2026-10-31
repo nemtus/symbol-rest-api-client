@@ -4,15 +4,12 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "vitest run"
+    "test": "node ../../../../scripts/link-dist.mjs && vitest run"
   },
   "keywords": [],
   "author": "yasunori-matsuoka <yasunori.matsuoka@gmail.com>",
   "license": "ISC",
-  "dependencies": {
-    "@nemtus/symbol-rest-api-client-fetch": "../../dist"
-  },
   "devDependencies": {
-    "vitest": "^4.1.8"
+    "vitest": "^5.0.5"
   }
 }

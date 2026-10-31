@@ -28,27 +28,19 @@ import {
  */
 export interface EmbeddedMosaicDefinitionTransactionDTO {
     /**
-     * 256-bit public key encoded as a hexadecimal string (64 hex characters).
-     * @type {string}
-     * @memberof EmbeddedMosaicDefinitionTransactionDTO
+     * Public key of the account that signed the entity (e.g. block harvester, transaction signer).
      */
     signerPublicKey: string;
     /**
      * Entity version. Indicates the schema variant for serialization and validation.
-     * @type {number}
-     * @memberof EmbeddedMosaicDefinitionTransactionDTO
      */
     version: number;
     /**
      * Network type (mainnet or testnet). Ensures the entity targets the correct network.
-     * @type {NetworkTypeEnum}
-     * @memberof EmbeddedMosaicDefinitionTransactionDTO
      */
     network: NetworkTypeEnum;
     /**
      * Entity type identifier (e.g. transaction type code, block type). Determines the entity schema.
-     * @type {number}
-     * @memberof EmbeddedMosaicDefinitionTransactionDTO
      */
     type: number;
     /**
@@ -56,22 +48,14 @@ export interface EmbeddedMosaicDefinitionTransactionDTO {
      * A 64-bit unsigned integer derived from the creator's address and a registration nonce,
      * encoded as a 16-character hexadecimal string.
      * 
-     * @type {string}
-     * @memberof EmbeddedMosaicDefinitionTransactionDTO
      */
     id: string;
     /**
      * Duration expressed in number of blocks.
-     * @type {string}
-     * @memberof EmbeddedMosaicDefinitionTransactionDTO
      */
     duration: string;
     /**
-     * Unsigned 32-bit integer.
-     * Represented as integer since it fits in JSON number precision.
-     * 
-     * @type {number}
-     * @memberof EmbeddedMosaicDefinitionTransactionDTO
+     * Random nonce used to generate the mosaic ID.
      */
     nonce: number;
     /**
@@ -85,8 +69,6 @@ export interface EmbeddedMosaicDefinitionTransactionDTO {
      * 
      * Example: `3` means `0x01 + 0x02`, so the mosaic is both `supplyMutable` and `transferable`.
      * 
-     * @type {number}
-     * @memberof EmbeddedMosaicDefinitionTransactionDTO
      */
     flags: number;
     /**
@@ -94,8 +76,6 @@ export interface EmbeddedMosaicDefinitionTransactionDTO {
      * Divisibility of 3 means that a mosaic can be divided into smallest parts of 0.001 mosaics.
      * The divisibility must be in the range of 0 and 6.
      * 
-     * @type {number}
-     * @memberof EmbeddedMosaicDefinitionTransactionDTO
      */
     divisibility: number;
 }
@@ -105,7 +85,7 @@ export interface EmbeddedMosaicDefinitionTransactionDTO {
 /**
  * Check if a given object implements the EmbeddedMosaicDefinitionTransactionDTO interface.
  */
-export function instanceOfEmbeddedMosaicDefinitionTransactionDTO(value: Record<string, any>): value is EmbeddedMosaicDefinitionTransactionDTO {
+export function instanceOfEmbeddedMosaicDefinitionTransactionDTO(value: object): value is EmbeddedMosaicDefinitionTransactionDTO {
     if (!('signerPublicKey' in value) || value['signerPublicKey'] === undefined) return false;
     if (!('version' in value) || value['version'] === undefined) return false;
     if (!('network' in value) || value['network'] === undefined) return false;

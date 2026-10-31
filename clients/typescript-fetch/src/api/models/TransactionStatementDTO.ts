@@ -35,23 +35,15 @@ import {
  */
 export interface TransactionStatementDTO {
     /**
-     * Height of a block in the blockchain. Starts at 1 and increments by one per block.
-     * Represented as a string to preserve precision, since the value is an unsigned 64-bit integer.
-     * 
-     * @type {string}
-     * @memberof TransactionStatementDTO
+     * Height of the block that contains the statement.
      */
     height: string;
     /**
      * 
-     * @type {SourceDTO}
-     * @memberof TransactionStatementDTO
      */
     source: SourceDTO;
     /**
      * Receipts emitted by the transaction source.
-     * @type {Array<TransactionStatementDTOReceiptsInner>}
-     * @memberof TransactionStatementDTO
      */
     receipts: Array<TransactionStatementDTOReceiptsInner>;
 }
@@ -59,7 +51,7 @@ export interface TransactionStatementDTO {
 /**
  * Check if a given object implements the TransactionStatementDTO interface.
  */
-export function instanceOfTransactionStatementDTO(value: Record<string, any>): value is TransactionStatementDTO {
+export function instanceOfTransactionStatementDTO(value: object): value is TransactionStatementDTO {
     if (!('height' in value) || value['height'] === undefined) return false;
     if (!('source' in value) || value['source'] === undefined) return false;
     if (!('receipts' in value) || value['receipts'] === undefined) return false;

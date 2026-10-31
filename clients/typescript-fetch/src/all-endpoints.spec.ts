@@ -36,6 +36,16 @@ const apiClasses = Object.entries(sdk).filter(([name, value]) => name.endsWith('
   ApiCtor,
 ][];
 
+// OpenAPI Generator 7.26 split every endpoint into three prototype methods:
+//   <op>RequestOpts  builds and RETURNS a runtime.RequestOpts — it never touches the transport
+//   <op>Raw          sends it and wraps the response
+//   <op>              sends it and parses the response model
+// `*Raw` was already skipped below (it is the same request as `<op>`, just unparsed).
+// `*RequestOpts` is a genuinely different contract, so it gets its own assertions rather
+// than being skipped: a request builder that silently returns a malformed path or method
+// is exactly the regression this introspective suite exists to catch.
+const isRequestOptsMethod = (name: string) => name.endsWith('RequestOpts');
+
 describe('every generated API method issues a well-formed request (mocked transport)', () => {
   it('discovers every RoutesApi class exported by the package', () => {
     expect(apiClasses.length).toBe(17);
@@ -51,6 +61,24 @@ describe('every generated API method issues a well-formed request (mocked transp
     });
 
     for (const method of methods) {
+      if (isRequestOptsMethod(method)) {
+        it(`${className}.${method} builds well-formed request options without sending`, async () => {
+          const { fetchApi, calls } = mockFetch();
+          const api = new ApiClass(new Configuration({ fetchApi }));
+
+          const args = (ApiClass.prototype[method] as (...a: unknown[]) => unknown).length >= 1 ? [anyParam] : [];
+          const opts = (await api[method](...args)) as { path: string; method: string; headers: unknown; query: unknown };
+
+          expect(opts.path).toMatch(/^\//);
+          expect(HTTP_METHODS).toContain(opts.method);
+          expect(opts.headers).toBeTypeOf('object');
+          expect(opts.query).toBeTypeOf('object');
+          // A builder must stay a builder: no transport access.
+          expect(calls).toHaveLength(0);
+        });
+        continue;
+      }
+
       it(`${className}.${method} builds a single well-formed request`, async () => {
         const { fetchApi, calls } = mockFetch();
         const api = new ApiClass(new Configuration({ fetchApi }));

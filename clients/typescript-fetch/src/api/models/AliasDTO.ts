@@ -31,25 +31,14 @@ import {
 export interface AliasDTO {
     /**
      * 
-     * @type {AliasTypeEnum}
-     * @memberof AliasDTO
      */
     type: AliasTypeEnum;
     /**
-     * Unique [mosaic](https://docs.symbol.dev/concepts/mosaic.html) identifier.
-     * A 64-bit unsigned integer derived from the creator's address and a registration nonce,
-     * encoded as a 16-character hexadecimal string.
-     * 
-     * @type {string}
-     * @memberof AliasDTO
+     * Mosaic identifier linked by the namespace when `type` is `1`.
      */
     mosaicId?: string;
     /**
-     * Address encoded as a 48-character hexadecimal string (24 bytes).
-     * The REST API returns addresses in this format. For Base32-encoded addresses (39 chars) see `Address`.
-     * 
-     * @type {string}
-     * @memberof AliasDTO
+     * Account address linked by the namespace when `type` is `2`.
      */
     address?: string;
 }
@@ -59,7 +48,7 @@ export interface AliasDTO {
 /**
  * Check if a given object implements the AliasDTO interface.
  */
-export function instanceOfAliasDTO(value: Record<string, any>): value is AliasDTO {
+export function instanceOfAliasDTO(value: object): value is AliasDTO {
     if (!('type' in value) || value['type'] === undefined) return false;
     return true;
 }

@@ -24,14 +24,10 @@ export interface MosaicAddressRestrictionTransactionBodyDTO {
      * If the most significant bit of byte 0 is set, the value contains a namespace ID alias
      * instead of a concrete mosaic ID.
      * 
-     * @type {string}
-     * @memberof MosaicAddressRestrictionTransactionBodyDTO
      */
     mosaicId: string;
     /**
      * Restriction key represented as a 64-bit hexadecimal value.
-     * @type {string}
-     * @memberof MosaicAddressRestrictionTransactionBodyDTO
      */
     restrictionKey: string;
     /**
@@ -39,8 +35,6 @@ export interface MosaicAddressRestrictionTransactionBodyDTO {
      * For address restrictions, it is the value assigned to the target address;
      * for global restrictions, it is the threshold evaluated with the restriction type.
      * 
-     * @type {string}
-     * @memberof MosaicAddressRestrictionTransactionBodyDTO
      */
     previousRestrictionValue: string;
     /**
@@ -48,8 +42,6 @@ export interface MosaicAddressRestrictionTransactionBodyDTO {
      * For address restrictions, it is the value assigned to the target address;
      * for global restrictions, it is the threshold evaluated with the restriction type.
      * 
-     * @type {string}
-     * @memberof MosaicAddressRestrictionTransactionBodyDTO
      */
     newRestrictionValue: string;
     /**
@@ -57,8 +49,6 @@ export interface MosaicAddressRestrictionTransactionBodyDTO {
      * If bit 0 of byte 0 is not set, the value represents a regular address.
      * Otherwise, it represents a namespace ID alias encoded as an unresolved address.
      * 
-     * @type {string}
-     * @memberof MosaicAddressRestrictionTransactionBodyDTO
      */
     targetAddress: string;
 }
@@ -66,7 +56,7 @@ export interface MosaicAddressRestrictionTransactionBodyDTO {
 /**
  * Check if a given object implements the MosaicAddressRestrictionTransactionBodyDTO interface.
  */
-export function instanceOfMosaicAddressRestrictionTransactionBodyDTO(value: Record<string, any>): value is MosaicAddressRestrictionTransactionBodyDTO {
+export function instanceOfMosaicAddressRestrictionTransactionBodyDTO(value: object): value is MosaicAddressRestrictionTransactionBodyDTO {
     if (!('mosaicId' in value) || value['mosaicId'] === undefined) return false;
     if (!('restrictionKey' in value) || value['restrictionKey'] === undefined) return false;
     if (!('previousRestrictionValue' in value) || value['previousRestrictionValue'] === undefined) return false;

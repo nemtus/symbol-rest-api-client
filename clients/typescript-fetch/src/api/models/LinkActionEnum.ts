@@ -22,7 +22,7 @@
  */
 export const LinkActionEnum = {
     NUMBER_0: 0,
-    NUMBER_1: 1
+    NUMBER_1: 1,
 } as const;
 export type LinkActionEnum = typeof LinkActionEnum[keyof typeof LinkActionEnum];
 

@@ -20,7 +20,7 @@
  */
 export const NodeIdentityEqualityStrategy = {
     Host: 'host',
-    PublicKey: 'public-key'
+    PublicKey: 'public-key',
 } as const;
 export type NodeIdentityEqualityStrategy = typeof NodeIdentityEqualityStrategy[keyof typeof NodeIdentityEqualityStrategy];
 

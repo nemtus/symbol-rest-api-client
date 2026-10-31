@@ -38,44 +38,30 @@ import {
 export interface MerkleTreeBranchDTO {
     /**
      * Node type (always branch).
-     * @type {MerkleTreeNodeTypeEnum}
-     * @memberof MerkleTreeBranchDTO
      */
     type: MerkleTreeNodeTypeEnum;
     /**
      * Path prefix (hex) from root to this branch.
-     * @type {string}
-     * @memberof MerkleTreeBranchDTO
      */
     path: string;
     /**
      * Compact-encoded path.
-     * @type {string}
-     * @memberof MerkleTreeBranchDTO
      */
     encodedPath: string;
     /**
      * Number of nibbles in the path.
-     * @type {number}
-     * @memberof MerkleTreeBranchDTO
      */
     nibbleCount: number;
     /**
      * Bitmask indicating which nibble slots (0 to 15) have child links.
-     * @type {string}
-     * @memberof MerkleTreeBranchDTO
      */
     linkMask: string;
     /**
      * Child links (max 16, one per nibble).
-     * @type {Array<MerkleTreeBranchLinkDTO>}
-     * @memberof MerkleTreeBranchDTO
      */
     links: Array<MerkleTreeBranchLinkDTO>;
     /**
-     * 256-bit hash encoded as a 64-character hexadecimal string.
-     * @type {string}
-     * @memberof MerkleTreeBranchDTO
+     * Hash of the branch node.
      */
     branchHash: string;
 }
@@ -85,7 +71,7 @@ export interface MerkleTreeBranchDTO {
 /**
  * Check if a given object implements the MerkleTreeBranchDTO interface.
  */
-export function instanceOfMerkleTreeBranchDTO(value: Record<string, any>): value is MerkleTreeBranchDTO {
+export function instanceOfMerkleTreeBranchDTO(value: object): value is MerkleTreeBranchDTO {
     if (!('type' in value) || value['type'] === undefined) return false;
     if (!('path' in value) || value['path'] === undefined) return false;
     if (!('encodedPath' in value) || value['encodedPath'] === undefined) return false;

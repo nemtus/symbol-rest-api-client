@@ -38,20 +38,14 @@ export interface EmbeddedTransactionInfoDTO {
      * Unique identifier of the object in the node's database (MongoDB ObjectId).
      * Used as the `offset` parameter value for cursor-based pagination.
      * 
-     * @type {string}
-     * @memberof EmbeddedTransactionInfoDTO
      */
     id: string;
     /**
      * 
-     * @type {EmbeddedTransactionMetaDTO}
-     * @memberof EmbeddedTransactionInfoDTO
      */
     meta: EmbeddedTransactionMetaDTO;
     /**
      * 
-     * @type {EmbeddedTransactionInfoDTOTransaction}
-     * @memberof EmbeddedTransactionInfoDTO
      */
     transaction: EmbeddedTransactionInfoDTOTransaction;
 }
@@ -59,7 +53,7 @@ export interface EmbeddedTransactionInfoDTO {
 /**
  * Check if a given object implements the EmbeddedTransactionInfoDTO interface.
  */
-export function instanceOfEmbeddedTransactionInfoDTO(value: Record<string, any>): value is EmbeddedTransactionInfoDTO {
+export function instanceOfEmbeddedTransactionInfoDTO(value: object): value is EmbeddedTransactionInfoDTO {
     if (!('id' in value) || value['id'] === undefined) return false;
     if (!('meta' in value) || value['meta'] === undefined) return false;
     if (!('transaction' in value) || value['transaction'] === undefined) return false;

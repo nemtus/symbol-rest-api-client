@@ -32,22 +32,16 @@ export interface AddressAliasTransactionBodyDTO {
      * A 64-bit unsigned integer derived from the namespace name and its parent namespace ID,
      * encoded as a 16-character hexadecimal string.
      * 
-     * @type {string}
-     * @memberof AddressAliasTransactionBodyDTO
      */
     namespaceId: string;
     /**
      * Address encoded as a 48-character hexadecimal string (24 bytes).
      * The REST API returns addresses in this format. For Base32-encoded addresses (39 chars) see `Address`.
      * 
-     * @type {string}
-     * @memberof AddressAliasTransactionBodyDTO
      */
     address: string;
     /**
      * 
-     * @type {AliasActionEnum}
-     * @memberof AddressAliasTransactionBodyDTO
      */
     aliasAction: AliasActionEnum;
 }
@@ -57,7 +51,7 @@ export interface AddressAliasTransactionBodyDTO {
 /**
  * Check if a given object implements the AddressAliasTransactionBodyDTO interface.
  */
-export function instanceOfAddressAliasTransactionBodyDTO(value: Record<string, any>): value is AddressAliasTransactionBodyDTO {
+export function instanceOfAddressAliasTransactionBodyDTO(value: object): value is AddressAliasTransactionBodyDTO {
     if (!('namespaceId' in value) || value['namespaceId'] === undefined) return false;
     if (!('address' in value) || value['address'] === undefined) return false;
     if (!('aliasAction' in value) || value['aliasAction'] === undefined) return false;

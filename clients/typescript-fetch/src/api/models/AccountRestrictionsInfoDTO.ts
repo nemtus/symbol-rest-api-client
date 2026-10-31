@@ -29,8 +29,6 @@ import {
 export interface AccountRestrictionsInfoDTO {
     /**
      * 
-     * @type {AccountRestrictionsDTO}
-     * @memberof AccountRestrictionsInfoDTO
      */
     accountRestrictions: AccountRestrictionsDTO;
 }
@@ -38,7 +36,7 @@ export interface AccountRestrictionsInfoDTO {
 /**
  * Check if a given object implements the AccountRestrictionsInfoDTO interface.
  */
-export function instanceOfAccountRestrictionsInfoDTO(value: Record<string, any>): value is AccountRestrictionsInfoDTO {
+export function instanceOfAccountRestrictionsInfoDTO(value: object): value is AccountRestrictionsInfoDTO {
     if (!('accountRestrictions' in value) || value['accountRestrictions'] === undefined) return false;
     return true;
 }

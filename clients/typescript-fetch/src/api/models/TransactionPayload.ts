@@ -24,8 +24,6 @@ export interface TransactionPayload {
      * Signed transaction payload encoded as a hexadecimal string.
      * To obtain this value, use your SDK's transaction serialization. See the announce endpoint description for more SDK links.
      * 
-     * @type {string}
-     * @memberof TransactionPayload
      */
     payload: string;
 }
@@ -33,7 +31,7 @@ export interface TransactionPayload {
 /**
  * Check if a given object implements the TransactionPayload interface.
  */
-export function instanceOfTransactionPayload(value: Record<string, any>): value is TransactionPayload {
+export function instanceOfTransactionPayload(value: object): value is TransactionPayload {
     if (!('payload' in value) || value['payload'] === undefined) return false;
     return true;
 }

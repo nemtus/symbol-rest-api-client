@@ -19,7 +19,7 @@
  */
 export const NodeStatusEnum = {
     Up: 'up',
-    Down: 'down'
+    Down: 'down',
 } as const;
 export type NodeStatusEnum = typeof NodeStatusEnum[keyof typeof NodeStatusEnum];
 

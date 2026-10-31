@@ -31,8 +31,6 @@ import {
 export interface NodeTimeDTO {
     /**
      * 
-     * @type {CommunicationTimestampsDTO}
-     * @memberof NodeTimeDTO
      */
     communicationTimestamps: CommunicationTimestampsDTO;
 }
@@ -40,7 +38,7 @@ export interface NodeTimeDTO {
 /**
  * Check if a given object implements the NodeTimeDTO interface.
  */
-export function instanceOfNodeTimeDTO(value: Record<string, any>): value is NodeTimeDTO {
+export function instanceOfNodeTimeDTO(value: object): value is NodeTimeDTO {
     if (!('communicationTimestamps' in value) || value['communicationTimestamps'] === undefined) return false;
     return true;
 }

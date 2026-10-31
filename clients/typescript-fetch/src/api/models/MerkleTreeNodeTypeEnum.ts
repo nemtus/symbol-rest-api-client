@@ -23,7 +23,7 @@
  */
 export const MerkleTreeNodeTypeEnum = {
     NUMBER_0: 0,
-    NUMBER_255: 255
+    NUMBER_255: 255,
 } as const;
 export type MerkleTreeNodeTypeEnum = typeof MerkleTreeNodeTypeEnum[keyof typeof MerkleTreeNodeTypeEnum];
 

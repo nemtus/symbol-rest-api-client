@@ -29,20 +29,14 @@ import {
 export interface AccountAddressRestrictionTransactionBodyDTO {
     /**
      * 
-     * @type {AccountRestrictionFlagsEnum}
-     * @memberof AccountAddressRestrictionTransactionBodyDTO
      */
     restrictionFlags: AccountRestrictionFlagsEnum;
     /**
      * Account restriction additions.
-     * @type {Array<string>}
-     * @memberof AccountAddressRestrictionTransactionBodyDTO
      */
     restrictionAdditions: Array<string>;
     /**
      * Account restriction deletions.
-     * @type {Array<string>}
-     * @memberof AccountAddressRestrictionTransactionBodyDTO
      */
     restrictionDeletions: Array<string>;
 }
@@ -52,7 +46,7 @@ export interface AccountAddressRestrictionTransactionBodyDTO {
 /**
  * Check if a given object implements the AccountAddressRestrictionTransactionBodyDTO interface.
  */
-export function instanceOfAccountAddressRestrictionTransactionBodyDTO(value: Record<string, any>): value is AccountAddressRestrictionTransactionBodyDTO {
+export function instanceOfAccountAddressRestrictionTransactionBodyDTO(value: object): value is AccountAddressRestrictionTransactionBodyDTO {
     if (!('restrictionFlags' in value) || value['restrictionFlags'] === undefined) return false;
     if (!('restrictionAdditions' in value) || value['restrictionAdditions'] === undefined) return false;
     if (!('restrictionDeletions' in value) || value['restrictionDeletions'] === undefined) return false;

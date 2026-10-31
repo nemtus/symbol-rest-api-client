@@ -12,30 +12,37 @@
  * Do not edit the class manually.
  */
 
-
 import * as runtime from '../runtime';
-import type {
-  NodeHealthInfoDTO,
-  NodeInfoDTO,
-  NodeTimeDTO,
-  ServerInfoDTO,
-  StorageInfoDTO,
-  UnlockedAccountDTO,
-} from '../models/index';
 import {
+    type NodeHealthInfoDTO,
     NodeHealthInfoDTOFromJSON,
     NodeHealthInfoDTOToJSON,
+} from '../models/NodeHealthInfoDTO';
+import {
+    type NodeInfoDTO,
     NodeInfoDTOFromJSON,
     NodeInfoDTOToJSON,
+} from '../models/NodeInfoDTO';
+import {
+    type NodeTimeDTO,
     NodeTimeDTOFromJSON,
     NodeTimeDTOToJSON,
+} from '../models/NodeTimeDTO';
+import {
+    type ServerInfoDTO,
     ServerInfoDTOFromJSON,
     ServerInfoDTOToJSON,
+} from '../models/ServerInfoDTO';
+import {
+    type StorageInfoDTO,
     StorageInfoDTOFromJSON,
     StorageInfoDTOToJSON,
+} from '../models/StorageInfoDTO';
+import {
+    type UnlockedAccountDTO,
     UnlockedAccountDTOFromJSON,
     UnlockedAccountDTOToJSON,
-} from '../models/index';
+} from '../models/UnlockedAccountDTO';
 
 /**
  * 
@@ -43,10 +50,9 @@ import {
 export class NodeRoutesApi extends runtime.BaseAPI {
 
     /**
-     * Supplies information regarding the connection and services status.
-     * Get the node health information
+     * Creates request options for getNodeHealth without sending the request
      */
-    async getNodeHealthRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<NodeHealthInfoDTO>> {
+    async getNodeHealthRequestOpts(): Promise<runtime.RequestOpts> {
         const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -54,12 +60,21 @@ export class NodeRoutesApi extends runtime.BaseAPI {
 
         let urlPath = `/node/health`;
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Supplies information regarding the connection and services status.
+     * Get the node health information
+     */
+    async getNodeHealthRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<NodeHealthInfoDTO>> {
+        const requestOptions = await this.getNodeHealthRequestOpts();
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => NodeHealthInfoDTOFromJSON(jsonValue));
     }
@@ -74,10 +89,9 @@ export class NodeRoutesApi extends runtime.BaseAPI {
     }
 
     /**
-     * Supplies additional information about the application running on a node.
-     * Get the node information
+     * Creates request options for getNodeInfo without sending the request
      */
-    async getNodeInfoRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<NodeInfoDTO>> {
+    async getNodeInfoRequestOpts(): Promise<runtime.RequestOpts> {
         const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -85,12 +99,21 @@ export class NodeRoutesApi extends runtime.BaseAPI {
 
         let urlPath = `/node/info`;
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Supplies additional information about the application running on a node.
+     * Get the node information
+     */
+    async getNodeInfoRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<NodeInfoDTO>> {
+        const requestOptions = await this.getNodeInfoRequestOpts();
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => NodeInfoDTOFromJSON(jsonValue));
     }
@@ -105,10 +128,9 @@ export class NodeRoutesApi extends runtime.BaseAPI {
     }
 
     /**
-     * Gets the node metadata information that has been set by the node operator.  **How to set:** Add a top-level `nodeMetadata` object in the REST server JSON configuration file. Example:  ```json {   \"nodeMetadata\": {     \"deploymentTool\": \"symbol-shoestring\",     \"version\": \"1.0.0\",     \"customLabel\": \"my-node\"   } } ```  The entire `nodeMetadata` object is served as-is; add any key-value pairs to personalize your node. 
-     * Retrieve node metadata
+     * Creates request options for getNodeMetadata without sending the request
      */
-    async getNodeMetadataRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<{ [key: string]: string; }>> {
+    async getNodeMetadataRequestOpts(): Promise<runtime.RequestOpts> {
         const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -116,12 +138,21 @@ export class NodeRoutesApi extends runtime.BaseAPI {
 
         let urlPath = `/node/metadata`;
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Gets the node metadata information that has been set by the node operator.  **How to set:** Add a top-level `nodeMetadata` object in the REST server JSON configuration file. Example:  ```json {   \"nodeMetadata\": {     \"deploymentTool\": \"symbol-shoestring\",     \"version\": \"1.0.0\",     \"customLabel\": \"my-node\"   } } ```  The entire `nodeMetadata` object is served as-is; add any key-value pairs to personalize your node. 
+     * Retrieve node metadata
+     */
+    async getNodeMetadataRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<{ [key: string]: string; }>> {
+        const requestOptions = await this.getNodeMetadataRequestOpts();
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse<any>(response);
     }
@@ -136,10 +167,9 @@ export class NodeRoutesApi extends runtime.BaseAPI {
     }
 
     /**
-     * Gets the list of peers visible by the node.
-     * Get peers information
+     * Creates request options for getNodePeers without sending the request
      */
-    async getNodePeersRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<NodeInfoDTO>>> {
+    async getNodePeersRequestOpts(): Promise<runtime.RequestOpts> {
         const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -147,12 +177,21 @@ export class NodeRoutesApi extends runtime.BaseAPI {
 
         let urlPath = `/node/peers`;
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Gets the list of peers visible by the node.
+     * Get peers information
+     */
+    async getNodePeersRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<NodeInfoDTO>>> {
+        const requestOptions = await this.getNodePeersRequestOpts();
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(NodeInfoDTOFromJSON));
     }
@@ -167,10 +206,9 @@ export class NodeRoutesApi extends runtime.BaseAPI {
     }
 
     /**
-     * Returns estimated counts of blocks, transactions, and accounts in the REST server\'s MongoDB database, along with database size statistics (`db.stats()`). 
-     * Get the storage information of the node
+     * Creates request options for getNodeStorage without sending the request
      */
-    async getNodeStorageRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<StorageInfoDTO>> {
+    async getNodeStorageRequestOpts(): Promise<runtime.RequestOpts> {
         const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -178,12 +216,21 @@ export class NodeRoutesApi extends runtime.BaseAPI {
 
         let urlPath = `/node/storage`;
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Returns estimated counts of blocks, transactions, and accounts in the REST server\'s MongoDB database, along with database size statistics (`db.stats()`). 
+     * Get the storage information of the node
+     */
+    async getNodeStorageRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<StorageInfoDTO>> {
+        const requestOptions = await this.getNodeStorageRequestOpts();
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => StorageInfoDTOFromJSON(jsonValue));
     }
@@ -198,10 +245,9 @@ export class NodeRoutesApi extends runtime.BaseAPI {
     }
 
     /**
-     * Gets the node time at the moment the reply was sent and received.
-     * Get the node time
+     * Creates request options for getNodeTime without sending the request
      */
-    async getNodeTimeRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<NodeTimeDTO>> {
+    async getNodeTimeRequestOpts(): Promise<runtime.RequestOpts> {
         const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -209,12 +255,21 @@ export class NodeRoutesApi extends runtime.BaseAPI {
 
         let urlPath = `/node/time`;
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Gets the node time at the moment the reply was sent and received.
+     * Get the node time
+     */
+    async getNodeTimeRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<NodeTimeDTO>> {
+        const requestOptions = await this.getNodeTimeRequestOpts();
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => NodeTimeDTOFromJSON(jsonValue));
     }
@@ -229,10 +284,9 @@ export class NodeRoutesApi extends runtime.BaseAPI {
     }
 
     /**
-     * Returns the version of the running catapult-rest component.
-     * Get the version of the running REST component
+     * Creates request options for getServerInfo without sending the request
      */
-    async getServerInfoRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ServerInfoDTO>> {
+    async getServerInfoRequestOpts(): Promise<runtime.RequestOpts> {
         const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -240,12 +294,21 @@ export class NodeRoutesApi extends runtime.BaseAPI {
 
         let urlPath = `/node/server`;
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Returns the version of the running catapult-rest component.
+     * Get the version of the running REST component
+     */
+    async getServerInfoRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ServerInfoDTO>> {
+        const requestOptions = await this.getServerInfoRequestOpts();
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => ServerInfoDTOFromJSON(jsonValue));
     }
@@ -260,10 +323,9 @@ export class NodeRoutesApi extends runtime.BaseAPI {
     }
 
     /**
-     * Returns array of unlocked account public keys.
-     * Get the unlocked harvesting account public keys
+     * Creates request options for getUnlockedAccount without sending the request
      */
-    async getUnlockedAccountRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<UnlockedAccountDTO>> {
+    async getUnlockedAccountRequestOpts(): Promise<runtime.RequestOpts> {
         const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -271,12 +333,21 @@ export class NodeRoutesApi extends runtime.BaseAPI {
 
         let urlPath = `/node/unlockedaccount`;
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Returns array of unlocked account public keys.
+     * Get the unlocked harvesting account public keys
+     */
+    async getUnlockedAccountRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<UnlockedAccountDTO>> {
+        const requestOptions = await this.getUnlockedAccountRequestOpts();
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => UnlockedAccountDTOFromJSON(jsonValue));
     }

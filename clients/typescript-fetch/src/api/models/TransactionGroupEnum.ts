@@ -26,7 +26,7 @@ export const TransactionGroupEnum = {
     Unconfirmed: 'unconfirmed',
     Confirmed: 'confirmed',
     Failed: 'failed',
-    Partial: 'partial'
+    Partial: 'partial',
 } as const;
 export type TransactionGroupEnum = typeof TransactionGroupEnum[keyof typeof TransactionGroupEnum];
 

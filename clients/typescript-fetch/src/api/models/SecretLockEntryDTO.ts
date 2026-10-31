@@ -41,77 +41,47 @@ export interface SecretLockEntryDTO {
      * schema of the entity changes (e.g. new fields are added), allowing the node to
      * deserialize entries written under earlier formats.
      * 
-     * @type {number}
-     * @memberof SecretLockEntryDTO
      */
     version: number;
     /**
-     * Address encoded as a 48-character hexadecimal string (24 bytes).
-     * The REST API returns addresses in this format. For Base32-encoded addresses (39 chars) see `Address`.
-     * 
-     * @type {string}
-     * @memberof SecretLockEntryDTO
+     * Address of the account that created the secret lock.
      */
     ownerAddress: string;
     /**
-     * Unique [mosaic](https://docs.symbol.dev/concepts/mosaic.html) identifier.
-     * A 64-bit unsigned integer derived from the creator's address and a registration nonce,
-     * encoded as a 16-character hexadecimal string.
-     * 
-     * @type {string}
-     * @memberof SecretLockEntryDTO
+     * Identifier of the locked mosaic.
      */
     mosaicId: string;
     /**
-     * Absolute amount expressed in the mosaic's smallest (atomic) unit, with no decimal point.
-     * For example, an amount of `123456789` for a mosaic with divisibility 6 represents
-     * `123.456789` whole units. Encoded as a string to preserve precision, since the value
-     * is an unsigned 64-bit integer.
-     * 
-     * @type {string}
-     * @memberof SecretLockEntryDTO
+     * Amount of locked mosaic units, expressed in the mosaic's smallest (atomic) unit.
      */
     amount: string;
     /**
-     * Height of a block in the blockchain. Starts at 1 and increments by one per block.
-     * Represented as a string to preserve precision, since the value is an unsigned 64-bit integer.
-     * 
-     * @type {string}
-     * @memberof SecretLockEntryDTO
+     * Block height at which the secret lock expires if no valid proof is announced earlier.
      */
     endHeight: string;
     /**
      * 
-     * @type {LockStatus}
-     * @memberof SecretLockEntryDTO
      */
     status: LockStatus;
     /**
      * 
-     * @type {LockHashAlgorithmEnum}
-     * @memberof SecretLockEntryDTO
      */
     hashAlgorithm: LockHashAlgorithmEnum;
     /**
      * 256-bit hashed secret derived from the proof using the selected `LockHashAlgorithm`.
      * In secret lock and secret proof transactions, the revealed proof must hash to this value.
      * 
-     * @type {string}
-     * @memberof SecretLockEntryDTO
      */
     secret: string;
     /**
-     * Address encoded as a 48-character hexadecimal string (24 bytes).
-     * The REST API returns addresses in this format. For Base32-encoded addresses (39 chars) see `Address`.
-     * 
-     * @type {string}
-     * @memberof SecretLockEntryDTO
+     * Address of the account that can unlock the funds by announcing the matching proof.
      */
     recipientAddress: string;
     /**
-     * 256-bit hash encoded as a 64-character hexadecimal string.
-     * @type {string}
-     * @memberof SecretLockEntryDTO
+     * Composite SHA3-256 hash derived from `secret` and `recipientAddress`.
+     * It uniquely identifies the secret lock entry and is computed automatically by the protocol;
+     * it is not supplied as a standalone field when announcing the secret lock transaction.
+     * 
      */
     compositeHash: string;
 }
@@ -121,7 +91,7 @@ export interface SecretLockEntryDTO {
 /**
  * Check if a given object implements the SecretLockEntryDTO interface.
  */
-export function instanceOfSecretLockEntryDTO(value: Record<string, any>): value is SecretLockEntryDTO {
+export function instanceOfSecretLockEntryDTO(value: object): value is SecretLockEntryDTO {
     if (!('version' in value) || value['version'] === undefined) return false;
     if (!('ownerAddress' in value) || value['ownerAddress'] === undefined) return false;
     if (!('mosaicId' in value) || value['mosaicId'] === undefined) return false;

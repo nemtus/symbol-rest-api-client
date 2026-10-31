@@ -32,7 +32,7 @@ export interface AccountRestrictionDTOValuesInner {
 /**
  * Check if a given object implements the AccountRestrictionDTOValuesInner interface.
  */
-export function instanceOfAccountRestrictionDTOValuesInner(value: Record<string, any>): value is AccountRestrictionDTOValuesInner {
+export function instanceOfAccountRestrictionDTOValuesInner(value: object): value is AccountRestrictionDTOValuesInner {
     return true;
 }
 

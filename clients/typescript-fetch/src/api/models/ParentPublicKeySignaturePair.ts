@@ -21,8 +21,6 @@ import { mapValues } from '../runtime';
 export interface ParentPublicKeySignaturePair {
     /**
      * 256-bit public key encoded as a hexadecimal string (64 hex characters).
-     * @type {string}
-     * @memberof ParentPublicKeySignaturePair
      */
     parentPublicKey: string;
     /**
@@ -30,8 +28,6 @@ export interface ParentPublicKeySignaturePair {
      * over the serialized entity payload. Can be verified with the signer's public key (`signerPublicKey`).
      * Used for blocks, transactions, and cosignatures.
      * 
-     * @type {string}
-     * @memberof ParentPublicKeySignaturePair
      */
     signature: string;
 }
@@ -39,7 +35,7 @@ export interface ParentPublicKeySignaturePair {
 /**
  * Check if a given object implements the ParentPublicKeySignaturePair interface.
  */
-export function instanceOfParentPublicKeySignaturePair(value: Record<string, any>): value is ParentPublicKeySignaturePair {
+export function instanceOfParentPublicKeySignaturePair(value: object): value is ParentPublicKeySignaturePair {
     if (!('parentPublicKey' in value) || value['parentPublicKey'] === undefined) return false;
     if (!('signature' in value) || value['signature'] === undefined) return false;
     return true;

@@ -22,7 +22,7 @@
  */
 export const Order = {
     Asc: 'asc',
-    Desc: 'desc'
+    Desc: 'desc',
 } as const;
 export type Order = typeof Order[keyof typeof Order];
 

@@ -27,8 +27,6 @@ export interface VerifiableEntityDTO {
      * over the serialized entity payload. Can be verified with the signer's public key (`signerPublicKey`).
      * Used for blocks, transactions, and cosignatures.
      * 
-     * @type {string}
-     * @memberof VerifiableEntityDTO
      */
     signature: string;
 }
@@ -36,7 +34,7 @@ export interface VerifiableEntityDTO {
 /**
  * Check if a given object implements the VerifiableEntityDTO interface.
  */
-export function instanceOfVerifiableEntityDTO(value: Record<string, any>): value is VerifiableEntityDTO {
+export function instanceOfVerifiableEntityDTO(value: object): value is VerifiableEntityDTO {
     if (!('signature' in value) || value['signature'] === undefined) return false;
     return true;
 }

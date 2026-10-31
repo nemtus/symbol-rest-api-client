@@ -24,8 +24,6 @@ export interface MosaicDTO {
      * schema of the entity changes (e.g. new fields are added), allowing the node to
      * deserialize entries written under earlier formats.
      * 
-     * @type {number}
-     * @memberof MosaicDTO
      */
     version: number;
     /**
@@ -33,42 +31,24 @@ export interface MosaicDTO {
      * A 64-bit unsigned integer derived from the creator's address and a registration nonce,
      * encoded as a 16-character hexadecimal string.
      * 
-     * @type {string}
-     * @memberof MosaicDTO
      */
     id: string;
     /**
-     * Absolute amount expressed in the mosaic's smallest (atomic) unit, with no decimal point.
-     * For example, an amount of `123456789` for a mosaic with divisibility 6 represents
-     * `123.456789` whole units. Encoded as a string to preserve precision, since the value
-     * is an unsigned 64-bit integer.
-     * 
-     * @type {string}
-     * @memberof MosaicDTO
+     * Current total supply of the mosaic, expressed in the smallest (atomic) unit.
      */
     supply: string;
     /**
-     * Height of a block in the blockchain. Starts at 1 and increments by one per block.
-     * Represented as a string to preserve precision, since the value is an unsigned 64-bit integer.
-     * 
-     * @type {string}
-     * @memberof MosaicDTO
+     * Block height at which the mosaic became active.
      */
     startHeight: string;
     /**
-     * Address encoded as a 48-character hexadecimal string (24 bytes).
-     * The REST API returns addresses in this format. For Base32-encoded addresses (39 chars) see `Address`.
-     * 
-     * @type {string}
-     * @memberof MosaicDTO
+     * Address of the account that created the mosaic.
      */
     ownerAddress: string;
     /**
-     * Unsigned 32-bit integer.
-     * Represented as integer since it fits in JSON number precision.
+     * Revision number of the mosaic definition.
+     * Starts at 1 when the mosaic is created and increments each time the same mosaic definition is modified.
      * 
-     * @type {number}
-     * @memberof MosaicDTO
      */
     revision: number;
     /**
@@ -82,8 +62,6 @@ export interface MosaicDTO {
      * 
      * Example: `3` means `0x01 + 0x02`, so the mosaic is both `supplyMutable` and `transferable`.
      * 
-     * @type {number}
-     * @memberof MosaicDTO
      */
     flags: number;
     /**
@@ -91,14 +69,10 @@ export interface MosaicDTO {
      * Divisibility of 3 means that a mosaic can be divided into smallest parts of 0.001 mosaics.
      * The divisibility must be in the range of 0 and 6.
      * 
-     * @type {number}
-     * @memberof MosaicDTO
      */
     divisibility: number;
     /**
-     * Duration expressed in number of blocks.
-     * @type {string}
-     * @memberof MosaicDTO
+     * Duration of the mosaic in blocks. A value of 0 indicates a non-expiring mosaic.
      */
     duration: string;
 }
@@ -106,7 +80,7 @@ export interface MosaicDTO {
 /**
  * Check if a given object implements the MosaicDTO interface.
  */
-export function instanceOfMosaicDTO(value: Record<string, any>): value is MosaicDTO {
+export function instanceOfMosaicDTO(value: object): value is MosaicDTO {
     if (!('version' in value) || value['version'] === undefined) return false;
     if (!('id' in value) || value['id'] === undefined) return false;
     if (!('supply' in value) || value['supply'] === undefined) return false;

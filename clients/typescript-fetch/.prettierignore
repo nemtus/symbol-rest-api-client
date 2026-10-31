@@ -4,7 +4,6 @@ lib
 cdn
 coverage
 src/api
-custom-templates
 tests/*/node_modules
 **/*.min.js
 package-lock.json

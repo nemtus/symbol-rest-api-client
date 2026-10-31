@@ -35,27 +35,19 @@ import {
  */
 export interface EmbeddedTransferTransactionDTO {
     /**
-     * 256-bit public key encoded as a hexadecimal string (64 hex characters).
-     * @type {string}
-     * @memberof EmbeddedTransferTransactionDTO
+     * Public key of the account that signed the entity (e.g. block harvester, transaction signer).
      */
     signerPublicKey: string;
     /**
      * Entity version. Indicates the schema variant for serialization and validation.
-     * @type {number}
-     * @memberof EmbeddedTransferTransactionDTO
      */
     version: number;
     /**
      * Network type (mainnet or testnet). Ensures the entity targets the correct network.
-     * @type {NetworkTypeEnum}
-     * @memberof EmbeddedTransferTransactionDTO
      */
     network: NetworkTypeEnum;
     /**
      * Entity type identifier (e.g. transaction type code, block type). Determines the entity schema.
-     * @type {number}
-     * @memberof EmbeddedTransferTransactionDTO
      */
     type: number;
     /**
@@ -63,21 +55,15 @@ export interface EmbeddedTransferTransactionDTO {
      * If bit 0 of byte 0 is not set, the value represents a regular address.
      * Otherwise, it represents a namespace ID alias encoded as an unresolved address.
      * 
-     * @type {string}
-     * @memberof EmbeddedTransferTransactionDTO
      */
     recipientAddress: string;
     /**
      * Array of mosaics sent to the recipient.
      * 
-     * @type {Array<UnresolvedMosaic>}
-     * @memberof EmbeddedTransferTransactionDTO
      */
     mosaics: Array<UnresolvedMosaic>;
     /**
      * Optional transfer message payload, encoded as a hexadecimal string.
-     * @type {string}
-     * @memberof EmbeddedTransferTransactionDTO
      */
     message?: string;
 }
@@ -87,7 +73,7 @@ export interface EmbeddedTransferTransactionDTO {
 /**
  * Check if a given object implements the EmbeddedTransferTransactionDTO interface.
  */
-export function instanceOfEmbeddedTransferTransactionDTO(value: Record<string, any>): value is EmbeddedTransferTransactionDTO {
+export function instanceOfEmbeddedTransferTransactionDTO(value: object): value is EmbeddedTransferTransactionDTO {
     if (!('signerPublicKey' in value) || value['signerPublicKey'] === undefined) return false;
     if (!('version' in value) || value['version'] === undefined) return false;
     if (!('network' in value) || value['network'] === undefined) return false;

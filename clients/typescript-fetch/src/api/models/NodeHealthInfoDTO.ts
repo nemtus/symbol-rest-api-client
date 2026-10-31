@@ -31,8 +31,6 @@ import {
 export interface NodeHealthInfoDTO {
     /**
      * 
-     * @type {NodeHealthDTO}
-     * @memberof NodeHealthInfoDTO
      */
     status: NodeHealthDTO;
 }
@@ -40,7 +38,7 @@ export interface NodeHealthInfoDTO {
 /**
  * Check if a given object implements the NodeHealthInfoDTO interface.
  */
-export function instanceOfNodeHealthInfoDTO(value: Record<string, any>): value is NodeHealthInfoDTO {
+export function instanceOfNodeHealthInfoDTO(value: object): value is NodeHealthInfoDTO {
     if (!('status' in value) || value['status'] === undefined) return false;
     return true;
 }

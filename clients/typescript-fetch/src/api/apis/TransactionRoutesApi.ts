@@ -12,127 +12,500 @@
  * Do not edit the class manually.
  */
 
-
 import * as runtime from '../runtime';
-import type {
-  AnnounceTransactionInfoDTO,
-  Cosignature,
-  ModelError,
-  Order,
-  TransactionIds,
-  TransactionInfoDTO,
-  TransactionPage,
-  TransactionPayload,
-  TransactionTypeEnum,
-} from '../models/index';
 import {
+    type AnnounceTransactionInfoDTO,
     AnnounceTransactionInfoDTOFromJSON,
     AnnounceTransactionInfoDTOToJSON,
+} from '../models/AnnounceTransactionInfoDTO';
+import {
+    type Cosignature,
     CosignatureFromJSON,
     CosignatureToJSON,
+} from '../models/Cosignature';
+import {
+    type ModelError,
     ModelErrorFromJSON,
     ModelErrorToJSON,
+} from '../models/ModelError';
+import {
+    type Order,
     OrderFromJSON,
     OrderToJSON,
+} from '../models/Order';
+import {
+    type TransactionIds,
     TransactionIdsFromJSON,
     TransactionIdsToJSON,
+} from '../models/TransactionIds';
+import {
+    type TransactionInfoDTO,
     TransactionInfoDTOFromJSON,
     TransactionInfoDTOToJSON,
+} from '../models/TransactionInfoDTO';
+import {
+    type TransactionPage,
     TransactionPageFromJSON,
     TransactionPageToJSON,
+} from '../models/TransactionPage';
+import {
+    type TransactionPayload,
     TransactionPayloadFromJSON,
     TransactionPayloadToJSON,
+} from '../models/TransactionPayload';
+import {
+    type TransactionTypeEnum,
     TransactionTypeEnumFromJSON,
     TransactionTypeEnumToJSON,
-} from '../models/index';
+} from '../models/TransactionTypeEnum';
 
 export interface AnnounceCosignatureTransactionRequest {
+    /**
+     * 
+     */
     cosignature: Cosignature;
 }
 
 export interface AnnouncePartialTransactionRequest {
+    /**
+     * 
+     */
     transactionPayload: TransactionPayload;
 }
 
 export interface AnnounceTransactionRequest {
+    /**
+     * 
+     */
     transactionPayload: TransactionPayload;
 }
 
 export interface GetConfirmedTransactionRequest {
+    /**
+     * Transaction hash (64 hexadecimal characters) or node-assigned transaction ID (16 hexadecimal characters).
+     * 
+     */
     transactionId: string;
 }
 
 export interface GetConfirmedTransactionsRequest {
+    /**
+     * 
+     */
     transactionIds: TransactionIds;
 }
 
 export interface GetPartialTransactionRequest {
+    /**
+     * Transaction hash (64 hexadecimal characters) or node-assigned transaction ID (16 hexadecimal characters).
+     * 
+     */
     transactionId: string;
 }
 
 export interface GetPartialTransactionsRequest {
+    /**
+     * 
+     */
     transactionIds: TransactionIds;
 }
 
 export interface GetUnconfirmedTransactionRequest {
+    /**
+     * Transaction hash (64 hexadecimal characters) or node-assigned transaction ID (16 hexadecimal characters).
+     * 
+     */
     transactionId: string;
 }
 
 export interface GetUnconfirmedTransactionsRequest {
+    /**
+     * 
+     */
     transactionIds: TransactionIds;
 }
 
 export interface SearchConfirmedTransactionsRequest {
+    /**
+     * Filter by address (include), in Base32 format.
+     * 
+     * The exact meaning depends on the endpoint:
+     * - transaction search: returns transactions where the address appears as the sender, recipient, or cosigner
+     * - account search: matches the account address
+     * - account restriction search: matches the restricted account address
+     * - hash lock and secret lock search: matches the lock owner address
+     * 
+     * On transaction search endpoints, this filter cannot be combined with `recipientAddress` and
+     * `signerPublicKey`.
+     * 
+     */
     address?: string;
+    /**
+     * Filter transactions by recipient address in Base32 format (include).
+     */
     recipientAddress?: string;
+    /**
+     * Filter transactions by the public key of the signing account (include).
+     */
     signerPublicKey?: string;
+    /**
+     * Filter by height (include).
+     * The exact meaning depends on the endpoint, for example block height for blocks or inclusion height for
+     * confirmed transactions.
+     * 
+     */
     height?: string;
+    /**
+     * Only transactions at or above this block height are returned.
+     */
     fromHeight?: string;
+    /**
+     * Only transactions at or below this block height are returned.
+     */
     toHeight?: string;
+    /**
+     * Requires providing the `transferMosaicId` filter.
+     * Only transfer transactions with an amount greater than or equal to this value for the specified mosaic ID are returned.
+     * 
+     */
     fromTransferAmount?: string;
+    /**
+     * Requires providing the `transferMosaicId` filter.
+     * Only transfer transactions with an amount less than or equal to this value for the specified mosaic ID are returned.
+     * 
+     */
     toTransferAmount?: string;
+    /**
+     * Filter by transaction type (include).
+     * To match multiple transaction types, add more query parameters like: `type=16974&type=16718`.
+     * 
+     */
     type?: Array<TransactionTypeEnum>;
+    /**
+     * When `true`, the search also includes transactions embedded inside aggregate transactions.
+     * Otherwise, only top-level transactions are returned.
+     * 
+     * Results are **flattened**. Embedded transactions are returned as separate entries in the same
+     * `data` array as top-level transactions, not nested under their parent aggregate transaction.
+     * Sorting, filtering, and pagination are therefore applied to one combined result set containing
+     * both top-level and embedded transaction records.
+     * 
+     * In the database, embedded transactions are stored as separate documents linked to their
+     * parent aggregate by `meta.aggregateId` and `meta.aggregateHash`. When `embedded=false`, the
+     * search excludes documents with `meta.aggregateId`. When `embedded=true`, those documents are
+     * included in the page result alongside regular transactions. In REST responses, embedded entries
+     * are identified by `meta.aggregateId`, `meta.aggregateHash`, and their inner `meta.index`;
+     * unlike top-level transactions, they do not carry their own `meta.hash`.
+     * 
+     * **Note:** This field does not work as expected with the `address` filter. That filter matches the
+     * internal `meta.addresses` field used on top-level transaction documents, while embedded
+     * transaction documents do not carry that field. As a result, embedded transactions involving the
+     * specified address will not be returned even when `embedded=true`. Filters such as
+     * `recipientAddress` and `signerPublicKey` do not have this limitation.
+     * 
+     */
     embedded?: boolean;
+    /**
+     * Filter transfer transactions by the mosaic ID in the transfer payload (include).
+     */
     transferMosaicId?: string;
+    /**
+     * Select the number of entries to return per page.
+     * Values outside the allowed range are clamped to the schema minimum or maximum.
+     * 
+     */
     pageSize?: number;
+    /**
+     * Page number for numbered pagination (1-based).
+     * 
+     * Numbered and cursor pagination can be combined, but this is not recommended because the semantics
+     * are harder to reason about. For cursor-style flows, keep `pageNumber=1` and advance pages by
+     * updating only `offset`. For numbered pagination flows, omit `offset` and advance pages by
+     * incrementing `pageNumber`.
+     * 
+     */
     pageNumber?: number;
+    /**
+     * Cursor for pagination. Provide the value of the sort field (`orderBy`) from the
+     * last entry of the previous page. **The offset type must match `orderBy`:**
+     * - `orderBy=id`: use the entry's `id` (ObjectId, 24-char hex).
+     * - `orderBy=height`: use the block height (string, e.g. `"17592"`).
+     * - `orderBy=balance`: use the mosaic balance amount (string, e.g. `"1000000"`).
+     * 
+     * Allowed `orderBy` values depend on the endpoint. If `orderBy` is omitted, `id` is used by default.
+     * 
+     * Set `offset` to the sort-field value of the last entry from the previous page. Across pages,
+     * this value decreases with `order=desc` and increases with `order=asc`.
+     * 
+     * Numbered and cursor pagination can be combined, but this is not recommended because the semantics
+     * are harder to reason about. For cursor-style flows, keep `pageNumber=1` and advance pages by
+     * updating only `offset`. For numbered pagination flows, omit `offset` and advance pages by
+     * incrementing `pageNumber`.
+     * 
+     */
     offset?: string;
+    /**
+     * Sort responses in ascending or descending order based on the collection property set on the param `orderBy`.
+     * If the request does not specify `orderBy`, REST returns the collection ordered by id.
+     * The default sort direction depends on the endpoint implementation.
+     * 
+     */
     order?: Order;
 }
 
 export interface SearchPartialTransactionsRequest {
+    /**
+     * Filter by address (include), in Base32 format.
+     * 
+     * The exact meaning depends on the endpoint:
+     * - transaction search: returns transactions where the address appears as the sender, recipient, or cosigner
+     * - account search: matches the account address
+     * - account restriction search: matches the restricted account address
+     * - hash lock and secret lock search: matches the lock owner address
+     * 
+     * On transaction search endpoints, this filter cannot be combined with `recipientAddress` and
+     * `signerPublicKey`.
+     * 
+     */
     address?: string;
+    /**
+     * Filter transactions by recipient address in Base32 format (include).
+     */
     recipientAddress?: string;
+    /**
+     * Filter transactions by the public key of the signing account (include).
+     */
     signerPublicKey?: string;
+    /**
+     * Filter by height (include).
+     * The exact meaning depends on the endpoint, for example block height for blocks or inclusion height for
+     * confirmed transactions.
+     * 
+     */
     height?: string;
+    /**
+     * Only transactions at or above this block height are returned.
+     */
     fromHeight?: string;
+    /**
+     * Only transactions at or below this block height are returned.
+     */
     toHeight?: string;
+    /**
+     * Requires providing the `transferMosaicId` filter.
+     * Only transfer transactions with an amount greater than or equal to this value for the specified mosaic ID are returned.
+     * 
+     */
     fromTransferAmount?: string;
+    /**
+     * Requires providing the `transferMosaicId` filter.
+     * Only transfer transactions with an amount less than or equal to this value for the specified mosaic ID are returned.
+     * 
+     */
     toTransferAmount?: string;
+    /**
+     * Filter by transaction type (include).
+     * To match multiple transaction types, add more query parameters like: `type=16974&type=16718`.
+     * 
+     */
     type?: Array<TransactionTypeEnum>;
+    /**
+     * When `true`, the search also includes transactions embedded inside aggregate transactions.
+     * Otherwise, only top-level transactions are returned.
+     * 
+     * Results are **flattened**. Embedded transactions are returned as separate entries in the same
+     * `data` array as top-level transactions, not nested under their parent aggregate transaction.
+     * Sorting, filtering, and pagination are therefore applied to one combined result set containing
+     * both top-level and embedded transaction records.
+     * 
+     * In the database, embedded transactions are stored as separate documents linked to their
+     * parent aggregate by `meta.aggregateId` and `meta.aggregateHash`. When `embedded=false`, the
+     * search excludes documents with `meta.aggregateId`. When `embedded=true`, those documents are
+     * included in the page result alongside regular transactions. In REST responses, embedded entries
+     * are identified by `meta.aggregateId`, `meta.aggregateHash`, and their inner `meta.index`;
+     * unlike top-level transactions, they do not carry their own `meta.hash`.
+     * 
+     * **Note:** This field does not work as expected with the `address` filter. That filter matches the
+     * internal `meta.addresses` field used on top-level transaction documents, while embedded
+     * transaction documents do not carry that field. As a result, embedded transactions involving the
+     * specified address will not be returned even when `embedded=true`. Filters such as
+     * `recipientAddress` and `signerPublicKey` do not have this limitation.
+     * 
+     */
     embedded?: boolean;
+    /**
+     * Filter transfer transactions by the mosaic ID in the transfer payload (include).
+     */
     transferMosaicId?: string;
+    /**
+     * Select the number of entries to return per page.
+     * Values outside the allowed range are clamped to the schema minimum or maximum.
+     * 
+     */
     pageSize?: number;
+    /**
+     * Page number for numbered pagination (1-based).
+     * 
+     * Numbered and cursor pagination can be combined, but this is not recommended because the semantics
+     * are harder to reason about. For cursor-style flows, keep `pageNumber=1` and advance pages by
+     * updating only `offset`. For numbered pagination flows, omit `offset` and advance pages by
+     * incrementing `pageNumber`.
+     * 
+     */
     pageNumber?: number;
+    /**
+     * Cursor for pagination. Provide the value of the sort field (`orderBy`) from the
+     * last entry of the previous page. **The offset type must match `orderBy`:**
+     * - `orderBy=id`: use the entry's `id` (ObjectId, 24-char hex).
+     * - `orderBy=height`: use the block height (string, e.g. `"17592"`).
+     * - `orderBy=balance`: use the mosaic balance amount (string, e.g. `"1000000"`).
+     * 
+     * Allowed `orderBy` values depend on the endpoint. If `orderBy` is omitted, `id` is used by default.
+     * 
+     * Set `offset` to the sort-field value of the last entry from the previous page. Across pages,
+     * this value decreases with `order=desc` and increases with `order=asc`.
+     * 
+     * Numbered and cursor pagination can be combined, but this is not recommended because the semantics
+     * are harder to reason about. For cursor-style flows, keep `pageNumber=1` and advance pages by
+     * updating only `offset`. For numbered pagination flows, omit `offset` and advance pages by
+     * incrementing `pageNumber`.
+     * 
+     */
     offset?: string;
+    /**
+     * Sort responses in ascending or descending order based on the collection property set on the param `orderBy`.
+     * If the request does not specify `orderBy`, REST returns the collection ordered by id.
+     * The default sort direction depends on the endpoint implementation.
+     * 
+     */
     order?: Order;
 }
 
 export interface SearchUnconfirmedTransactionsRequest {
+    /**
+     * Filter by address (include), in Base32 format.
+     * 
+     * The exact meaning depends on the endpoint:
+     * - transaction search: returns transactions where the address appears as the sender, recipient, or cosigner
+     * - account search: matches the account address
+     * - account restriction search: matches the restricted account address
+     * - hash lock and secret lock search: matches the lock owner address
+     * 
+     * On transaction search endpoints, this filter cannot be combined with `recipientAddress` and
+     * `signerPublicKey`.
+     * 
+     */
     address?: string;
+    /**
+     * Filter transactions by recipient address in Base32 format (include).
+     */
     recipientAddress?: string;
+    /**
+     * Filter transactions by the public key of the signing account (include).
+     */
     signerPublicKey?: string;
+    /**
+     * Filter by height (include).
+     * The exact meaning depends on the endpoint, for example block height for blocks or inclusion height for
+     * confirmed transactions.
+     * 
+     */
     height?: string;
+    /**
+     * Only transactions at or above this block height are returned.
+     */
     fromHeight?: string;
+    /**
+     * Only transactions at or below this block height are returned.
+     */
     toHeight?: string;
+    /**
+     * Requires providing the `transferMosaicId` filter.
+     * Only transfer transactions with an amount greater than or equal to this value for the specified mosaic ID are returned.
+     * 
+     */
     fromTransferAmount?: string;
+    /**
+     * Requires providing the `transferMosaicId` filter.
+     * Only transfer transactions with an amount less than or equal to this value for the specified mosaic ID are returned.
+     * 
+     */
     toTransferAmount?: string;
+    /**
+     * Filter by transaction type (include).
+     * To match multiple transaction types, add more query parameters like: `type=16974&type=16718`.
+     * 
+     */
     type?: Array<TransactionTypeEnum>;
+    /**
+     * When `true`, the search also includes transactions embedded inside aggregate transactions.
+     * Otherwise, only top-level transactions are returned.
+     * 
+     * Results are **flattened**. Embedded transactions are returned as separate entries in the same
+     * `data` array as top-level transactions, not nested under their parent aggregate transaction.
+     * Sorting, filtering, and pagination are therefore applied to one combined result set containing
+     * both top-level and embedded transaction records.
+     * 
+     * In the database, embedded transactions are stored as separate documents linked to their
+     * parent aggregate by `meta.aggregateId` and `meta.aggregateHash`. When `embedded=false`, the
+     * search excludes documents with `meta.aggregateId`. When `embedded=true`, those documents are
+     * included in the page result alongside regular transactions. In REST responses, embedded entries
+     * are identified by `meta.aggregateId`, `meta.aggregateHash`, and their inner `meta.index`;
+     * unlike top-level transactions, they do not carry their own `meta.hash`.
+     * 
+     * **Note:** This field does not work as expected with the `address` filter. That filter matches the
+     * internal `meta.addresses` field used on top-level transaction documents, while embedded
+     * transaction documents do not carry that field. As a result, embedded transactions involving the
+     * specified address will not be returned even when `embedded=true`. Filters such as
+     * `recipientAddress` and `signerPublicKey` do not have this limitation.
+     * 
+     */
     embedded?: boolean;
+    /**
+     * Filter transfer transactions by the mosaic ID in the transfer payload (include).
+     */
     transferMosaicId?: string;
+    /**
+     * Select the number of entries to return per page.
+     * Values outside the allowed range are clamped to the schema minimum or maximum.
+     * 
+     */
     pageSize?: number;
+    /**
+     * Page number for numbered pagination (1-based).
+     * 
+     * Numbered and cursor pagination can be combined, but this is not recommended because the semantics
+     * are harder to reason about. For cursor-style flows, keep `pageNumber=1` and advance pages by
+     * updating only `offset`. For numbered pagination flows, omit `offset` and advance pages by
+     * incrementing `pageNumber`.
+     * 
+     */
     pageNumber?: number;
+    /**
+     * Cursor for pagination. Provide the value of the sort field (`orderBy`) from the
+     * last entry of the previous page. **The offset type must match `orderBy`:**
+     * - `orderBy=id`: use the entry's `id` (ObjectId, 24-char hex).
+     * - `orderBy=height`: use the block height (string, e.g. `"17592"`).
+     * - `orderBy=balance`: use the mosaic balance amount (string, e.g. `"1000000"`).
+     * 
+     * Allowed `orderBy` values depend on the endpoint. If `orderBy` is omitted, `id` is used by default.
+     * 
+     * Set `offset` to the sort-field value of the last entry from the previous page. Across pages,
+     * this value decreases with `order=desc` and increases with `order=asc`.
+     * 
+     * Numbered and cursor pagination can be combined, but this is not recommended because the semantics
+     * are harder to reason about. For cursor-style flows, keep `pageNumber=1` and advance pages by
+     * updating only `offset`. For numbered pagination flows, omit `offset` and advance pages by
+     * incrementing `pageNumber`.
+     * 
+     */
     offset?: string;
+    /**
+     * Sort responses in ascending or descending order based on the collection property set on the param `orderBy`.
+     * If the request does not specify `orderBy`, REST returns the collection ordered by id.
+     * The default sort direction depends on the endpoint implementation.
+     * 
+     */
     order?: Order;
 }
 
@@ -142,10 +515,9 @@ export interface SearchUnconfirmedTransactionsRequest {
 export class TransactionRoutesApi extends runtime.BaseAPI {
 
     /**
-     * Broadcasts a detached cosignature for an aggregate bonded transaction to the network through this node.  The request must contain the detached cosignature fields: cosignature version, signer public key, cosignature signature, and the parent aggregate transaction hash. Detached cosignatures are normally created client-side with a [Symbol SDK](https://docs.symbol.dev/sdk.html) and then announced with this endpoint.  Acceptance by this node does not mean the parent aggregate bonded transaction is already confirmed on-chain. The cosignature still needs to be propagated and processed by the network.  To verify the effect of the cosignature, query the **parent aggregate bonded transaction**, for example with [`GET /transactionStatus/{hash}`](/transactionStatus/{hash}) using the parent aggregate transaction hash. Transaction status availability is not guaranteed indefinitely: failed statuses are stored in a capped collection and may be evicted as new entries arrive. 
-     * Announce a cosignature transaction
+     * Creates request options for announceCosignatureTransaction without sending the request
      */
-    async announceCosignatureTransactionRaw(requestParameters: AnnounceCosignatureTransactionRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<AnnounceTransactionInfoDTO>> {
+    async announceCosignatureTransactionRequestOpts(requestParameters: AnnounceCosignatureTransactionRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['cosignature'] == null) {
             throw new runtime.RequiredError(
                 'cosignature',
@@ -162,13 +534,22 @@ export class TransactionRoutesApi extends runtime.BaseAPI {
 
         let urlPath = `/transactions/cosignature`;
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'PUT',
             headers: headerParameters,
             query: queryParameters,
             body: CosignatureToJSON(requestParameters['cosignature']),
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Broadcasts a detached cosignature for an aggregate bonded transaction to the network through this node.  The request must contain the detached cosignature fields: cosignature version, signer public key, cosignature signature, and the parent aggregate transaction hash. Detached cosignatures are normally created client-side with a [Symbol SDK](https://docs.symbol.dev/sdk.html) and then announced with this endpoint.  Acceptance by this node does not mean the parent aggregate bonded transaction is already confirmed on-chain. The cosignature still needs to be propagated and processed by the network.  To verify the effect of the cosignature, query the **parent aggregate bonded transaction**, for example with [`GET /transactionStatus/{hash}`](/transactionStatus/{hash}) using the parent aggregate transaction hash. Transaction status availability is not guaranteed indefinitely: failed statuses are stored in a capped collection and may be evicted as new entries arrive. 
+     * Announce a cosignature transaction
+     */
+    async announceCosignatureTransactionRaw(requestParameters: AnnounceCosignatureTransactionRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<AnnounceTransactionInfoDTO>> {
+        const requestOptions = await this.announceCosignatureTransactionRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => AnnounceTransactionInfoDTOFromJSON(jsonValue));
     }
@@ -183,10 +564,9 @@ export class TransactionRoutesApi extends runtime.BaseAPI {
     }
 
     /**
-     * Broadcasts a signed aggregate bonded transaction to the network through this node.  The request must contain the serialized aggregate bonded transaction payload in hexadecimal form. Transactions are normally created and signed client-side with a [Symbol SDK](https://docs.symbol.dev/sdk.html) and then announced with this endpoint.  Acceptance by this node does not mean the transaction is already part of the blockchain. The transaction still needs to be validated and confirmed by the network.  To verify the final result, query `GET /transactionStatus/{hash}` on the same node that received the announce request. If that node drops the transaction before propagation, other nodes may not know the transaction at all and can return `404` for the same hash. Transaction status availability is not guaranteed indefinitely: failed statuses are stored in a capped collection and may be evicted as new entries arrive. 
-     * Announce an aggregate bonded transaction
+     * Creates request options for announcePartialTransaction without sending the request
      */
-    async announcePartialTransactionRaw(requestParameters: AnnouncePartialTransactionRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<AnnounceTransactionInfoDTO>> {
+    async announcePartialTransactionRequestOpts(requestParameters: AnnouncePartialTransactionRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['transactionPayload'] == null) {
             throw new runtime.RequiredError(
                 'transactionPayload',
@@ -203,13 +583,22 @@ export class TransactionRoutesApi extends runtime.BaseAPI {
 
         let urlPath = `/transactions/partial`;
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'PUT',
             headers: headerParameters,
             query: queryParameters,
             body: TransactionPayloadToJSON(requestParameters['transactionPayload']),
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Broadcasts a signed aggregate bonded transaction to the network through this node.  The request must contain the serialized aggregate bonded transaction payload in hexadecimal form. Transactions are normally created and signed client-side with a [Symbol SDK](https://docs.symbol.dev/sdk.html) and then announced with this endpoint.  Acceptance by this node does not mean the transaction is already part of the blockchain. The transaction still needs to be validated and confirmed by the network.  To verify the final result, query `GET /transactionStatus/{hash}` on the same node that received the announce request. If that node drops the transaction before propagation, other nodes may not know the transaction at all and can return `404` for the same hash. Transaction status availability is not guaranteed indefinitely: failed statuses are stored in a capped collection and may be evicted as new entries arrive. 
+     * Announce an aggregate bonded transaction
+     */
+    async announcePartialTransactionRaw(requestParameters: AnnouncePartialTransactionRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<AnnounceTransactionInfoDTO>> {
+        const requestOptions = await this.announcePartialTransactionRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => AnnounceTransactionInfoDTOFromJSON(jsonValue));
     }
@@ -224,10 +613,9 @@ export class TransactionRoutesApi extends runtime.BaseAPI {
     }
 
     /**
-     * Broadcasts a signed transaction to the network through this node.  The request must contain the serialized transaction payload in hexadecimal form. Transactions are normally created and signed client-side with a [Symbol SDK](https://docs.symbol.dev/sdk.html) and then announced with this endpoint.  The [catbuffer library](https://github.com/symbol/symbol/tree/main/catbuffer) defines the binary serialization format used by Symbol entities.  Acceptance by this node does not mean the transaction is already part of the blockchain. The transaction still needs to be validated and confirmed by the network.  To verify the final result, query `GET /transactionStatus/{hash}` on the same node that received the announce request. If that node drops the transaction before propagation, other nodes may not know the transaction at all and can return `404` for the same hash. Transaction status availability is not guaranteed indefinitely: failed statuses are stored in a capped collection and may be evicted as new entries arrive. 
-     * Announce a new transaction
+     * Creates request options for announceTransaction without sending the request
      */
-    async announceTransactionRaw(requestParameters: AnnounceTransactionRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<AnnounceTransactionInfoDTO>> {
+    async announceTransactionRequestOpts(requestParameters: AnnounceTransactionRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['transactionPayload'] == null) {
             throw new runtime.RequiredError(
                 'transactionPayload',
@@ -244,13 +632,22 @@ export class TransactionRoutesApi extends runtime.BaseAPI {
 
         let urlPath = `/transactions`;
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'PUT',
             headers: headerParameters,
             query: queryParameters,
             body: TransactionPayloadToJSON(requestParameters['transactionPayload']),
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Broadcasts a signed transaction to the network through this node.  The request must contain the serialized transaction payload in hexadecimal form. Transactions are normally created and signed client-side with a [Symbol SDK](https://docs.symbol.dev/sdk.html) and then announced with this endpoint.  The [catbuffer library](https://github.com/symbol/symbol/tree/main/catbuffer) defines the binary serialization format used by Symbol entities.  Acceptance by this node does not mean the transaction is already part of the blockchain. The transaction still needs to be validated and confirmed by the network.  To verify the final result, query `GET /transactionStatus/{hash}` on the same node that received the announce request. If that node drops the transaction before propagation, other nodes may not know the transaction at all and can return `404` for the same hash. Transaction status availability is not guaranteed indefinitely: failed statuses are stored in a capped collection and may be evicted as new entries arrive. 
+     * Announce a new transaction
+     */
+    async announceTransactionRaw(requestParameters: AnnounceTransactionRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<AnnounceTransactionInfoDTO>> {
+        const requestOptions = await this.announceTransactionRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => AnnounceTransactionInfoDTOFromJSON(jsonValue));
     }
@@ -265,10 +662,9 @@ export class TransactionRoutesApi extends runtime.BaseAPI {
     }
 
     /**
-     * Returns confirmed transaction information given a transaction ID assigned by the node or transaction hash.  Use this endpoint when you need on-chain transaction data (the transaction is already included in a block). Use `getUnconfirmedTransaction` while the transaction is still in a node\'s unconfirmed pool, and use `getPartialTransaction` for aggregate bonded transactions waiting for cosignatures. 
-     * Get confirmed transaction information
+     * Creates request options for getConfirmedTransaction without sending the request
      */
-    async getConfirmedTransactionRaw(requestParameters: GetConfirmedTransactionRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<TransactionInfoDTO>> {
+    async getConfirmedTransactionRequestOpts(requestParameters: GetConfirmedTransactionRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['transactionId'] == null) {
             throw new runtime.RequiredError(
                 'transactionId',
@@ -282,14 +678,23 @@ export class TransactionRoutesApi extends runtime.BaseAPI {
 
 
         let urlPath = `/transactions/confirmed/{transactionId}`;
-        urlPath = urlPath.replace(`{${"transactionId"}}`, encodeURIComponent(String(requestParameters['transactionId'])));
+        urlPath = urlPath.replace('{transactionId}', encodeURIComponent(String(requestParameters['transactionId'])));
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Returns confirmed transaction information given a transaction ID assigned by the node or transaction hash.  Use this endpoint when you need on-chain transaction data (the transaction is already included in a block). Use `getUnconfirmedTransaction` while the transaction is still in a node\'s unconfirmed pool, and use `getPartialTransaction` for aggregate bonded transactions waiting for cosignatures. 
+     * Get confirmed transaction information
+     */
+    async getConfirmedTransactionRaw(requestParameters: GetConfirmedTransactionRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<TransactionInfoDTO>> {
+        const requestOptions = await this.getConfirmedTransactionRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => TransactionInfoDTOFromJSON(jsonValue));
     }
@@ -304,10 +709,9 @@ export class TransactionRoutesApi extends runtime.BaseAPI {
     }
 
     /**
-     * Returns confirmed transactions for the list of identifiers in the request body. Each request item can be either a transaction ID assigned by the node or a transaction hash. Both values are returned by transaction retrieval and search endpoints, for example `GET /transactions/confirmed` and `GET /transactions/confirmed/{transactionId}`.  Use this endpoint when you need on-chain data for multiple transactions in one call. Use `getUnconfirmedTransactions` for transactions still pending in a node pool, and use `getPartialTransactions` for aggregate bonded transactions waiting for cosignatures. 
-     * Get confirmed transactions information
+     * Creates request options for getConfirmedTransactions without sending the request
      */
-    async getConfirmedTransactionsRaw(requestParameters: GetConfirmedTransactionsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<TransactionInfoDTO>>> {
+    async getConfirmedTransactionsRequestOpts(requestParameters: GetConfirmedTransactionsRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['transactionIds'] == null) {
             throw new runtime.RequiredError(
                 'transactionIds',
@@ -324,13 +728,22 @@ export class TransactionRoutesApi extends runtime.BaseAPI {
 
         let urlPath = `/transactions/confirmed`;
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
             body: TransactionIdsToJSON(requestParameters['transactionIds']),
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Returns confirmed transactions for the list of identifiers in the request body. Each request item can be either a transaction ID assigned by the node or a transaction hash. Both values are returned by transaction retrieval and search endpoints, for example `GET /transactions/confirmed` and `GET /transactions/confirmed/{transactionId}`.  Use this endpoint when you need on-chain data for multiple transactions in one call. Use `getUnconfirmedTransactions` for transactions still pending in a node pool, and use `getPartialTransactions` for aggregate bonded transactions waiting for cosignatures. 
+     * Get confirmed transactions information
+     */
+    async getConfirmedTransactionsRaw(requestParameters: GetConfirmedTransactionsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<TransactionInfoDTO>>> {
+        const requestOptions = await this.getConfirmedTransactionsRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(TransactionInfoDTOFromJSON));
     }
@@ -345,10 +758,9 @@ export class TransactionRoutesApi extends runtime.BaseAPI {
     }
 
     /**
-     * Returns one partial transaction identified by the path value. Partial transactions are aggregate bonded transactions waiting for the remaining cosignatures.  The path accepts either the transaction ID assigned by the node or the transaction hash. Both values are returned by transaction retrieval and search endpoints, for example `GET /transactions/partial` and `GET /transactions/partial/{transactionId}`.  Use this endpoint for aggregate bonded transactions before they are fully cosigned. Use `getUnconfirmedTransaction` for non-partial transactions that are in a node\'s unconfirmed pool, and use `getConfirmedTransaction` once the transaction is confirmed on-chain. 
-     * Get partial transaction information
+     * Creates request options for getPartialTransaction without sending the request
      */
-    async getPartialTransactionRaw(requestParameters: GetPartialTransactionRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<TransactionInfoDTO>> {
+    async getPartialTransactionRequestOpts(requestParameters: GetPartialTransactionRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['transactionId'] == null) {
             throw new runtime.RequiredError(
                 'transactionId',
@@ -362,14 +774,23 @@ export class TransactionRoutesApi extends runtime.BaseAPI {
 
 
         let urlPath = `/transactions/partial/{transactionId}`;
-        urlPath = urlPath.replace(`{${"transactionId"}}`, encodeURIComponent(String(requestParameters['transactionId'])));
+        urlPath = urlPath.replace('{transactionId}', encodeURIComponent(String(requestParameters['transactionId'])));
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Returns one partial transaction identified by the path value. Partial transactions are aggregate bonded transactions waiting for the remaining cosignatures.  The path accepts either the transaction ID assigned by the node or the transaction hash. Both values are returned by transaction retrieval and search endpoints, for example `GET /transactions/partial` and `GET /transactions/partial/{transactionId}`.  Use this endpoint for aggregate bonded transactions before they are fully cosigned. Use `getUnconfirmedTransaction` for non-partial transactions that are in a node\'s unconfirmed pool, and use `getConfirmedTransaction` once the transaction is confirmed on-chain. 
+     * Get partial transaction information
+     */
+    async getPartialTransactionRaw(requestParameters: GetPartialTransactionRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<TransactionInfoDTO>> {
+        const requestOptions = await this.getPartialTransactionRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => TransactionInfoDTOFromJSON(jsonValue));
     }
@@ -384,10 +805,9 @@ export class TransactionRoutesApi extends runtime.BaseAPI {
     }
 
     /**
-     * Returns partial transactions for the list of identifiers in the request body. Partial transactions are aggregate bonded transactions waiting for the remaining cosignatures.  Each request item can be either a transaction ID assigned by the node or a transaction hash. Both values are returned by transaction retrieval and search endpoints, for example `GET /transactions/partial` and `GET /transactions/partial/{transactionId}`.  Use this endpoint for aggregate bonded transactions that still wait for required cosignatures. Use `getUnconfirmedTransactions` for non-partial pending transactions accepted by a node but not yet included in a block, and use `getConfirmedTransactions` once transactions are confirmed on-chain. 
-     * Get information about partial transactions
+     * Creates request options for getPartialTransactions without sending the request
      */
-    async getPartialTransactionsRaw(requestParameters: GetPartialTransactionsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<TransactionInfoDTO>>> {
+    async getPartialTransactionsRequestOpts(requestParameters: GetPartialTransactionsRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['transactionIds'] == null) {
             throw new runtime.RequiredError(
                 'transactionIds',
@@ -404,13 +824,22 @@ export class TransactionRoutesApi extends runtime.BaseAPI {
 
         let urlPath = `/transactions/partial`;
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
             body: TransactionIdsToJSON(requestParameters['transactionIds']),
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Returns partial transactions for the list of identifiers in the request body. Partial transactions are aggregate bonded transactions waiting for the remaining cosignatures.  Each request item can be either a transaction ID assigned by the node or a transaction hash. Both values are returned by transaction retrieval and search endpoints, for example `GET /transactions/partial` and `GET /transactions/partial/{transactionId}`.  Use this endpoint for aggregate bonded transactions that still wait for required cosignatures. Use `getUnconfirmedTransactions` for non-partial pending transactions accepted by a node but not yet included in a block, and use `getConfirmedTransactions` once transactions are confirmed on-chain. 
+     * Get information about partial transactions
+     */
+    async getPartialTransactionsRaw(requestParameters: GetPartialTransactionsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<TransactionInfoDTO>>> {
+        const requestOptions = await this.getPartialTransactionsRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(TransactionInfoDTOFromJSON));
     }
@@ -425,10 +854,9 @@ export class TransactionRoutesApi extends runtime.BaseAPI {
     }
 
     /**
-     * Returns one unconfirmed transaction identified by the path value. An unconfirmed transaction is accepted by a node and pending inclusion in a block.  The path accepts either the transaction ID assigned by the node or the transaction hash. Both values are returned by transaction retrieval and search endpoints, for example `GET /transactions/unconfirmed` and `GET /transactions/unconfirmed/{transactionId}`.  Use this endpoint while a transaction is accepted by a node but not yet included in a block. Use `getConfirmedTransaction` once it is confirmed on-chain, and use `getPartialTransaction` for aggregate bonded transactions waiting for cosignatures. 
-     * Get unconfirmed transaction information
+     * Creates request options for getUnconfirmedTransaction without sending the request
      */
-    async getUnconfirmedTransactionRaw(requestParameters: GetUnconfirmedTransactionRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<TransactionInfoDTO>> {
+    async getUnconfirmedTransactionRequestOpts(requestParameters: GetUnconfirmedTransactionRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['transactionId'] == null) {
             throw new runtime.RequiredError(
                 'transactionId',
@@ -442,14 +870,23 @@ export class TransactionRoutesApi extends runtime.BaseAPI {
 
 
         let urlPath = `/transactions/unconfirmed/{transactionId}`;
-        urlPath = urlPath.replace(`{${"transactionId"}}`, encodeURIComponent(String(requestParameters['transactionId'])));
+        urlPath = urlPath.replace('{transactionId}', encodeURIComponent(String(requestParameters['transactionId'])));
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Returns one unconfirmed transaction identified by the path value. An unconfirmed transaction is accepted by a node and pending inclusion in a block.  The path accepts either the transaction ID assigned by the node or the transaction hash. Both values are returned by transaction retrieval and search endpoints, for example `GET /transactions/unconfirmed` and `GET /transactions/unconfirmed/{transactionId}`.  Use this endpoint while a transaction is accepted by a node but not yet included in a block. Use `getConfirmedTransaction` once it is confirmed on-chain, and use `getPartialTransaction` for aggregate bonded transactions waiting for cosignatures. 
+     * Get unconfirmed transaction information
+     */
+    async getUnconfirmedTransactionRaw(requestParameters: GetUnconfirmedTransactionRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<TransactionInfoDTO>> {
+        const requestOptions = await this.getUnconfirmedTransactionRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => TransactionInfoDTOFromJSON(jsonValue));
     }
@@ -464,10 +901,9 @@ export class TransactionRoutesApi extends runtime.BaseAPI {
     }
 
     /**
-     * Returns unconfirmed transactions for the list of identifiers in the request body. Unconfirmed transactions are accepted by a node and pending inclusion in a block.  Each request item can be either a transaction ID assigned by the node or a transaction hash. Both values are returned by transaction retrieval and search endpoints, for example `GET /transactions/unconfirmed` and `GET /transactions/unconfirmed/{transactionId}`.  Use this endpoint when checking multiple transactions that are accepted by a node but not yet included in a block. Use `getConfirmedTransactions` for on-chain transactions, and use `getPartialTransactions` for aggregate bonded transactions waiting for cosignatures. 
-     * Get information about unconfirmed transactions
+     * Creates request options for getUnconfirmedTransactions without sending the request
      */
-    async getUnconfirmedTransactionsRaw(requestParameters: GetUnconfirmedTransactionsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<TransactionInfoDTO>>> {
+    async getUnconfirmedTransactionsRequestOpts(requestParameters: GetUnconfirmedTransactionsRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['transactionIds'] == null) {
             throw new runtime.RequiredError(
                 'transactionIds',
@@ -484,13 +920,22 @@ export class TransactionRoutesApi extends runtime.BaseAPI {
 
         let urlPath = `/transactions/unconfirmed`;
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
             body: TransactionIdsToJSON(requestParameters['transactionIds']),
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Returns unconfirmed transactions for the list of identifiers in the request body. Unconfirmed transactions are accepted by a node and pending inclusion in a block.  Each request item can be either a transaction ID assigned by the node or a transaction hash. Both values are returned by transaction retrieval and search endpoints, for example `GET /transactions/unconfirmed` and `GET /transactions/unconfirmed/{transactionId}`.  Use this endpoint when checking multiple transactions that are accepted by a node but not yet included in a block. Use `getConfirmedTransactions` for on-chain transactions, and use `getPartialTransactions` for aggregate bonded transactions waiting for cosignatures. 
+     * Get information about unconfirmed transactions
+     */
+    async getUnconfirmedTransactionsRaw(requestParameters: GetUnconfirmedTransactionsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<TransactionInfoDTO>>> {
+        const requestOptions = await this.getUnconfirmedTransactionsRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(TransactionInfoDTOFromJSON));
     }
@@ -505,10 +950,9 @@ export class TransactionRoutesApi extends runtime.BaseAPI {
     }
 
     /**
-     * Returns a paginated list of confirmed transactions matching the supplied filters.  Use this endpoint when you need on-chain transactions only (already included in blocks). Use `searchUnconfirmedTransactions` for transactions that are still pending in a node pool, and use `searchPartialTransactions` for aggregate bonded transactions waiting for cosignatures.  If a transaction was announced with an alias rather than an address, the address considered during filtering is the one resolved from that alias at confirmation time.  For cursor-style pagination on this endpoint, set `offset` to the `id` of the last transaction from the previous page. For general pagination strategy guidance, see the `offset` and `pageNumber` query parameter descriptions. 
-     * Search confirmed transactions
+     * Creates request options for searchConfirmedTransactions without sending the request
      */
-    async searchConfirmedTransactionsRaw(requestParameters: SearchConfirmedTransactionsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<TransactionPage>> {
+    async searchConfirmedTransactionsRequestOpts(requestParameters: SearchConfirmedTransactionsRequest): Promise<runtime.RequestOpts> {
         const queryParameters: any = {};
 
         if (requestParameters['address'] != null) {
@@ -576,12 +1020,21 @@ export class TransactionRoutesApi extends runtime.BaseAPI {
 
         let urlPath = `/transactions/confirmed`;
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Returns a paginated list of confirmed transactions matching the supplied filters.  Use this endpoint when you need on-chain transactions only (already included in blocks). Use `searchUnconfirmedTransactions` for transactions that are still pending in a node pool, and use `searchPartialTransactions` for aggregate bonded transactions waiting for cosignatures.  If a transaction was announced with an alias rather than an address, the address considered during filtering is the one resolved from that alias at confirmation time.  For cursor-style pagination on this endpoint, set `offset` to the `id` of the last transaction from the previous page. For general pagination strategy guidance, see the `offset` and `pageNumber` query parameter descriptions. 
+     * Search confirmed transactions
+     */
+    async searchConfirmedTransactionsRaw(requestParameters: SearchConfirmedTransactionsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<TransactionPage>> {
+        const requestOptions = await this.searchConfirmedTransactionsRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => TransactionPageFromJSON(jsonValue));
     }
@@ -596,10 +1049,9 @@ export class TransactionRoutesApi extends runtime.BaseAPI {
     }
 
     /**
-     * Returns a paginated list of partial transactions matching the supplied filters.  Use this endpoint for aggregate bonded transactions that still wait for required cosignatures. Use `searchUnconfirmedTransactions` for non-partial pending transactions, and use `searchConfirmedTransactions` once transactions are confirmed on-chain.  For cursor-style pagination on this endpoint, set `offset` to the `id` of the last transaction from the previous page. For general pagination strategy guidance, see the `offset` and `pageNumber` query parameter descriptions. 
-     * Search partial transactions
+     * Creates request options for searchPartialTransactions without sending the request
      */
-    async searchPartialTransactionsRaw(requestParameters: SearchPartialTransactionsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<TransactionPage>> {
+    async searchPartialTransactionsRequestOpts(requestParameters: SearchPartialTransactionsRequest): Promise<runtime.RequestOpts> {
         const queryParameters: any = {};
 
         if (requestParameters['address'] != null) {
@@ -667,12 +1119,21 @@ export class TransactionRoutesApi extends runtime.BaseAPI {
 
         let urlPath = `/transactions/partial`;
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Returns a paginated list of partial transactions matching the supplied filters.  Use this endpoint for aggregate bonded transactions that still wait for required cosignatures. Use `searchUnconfirmedTransactions` for non-partial pending transactions, and use `searchConfirmedTransactions` once transactions are confirmed on-chain.  For cursor-style pagination on this endpoint, set `offset` to the `id` of the last transaction from the previous page. For general pagination strategy guidance, see the `offset` and `pageNumber` query parameter descriptions. 
+     * Search partial transactions
+     */
+    async searchPartialTransactionsRaw(requestParameters: SearchPartialTransactionsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<TransactionPage>> {
+        const requestOptions = await this.searchPartialTransactionsRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => TransactionPageFromJSON(jsonValue));
     }
@@ -687,10 +1148,9 @@ export class TransactionRoutesApi extends runtime.BaseAPI {
     }
 
     /**
-     * Returns a paginated list of unconfirmed transactions matching the supplied filters.  Use this endpoint for transactions accepted by a node but not yet included in a block. Use `searchConfirmedTransactions` for on-chain transactions, and use `searchPartialTransactions` for aggregate bonded transactions waiting for cosignatures.  For cursor-style pagination on this endpoint, set `offset` to the `id` of the last transaction from the previous page. For general pagination strategy guidance, see the `offset` and `pageNumber` query parameter descriptions. 
-     * Search unconfirmed transactions
+     * Creates request options for searchUnconfirmedTransactions without sending the request
      */
-    async searchUnconfirmedTransactionsRaw(requestParameters: SearchUnconfirmedTransactionsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<TransactionPage>> {
+    async searchUnconfirmedTransactionsRequestOpts(requestParameters: SearchUnconfirmedTransactionsRequest): Promise<runtime.RequestOpts> {
         const queryParameters: any = {};
 
         if (requestParameters['address'] != null) {
@@ -758,12 +1218,21 @@ export class TransactionRoutesApi extends runtime.BaseAPI {
 
         let urlPath = `/transactions/unconfirmed`;
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Returns a paginated list of unconfirmed transactions matching the supplied filters.  Use this endpoint for transactions accepted by a node but not yet included in a block. Use `searchConfirmedTransactions` for on-chain transactions, and use `searchPartialTransactions` for aggregate bonded transactions waiting for cosignatures.  For cursor-style pagination on this endpoint, set `offset` to the `id` of the last transaction from the previous page. For general pagination strategy guidance, see the `offset` and `pageNumber` query parameter descriptions. 
+     * Search unconfirmed transactions
+     */
+    async searchUnconfirmedTransactionsRaw(requestParameters: SearchUnconfirmedTransactionsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<TransactionPage>> {
+        const requestOptions = await this.searchUnconfirmedTransactionsRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => TransactionPageFromJSON(jsonValue));
     }

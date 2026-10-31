@@ -39,20 +39,14 @@ export interface ResolutionStatementInfoDTO {
      * Unique identifier of the object in the node's database (MongoDB ObjectId).
      * Used as the `offset` parameter value for cursor-based pagination.
      * 
-     * @type {string}
-     * @memberof ResolutionStatementInfoDTO
      */
     id: string;
     /**
      * 
-     * @type {StatementMetaDTO}
-     * @memberof ResolutionStatementInfoDTO
      */
     meta: StatementMetaDTO;
     /**
      * 
-     * @type {ResolutionStatementDTO}
-     * @memberof ResolutionStatementInfoDTO
      */
     statement: ResolutionStatementDTO;
 }
@@ -60,7 +54,7 @@ export interface ResolutionStatementInfoDTO {
 /**
  * Check if a given object implements the ResolutionStatementInfoDTO interface.
  */
-export function instanceOfResolutionStatementInfoDTO(value: Record<string, any>): value is ResolutionStatementInfoDTO {
+export function instanceOfResolutionStatementInfoDTO(value: object): value is ResolutionStatementInfoDTO {
     if (!('id' in value) || value['id'] === undefined) return false;
     if (!('meta' in value) || value['meta'] === undefined) return false;
     if (!('statement' in value) || value['statement'] === undefined) return false;

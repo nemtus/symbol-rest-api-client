@@ -23,18 +23,11 @@ import { mapValues } from '../runtime';
  */
 export interface MosaicNamesDTO {
     /**
-     * Unique [mosaic](https://docs.symbol.dev/concepts/mosaic.html) identifier.
-     * A 64-bit unsigned integer derived from the creator's address and a registration nonce,
-     * encoded as a 16-character hexadecimal string.
-     * 
-     * @type {string}
-     * @memberof MosaicNamesDTO
+     * Mosaic identifier for which namespace names were resolved.
      */
     mosaicId: string;
     /**
      * Namespace names currently linked to the mosaic identifier.
-     * @type {Array<string>}
-     * @memberof MosaicNamesDTO
      */
     names: Array<string>;
 }
@@ -42,7 +35,7 @@ export interface MosaicNamesDTO {
 /**
  * Check if a given object implements the MosaicNamesDTO interface.
  */
-export function instanceOfMosaicNamesDTO(value: Record<string, any>): value is MosaicNamesDTO {
+export function instanceOfMosaicNamesDTO(value: object): value is MosaicNamesDTO {
     if (!('mosaicId' in value) || value['mosaicId'] === undefined) return false;
     if (!('names' in value) || value['names'] === undefined) return false;
     return true;

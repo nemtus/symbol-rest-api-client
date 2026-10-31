@@ -23,33 +23,15 @@ import { mapValues } from '../runtime';
  */
 export interface RentalFeesDTO {
     /**
-     * Absolute amount expressed in the mosaic's smallest (atomic) unit, with no decimal point.
-     * For example, an amount of `123456789` for a mosaic with divisibility 6 represents
-     * `123.456789` whole units. Encoded as a string to preserve precision, since the value
-     * is an unsigned 64-bit integer.
-     * 
-     * @type {string}
-     * @memberof RentalFeesDTO
+     * Estimated effective rental fee to register/extend a namespace per block.
      */
     effectiveRootNamespaceRentalFeePerBlock: string;
     /**
-     * Absolute amount expressed in the mosaic's smallest (atomic) unit, with no decimal point.
-     * For example, an amount of `123456789` for a mosaic with divisibility 6 represents
-     * `123.456789` whole units. Encoded as a string to preserve precision, since the value
-     * is an unsigned 64-bit integer.
-     * 
-     * @type {string}
-     * @memberof RentalFeesDTO
+     * Estimated effective rental fee to create a subnamespace.
      */
     effectiveChildNamespaceRentalFee: string;
     /**
-     * Absolute amount expressed in the mosaic's smallest (atomic) unit, with no decimal point.
-     * For example, an amount of `123456789` for a mosaic with divisibility 6 represents
-     * `123.456789` whole units. Encoded as a string to preserve precision, since the value
-     * is an unsigned 64-bit integer.
-     * 
-     * @type {string}
-     * @memberof RentalFeesDTO
+     * Estimated effective rental fee to create a mosaic.
      */
     effectiveMosaicRentalFee: string;
 }
@@ -57,7 +39,7 @@ export interface RentalFeesDTO {
 /**
  * Check if a given object implements the RentalFeesDTO interface.
  */
-export function instanceOfRentalFeesDTO(value: Record<string, any>): value is RentalFeesDTO {
+export function instanceOfRentalFeesDTO(value: object): value is RentalFeesDTO {
     if (!('effectiveRootNamespaceRentalFeePerBlock' in value) || value['effectiveRootNamespaceRentalFeePerBlock'] === undefined) return false;
     if (!('effectiveChildNamespaceRentalFee' in value) || value['effectiveChildNamespaceRentalFee'] === undefined) return false;
     if (!('effectiveMosaicRentalFee' in value) || value['effectiveMosaicRentalFee'] === undefined) return false;

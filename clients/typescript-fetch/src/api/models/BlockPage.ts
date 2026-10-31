@@ -36,14 +36,10 @@ import {
 export interface BlockPage {
     /**
      * Array of block information objects.
-     * @type {Array<BlockInfoDTO>}
-     * @memberof BlockPage
      */
     data: Array<BlockInfoDTO>;
     /**
      * 
-     * @type {Pagination}
-     * @memberof BlockPage
      */
     pagination: Pagination;
 }
@@ -51,7 +47,7 @@ export interface BlockPage {
 /**
  * Check if a given object implements the BlockPage interface.
  */
-export function instanceOfBlockPage(value: Record<string, any>): value is BlockPage {
+export function instanceOfBlockPage(value: object): value is BlockPage {
     if (!('data' in value) || value['data'] === undefined) return false;
     if (!('pagination' in value) || value['pagination'] === undefined) return false;
     return true;

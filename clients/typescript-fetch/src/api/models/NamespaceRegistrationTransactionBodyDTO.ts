@@ -29,8 +29,6 @@ import {
 export interface NamespaceRegistrationTransactionBodyDTO {
     /**
      * Duration expressed in number of blocks.
-     * @type {string}
-     * @memberof NamespaceRegistrationTransactionBodyDTO
      */
     duration?: string;
     /**
@@ -38,8 +36,6 @@ export interface NamespaceRegistrationTransactionBodyDTO {
      * A 64-bit unsigned integer derived from the namespace name and its parent namespace ID,
      * encoded as a 16-character hexadecimal string.
      * 
-     * @type {string}
-     * @memberof NamespaceRegistrationTransactionBodyDTO
      */
     parentId?: string;
     /**
@@ -47,20 +43,14 @@ export interface NamespaceRegistrationTransactionBodyDTO {
      * A 64-bit unsigned integer derived from the namespace name and its parent namespace ID,
      * encoded as a 16-character hexadecimal string.
      * 
-     * @type {string}
-     * @memberof NamespaceRegistrationTransactionBodyDTO
      */
     id: string;
     /**
      * 
-     * @type {NamespaceRegistrationTypeEnum}
-     * @memberof NamespaceRegistrationTransactionBodyDTO
      */
     registrationType: NamespaceRegistrationTypeEnum;
     /**
      * Namespace name.
-     * @type {string}
-     * @memberof NamespaceRegistrationTransactionBodyDTO
      */
     name: string;
 }
@@ -70,7 +60,7 @@ export interface NamespaceRegistrationTransactionBodyDTO {
 /**
  * Check if a given object implements the NamespaceRegistrationTransactionBodyDTO interface.
  */
-export function instanceOfNamespaceRegistrationTransactionBodyDTO(value: Record<string, any>): value is NamespaceRegistrationTransactionBodyDTO {
+export function instanceOfNamespaceRegistrationTransactionBodyDTO(value: object): value is NamespaceRegistrationTransactionBodyDTO {
     if (!('id' in value) || value['id'] === undefined) return false;
     if (!('registrationType' in value) || value['registrationType'] === undefined) return false;
     if (!('name' in value) || value['name'] === undefined) return false;

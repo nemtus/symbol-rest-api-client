@@ -38,20 +38,14 @@ export interface TransactionStatementInfoDTO {
      * Unique identifier of the object in the node's database (MongoDB ObjectId).
      * Used as the `offset` parameter value for cursor-based pagination.
      * 
-     * @type {string}
-     * @memberof TransactionStatementInfoDTO
      */
     id: string;
     /**
      * 
-     * @type {StatementMetaDTO}
-     * @memberof TransactionStatementInfoDTO
      */
     meta: StatementMetaDTO;
     /**
      * 
-     * @type {TransactionStatementDTO}
-     * @memberof TransactionStatementInfoDTO
      */
     statement: TransactionStatementDTO;
 }
@@ -59,7 +53,7 @@ export interface TransactionStatementInfoDTO {
 /**
  * Check if a given object implements the TransactionStatementInfoDTO interface.
  */
-export function instanceOfTransactionStatementInfoDTO(value: Record<string, any>): value is TransactionStatementInfoDTO {
+export function instanceOfTransactionStatementInfoDTO(value: object): value is TransactionStatementInfoDTO {
     if (!('id' in value) || value['id'] === undefined) return false;
     if (!('meta' in value) || value['meta'] === undefined) return false;
     if (!('statement' in value) || value['statement'] === undefined) return false;

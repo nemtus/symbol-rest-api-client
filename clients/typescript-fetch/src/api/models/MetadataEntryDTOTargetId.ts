@@ -24,7 +24,7 @@ export interface MetadataEntryDTOTargetId {
 /**
  * Check if a given object implements the MetadataEntryDTOTargetId interface.
  */
-export function instanceOfMetadataEntryDTOTargetId(value: Record<string, any>): value is MetadataEntryDTOTargetId {
+export function instanceOfMetadataEntryDTOTargetId(value: object): value is MetadataEntryDTOTargetId {
     return true;
 }
 

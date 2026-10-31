@@ -21,8 +21,6 @@ import { mapValues } from '../runtime';
 export interface TransactionIds {
     /**
      * Array of transaction IDs or transaction hashes.
-     * @type {Array<string>}
-     * @memberof TransactionIds
      */
     transactionIds: Array<string>;
 }
@@ -30,7 +28,7 @@ export interface TransactionIds {
 /**
  * Check if a given object implements the TransactionIds interface.
  */
-export function instanceOfTransactionIds(value: Record<string, any>): value is TransactionIds {
+export function instanceOfTransactionIds(value: object): value is TransactionIds {
     if (!('transactionIds' in value) || value['transactionIds'] === undefined) return false;
     return true;
 }

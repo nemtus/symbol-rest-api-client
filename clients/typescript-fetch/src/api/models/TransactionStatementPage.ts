@@ -36,14 +36,10 @@ import {
 export interface TransactionStatementPage {
     /**
      * Transaction statements matching the requested filters.
-     * @type {Array<TransactionStatementInfoDTO>}
-     * @memberof TransactionStatementPage
      */
     data: Array<TransactionStatementInfoDTO>;
     /**
      * 
-     * @type {Pagination}
-     * @memberof TransactionStatementPage
      */
     pagination: Pagination;
 }
@@ -51,7 +47,7 @@ export interface TransactionStatementPage {
 /**
  * Check if a given object implements the TransactionStatementPage interface.
  */
-export function instanceOfTransactionStatementPage(value: Record<string, any>): value is TransactionStatementPage {
+export function instanceOfTransactionStatementPage(value: object): value is TransactionStatementPage {
     if (!('data' in value) || value['data'] === undefined) return false;
     if (!('pagination' in value) || value['pagination'] === undefined) return false;
     return true;

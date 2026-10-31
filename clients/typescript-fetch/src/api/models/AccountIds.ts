@@ -23,14 +23,10 @@ import { mapValues } from '../runtime';
 export interface AccountIds {
     /**
      * Array of account public keys.
-     * @type {Array<string>}
-     * @memberof AccountIds
      */
     publicKeys?: Array<string>;
     /**
      * Array of account addresses.
-     * @type {Array<string>}
-     * @memberof AccountIds
      */
     addresses?: Array<string>;
 }
@@ -38,7 +34,7 @@ export interface AccountIds {
 /**
  * Check if a given object implements the AccountIds interface.
  */
-export function instanceOfAccountIds(value: Record<string, any>): value is AccountIds {
+export function instanceOfAccountIds(value: object): value is AccountIds {
     return true;
 }
 

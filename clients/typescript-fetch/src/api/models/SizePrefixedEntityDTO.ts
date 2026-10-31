@@ -23,11 +23,9 @@ import { mapValues } from '../runtime';
  */
 export interface SizePrefixedEntityDTO {
     /**
-     * Unsigned 32-bit integer.
-     * Represented as integer since it fits in JSON number precision.
+     * Total size of the serialized entity in bytes. Includes the full binary payload,
+     * including the 4-byte size field itself.
      * 
-     * @type {number}
-     * @memberof SizePrefixedEntityDTO
      */
     size: number;
 }
@@ -35,7 +33,7 @@ export interface SizePrefixedEntityDTO {
 /**
  * Check if a given object implements the SizePrefixedEntityDTO interface.
  */
-export function instanceOfSizePrefixedEntityDTO(value: Record<string, any>): value is SizePrefixedEntityDTO {
+export function instanceOfSizePrefixedEntityDTO(value: object): value is SizePrefixedEntityDTO {
     if (!('size' in value) || value['size'] === undefined) return false;
     return true;
 }

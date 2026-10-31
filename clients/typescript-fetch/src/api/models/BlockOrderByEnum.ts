@@ -22,7 +22,7 @@
  */
 export const BlockOrderByEnum = {
     Id: 'id',
-    Height: 'height'
+    Height: 'height',
 } as const;
 export type BlockOrderByEnum = typeof BlockOrderByEnum[keyof typeof BlockOrderByEnum];
 

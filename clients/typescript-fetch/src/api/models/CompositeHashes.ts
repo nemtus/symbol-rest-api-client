@@ -21,8 +21,6 @@ import { mapValues } from '../runtime';
 export interface CompositeHashes {
     /**
      * Array of composite hashes.
-     * @type {Array<string>}
-     * @memberof CompositeHashes
      */
     compositeHashes?: Array<string>;
 }
@@ -30,7 +28,7 @@ export interface CompositeHashes {
 /**
  * Check if a given object implements the CompositeHashes interface.
  */
-export function instanceOfCompositeHashes(value: Record<string, any>): value is CompositeHashes {
+export function instanceOfCompositeHashes(value: object): value is CompositeHashes {
     return true;
 }
 

@@ -20,27 +20,15 @@ import { mapValues } from '../runtime';
  */
 export interface NamespaceNameDTO {
     /**
-     * Unique [namespace](https://docs.symbol.dev/concepts/namespaces.html) identifier.
-     * A 64-bit unsigned integer derived from the namespace name and its parent namespace ID,
-     * encoded as a 16-character hexadecimal string.
-     * 
-     * @type {string}
-     * @memberof NamespaceNameDTO
+     * Parent namespace identifier when the resolved namespace is a subnamespace.
      */
     parentId?: string;
     /**
-     * Unique [namespace](https://docs.symbol.dev/concepts/namespaces.html) identifier.
-     * A 64-bit unsigned integer derived from the namespace name and its parent namespace ID,
-     * encoded as a 16-character hexadecimal string.
-     * 
-     * @type {string}
-     * @memberof NamespaceNameDTO
+     * Namespace identifier that was resolved.
      */
     id: string;
     /**
      * Human-readable namespace name.
-     * @type {string}
-     * @memberof NamespaceNameDTO
      */
     name: string;
 }
@@ -48,7 +36,7 @@ export interface NamespaceNameDTO {
 /**
  * Check if a given object implements the NamespaceNameDTO interface.
  */
-export function instanceOfNamespaceNameDTO(value: Record<string, any>): value is NamespaceNameDTO {
+export function instanceOfNamespaceNameDTO(value: object): value is NamespaceNameDTO {
     if (!('id' in value) || value['id'] === undefined) return false;
     if (!('name' in value) || value['name'] === undefined) return false;
     return true;

@@ -32,26 +32,18 @@ export interface SecretProofTransactionBodyDTO {
      * If bit 0 of byte 0 is not set, the value represents a regular address.
      * Otherwise, it represents a namespace ID alias encoded as an unresolved address.
      * 
-     * @type {string}
-     * @memberof SecretProofTransactionBodyDTO
      */
     recipientAddress: string;
     /**
      * 256-bit hash encoded as a 64-character hexadecimal string.
-     * @type {string}
-     * @memberof SecretProofTransactionBodyDTO
      */
     secret: string;
     /**
      * 
-     * @type {LockHashAlgorithmEnum}
-     * @memberof SecretProofTransactionBodyDTO
      */
     hashAlgorithm: LockHashAlgorithmEnum;
     /**
      * Proof data whose hash, using `hashAlgorithm`, must match `secret`.
-     * @type {string}
-     * @memberof SecretProofTransactionBodyDTO
      */
     proof: string;
 }
@@ -61,7 +53,7 @@ export interface SecretProofTransactionBodyDTO {
 /**
  * Check if a given object implements the SecretProofTransactionBodyDTO interface.
  */
-export function instanceOfSecretProofTransactionBodyDTO(value: Record<string, any>): value is SecretProofTransactionBodyDTO {
+export function instanceOfSecretProofTransactionBodyDTO(value: object): value is SecretProofTransactionBodyDTO {
     if (!('recipientAddress' in value) || value['recipientAddress'] === undefined) return false;
     if (!('secret' in value) || value['secret'] === undefined) return false;
     if (!('hashAlgorithm' in value) || value['hashAlgorithm'] === undefined) return false;

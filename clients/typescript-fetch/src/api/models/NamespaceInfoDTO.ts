@@ -38,20 +38,14 @@ export interface NamespaceInfoDTO {
      * Unique identifier of the object in the node's database (MongoDB ObjectId).
      * Used as the `offset` parameter value for cursor-based pagination.
      * 
-     * @type {string}
-     * @memberof NamespaceInfoDTO
      */
     id: string;
     /**
      * 
-     * @type {NamespaceMetaDTO}
-     * @memberof NamespaceInfoDTO
      */
     meta: NamespaceMetaDTO;
     /**
      * 
-     * @type {NamespaceDTO}
-     * @memberof NamespaceInfoDTO
      */
     namespace: NamespaceDTO;
 }
@@ -59,7 +53,7 @@ export interface NamespaceInfoDTO {
 /**
  * Check if a given object implements the NamespaceInfoDTO interface.
  */
-export function instanceOfNamespaceInfoDTO(value: Record<string, any>): value is NamespaceInfoDTO {
+export function instanceOfNamespaceInfoDTO(value: object): value is NamespaceInfoDTO {
     if (!('id' in value) || value['id'] === undefined) return false;
     if (!('meta' in value) || value['meta'] === undefined) return false;
     if (!('namespace' in value) || value['namespace'] === undefined) return false;

@@ -29,8 +29,6 @@ import {
 export interface AccountsNamesDTO {
     /**
      * Array of namespace name entries resolved for the requested account addresses.
-     * @type {Array<AccountNamesDTO>}
-     * @memberof AccountsNamesDTO
      */
     accountNames: Array<AccountNamesDTO>;
 }
@@ -38,7 +36,7 @@ export interface AccountsNamesDTO {
 /**
  * Check if a given object implements the AccountsNamesDTO interface.
  */
-export function instanceOfAccountsNamesDTO(value: Record<string, any>): value is AccountsNamesDTO {
+export function instanceOfAccountsNamesDTO(value: object): value is AccountsNamesDTO {
     if (!('accountNames' in value) || value['accountNames'] === undefined) return false;
     return true;
 }

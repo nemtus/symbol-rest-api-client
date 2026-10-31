@@ -28,8 +28,6 @@ export interface Mosaic {
      * A 64-bit unsigned integer derived from the creator's address and a registration nonce,
      * encoded as a 16-character hexadecimal string.
      * 
-     * @type {string}
-     * @memberof Mosaic
      */
     id: string;
     /**
@@ -38,8 +36,6 @@ export interface Mosaic {
      * `123.456789` whole units. Encoded as a string to preserve precision, since the value
      * is an unsigned 64-bit integer.
      * 
-     * @type {string}
-     * @memberof Mosaic
      */
     amount: string;
 }
@@ -47,7 +43,7 @@ export interface Mosaic {
 /**
  * Check if a given object implements the Mosaic interface.
  */
-export function instanceOfMosaic(value: Record<string, any>): value is Mosaic {
+export function instanceOfMosaic(value: object): value is Mosaic {
     if (!('id' in value) || value['id'] === undefined) return false;
     if (!('amount' in value) || value['amount'] === undefined) return false;
     return true;

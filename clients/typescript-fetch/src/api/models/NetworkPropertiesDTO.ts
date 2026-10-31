@@ -29,32 +29,22 @@ import {
 export interface NetworkPropertiesDTO {
     /**
      * Network identifier.
-     * @type {string}
-     * @memberof NetworkPropertiesDTO
      */
     identifier?: string;
     /**
      * 
-     * @type {NodeIdentityEqualityStrategy}
-     * @memberof NetworkPropertiesDTO
      */
     nodeEqualityStrategy?: NodeIdentityEqualityStrategy;
     /**
      * 256-bit public key encoded as a hexadecimal string (64 hex characters).
-     * @type {string}
-     * @memberof NetworkPropertiesDTO
      */
     nemesisSignerPublicKey?: string;
     /**
      * 256-bit hash encoded as a 64-character hexadecimal string.
-     * @type {string}
-     * @memberof NetworkPropertiesDTO
      */
     generationHashSeed?: string;
     /**
      * Nemesis epoch time adjustment.
-     * @type {string}
-     * @memberof NetworkPropertiesDTO
      */
     epochAdjustment?: string;
 }
@@ -64,7 +54,7 @@ export interface NetworkPropertiesDTO {
 /**
  * Check if a given object implements the NetworkPropertiesDTO interface.
  */
-export function instanceOfNetworkPropertiesDTO(value: Record<string, any>): value is NetworkPropertiesDTO {
+export function instanceOfNetworkPropertiesDTO(value: object): value is NetworkPropertiesDTO {
     return true;
 }
 

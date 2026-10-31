@@ -35,27 +35,19 @@ import {
  */
 export interface EmbeddedAddressAliasTransactionDTO {
     /**
-     * 256-bit public key encoded as a hexadecimal string (64 hex characters).
-     * @type {string}
-     * @memberof EmbeddedAddressAliasTransactionDTO
+     * Public key of the account that signed the entity (e.g. block harvester, transaction signer).
      */
     signerPublicKey: string;
     /**
      * Entity version. Indicates the schema variant for serialization and validation.
-     * @type {number}
-     * @memberof EmbeddedAddressAliasTransactionDTO
      */
     version: number;
     /**
      * Network type (mainnet or testnet). Ensures the entity targets the correct network.
-     * @type {NetworkTypeEnum}
-     * @memberof EmbeddedAddressAliasTransactionDTO
      */
     network: NetworkTypeEnum;
     /**
      * Entity type identifier (e.g. transaction type code, block type). Determines the entity schema.
-     * @type {number}
-     * @memberof EmbeddedAddressAliasTransactionDTO
      */
     type: number;
     /**
@@ -63,22 +55,16 @@ export interface EmbeddedAddressAliasTransactionDTO {
      * A 64-bit unsigned integer derived from the namespace name and its parent namespace ID,
      * encoded as a 16-character hexadecimal string.
      * 
-     * @type {string}
-     * @memberof EmbeddedAddressAliasTransactionDTO
      */
     namespaceId: string;
     /**
      * Address encoded as a 48-character hexadecimal string (24 bytes).
      * The REST API returns addresses in this format. For Base32-encoded addresses (39 chars) see `Address`.
      * 
-     * @type {string}
-     * @memberof EmbeddedAddressAliasTransactionDTO
      */
     address: string;
     /**
      * 
-     * @type {AliasActionEnum}
-     * @memberof EmbeddedAddressAliasTransactionDTO
      */
     aliasAction: AliasActionEnum;
 }
@@ -88,7 +74,7 @@ export interface EmbeddedAddressAliasTransactionDTO {
 /**
  * Check if a given object implements the EmbeddedAddressAliasTransactionDTO interface.
  */
-export function instanceOfEmbeddedAddressAliasTransactionDTO(value: Record<string, any>): value is EmbeddedAddressAliasTransactionDTO {
+export function instanceOfEmbeddedAddressAliasTransactionDTO(value: object): value is EmbeddedAddressAliasTransactionDTO {
     if (!('signerPublicKey' in value) || value['signerPublicKey'] === undefined) return false;
     if (!('version' in value) || value['version'] === undefined) return false;
     if (!('network' in value) || value['network'] === undefined) return false;

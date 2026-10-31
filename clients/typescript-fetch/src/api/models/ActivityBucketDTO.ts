@@ -24,42 +24,30 @@ import { mapValues } from '../runtime';
  */
 export interface ActivityBucketDTO {
     /**
-     * Height of a block in the blockchain. Starts at 1 and increments by one per block.
-     * Represented as a string to preserve precision, since the value is an unsigned 64-bit integer.
-     * 
-     * @type {string}
-     * @memberof ActivityBucketDTO
+     * Block height at which this bucket's observation period started.
      */
     startHeight: string;
     /**
-     * Absolute amount expressed in the mosaic's smallest (atomic) unit, with no decimal point.
-     * For example, an amount of `123456789` for a mosaic with divisibility 6 represents
-     * `123.456789` whole units. Encoded as a string to preserve precision, since the value
-     * is an unsigned 64-bit integer.
+     * Total transaction fees (in smallest/atomic units) paid by the account during this bucket's period.
+     * Used to compute the
+     * [Transaction Score (T)](https://docs.symbol.dev/concepts/consensus-algorithm.html#partial-scores)
+     * component of the PoS+ importance calculation.
      * 
-     * @type {string}
-     * @memberof ActivityBucketDTO
      */
     totalFeesPaid: string;
     /**
-     * Unsigned 32-bit integer.
-     * Represented as integer since it fits in JSON number precision.
+     * Number of times the account was designated as a node fee beneficiary during this bucket's
+     * period. Used to compute the
+     * [Node Score (N)](https://docs.symbol.dev/concepts/consensus-algorithm.html#partial-scores)
+     * component. Accounts that operate nodes accumulate a higher count, increasing their importance.
      * 
-     * @type {number}
-     * @memberof ActivityBucketDTO
      */
     beneficiaryCount: number;
     /**
-     * [Importance score](https://docs.symbol.dev/concepts/consensus-algorithm.html#importance-score)
-     * of an account, representing the probability of being selected to harvest the next block under
-     * the [PoS+](https://docs.symbol.dev/concepts/consensus-algorithm.html) consensus algorithm.
-     * The score is derived from three factors: stake, transaction activity, and node operation.
-     * Only accounts holding at least the minimum harvesting balance (`minHarvesterBalance` network
-     * property) receive a non-zero score. Decimal value between 0 and 1 (inclusive).
-     * Minimum: 0. Maximum: 1.
+     * Importance score calculated for this single bucket period, before averaging across buckets.
+     * The final effective importance of the account is derived from the scores of the most recent
+     * buckets (the smaller of the previous two period scores is used as the harvesting probability).
      * 
-     * @type {string}
-     * @memberof ActivityBucketDTO
      */
     rawScore: string;
 }
@@ -67,7 +55,7 @@ export interface ActivityBucketDTO {
 /**
  * Check if a given object implements the ActivityBucketDTO interface.
  */
-export function instanceOfActivityBucketDTO(value: Record<string, any>): value is ActivityBucketDTO {
+export function instanceOfActivityBucketDTO(value: object): value is ActivityBucketDTO {
     if (!('startHeight' in value) || value['startHeight'] === undefined) return false;
     if (!('totalFeesPaid' in value) || value['totalFeesPaid'] === undefined) return false;
     if (!('beneficiaryCount' in value) || value['beneficiaryCount'] === undefined) return false;

@@ -29,14 +29,10 @@ import {
 export interface NodeHealthDTO {
     /**
      * API node service status.
-     * @type {NodeStatusEnum}
-     * @memberof NodeHealthDTO
      */
     apiNode: NodeStatusEnum;
     /**
      * MongoDB service status.
-     * @type {NodeStatusEnum}
-     * @memberof NodeHealthDTO
      */
     db: NodeStatusEnum;
 }
@@ -46,7 +42,7 @@ export interface NodeHealthDTO {
 /**
  * Check if a given object implements the NodeHealthDTO interface.
  */
-export function instanceOfNodeHealthDTO(value: Record<string, any>): value is NodeHealthDTO {
+export function instanceOfNodeHealthDTO(value: object): value is NodeHealthDTO {
     if (!('apiNode' in value) || value['apiNode'] === undefined) return false;
     if (!('db' in value) || value['db'] === undefined) return false;
     return true;

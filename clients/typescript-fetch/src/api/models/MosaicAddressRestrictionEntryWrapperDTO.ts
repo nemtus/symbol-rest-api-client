@@ -39,43 +39,26 @@ export interface MosaicAddressRestrictionEntryWrapperDTO {
      * schema of the entity changes (e.g. new fields are added), allowing the node to
      * deserialize entries written under earlier formats.
      * 
-     * @type {number}
-     * @memberof MosaicAddressRestrictionEntryWrapperDTO
      */
     version: number;
     /**
-     * 256-bit hash encoded as a 64-character hexadecimal string.
-     * @type {string}
-     * @memberof MosaicAddressRestrictionEntryWrapperDTO
+     * Composite hash uniquely identifying the mosaic restriction entry.
      */
     compositeHash: string;
     /**
      * 
-     * @type {MosaicRestrictionEntryTypeEnum}
-     * @memberof MosaicAddressRestrictionEntryWrapperDTO
      */
     entryType: MosaicRestrictionEntryTypeEnum;
     /**
-     * Unique [mosaic](https://docs.symbol.dev/concepts/mosaic.html) identifier.
-     * A 64-bit unsigned integer derived from the creator's address and a registration nonce,
-     * encoded as a 16-character hexadecimal string.
-     * 
-     * @type {string}
-     * @memberof MosaicAddressRestrictionEntryWrapperDTO
+     * Mosaic identifier for which the restrictions are defined.
      */
     mosaicId: string;
     /**
-     * Address encoded as a 48-character hexadecimal string (24 bytes).
-     * The REST API returns addresses in this format. For Base32-encoded addresses (39 chars) see `Address`.
-     * 
-     * @type {string}
-     * @memberof MosaicAddressRestrictionEntryWrapperDTO
+     * Hex-encoded address to which the restrictions apply.
      */
     targetAddress: string;
     /**
      * Address-specific restriction values associated with the mosaic and target address.
-     * @type {Array<MosaicAddressRestrictionEntryDTO>}
-     * @memberof MosaicAddressRestrictionEntryWrapperDTO
      */
     restrictions: Array<MosaicAddressRestrictionEntryDTO>;
 }
@@ -85,7 +68,7 @@ export interface MosaicAddressRestrictionEntryWrapperDTO {
 /**
  * Check if a given object implements the MosaicAddressRestrictionEntryWrapperDTO interface.
  */
-export function instanceOfMosaicAddressRestrictionEntryWrapperDTO(value: Record<string, any>): value is MosaicAddressRestrictionEntryWrapperDTO {
+export function instanceOfMosaicAddressRestrictionEntryWrapperDTO(value: object): value is MosaicAddressRestrictionEntryWrapperDTO {
     if (!('version' in value) || value['version'] === undefined) return false;
     if (!('compositeHash' in value) || value['compositeHash'] === undefined) return false;
     if (!('entryType' in value) || value['entryType'] === undefined) return false;

@@ -21,34 +21,24 @@ import { mapValues } from '../runtime';
 export interface AggregateNetworkPropertiesDTO {
     /**
      * Maximum number of transactions per aggregate.
-     * @type {string}
-     * @memberof AggregateNetworkPropertiesDTO
      */
     maxTransactionsPerAggregate?: string;
     /**
      * Maximum number of cosignatures per aggregate.
-     * @type {string}
-     * @memberof AggregateNetworkPropertiesDTO
      */
     maxCosignaturesPerAggregate?: string;
     /**
      * Set to true if cosignatures must exactly match component signers. Set to
      * false if cosignatures should be validated externally.
      * 
-     * @type {boolean}
-     * @memberof AggregateNetworkPropertiesDTO
      */
     enableStrictCosignatureCheck?: boolean;
     /**
      * Set to true if bonded aggregates should be allowed. Set to false if bonded aggregates should be rejected.
-     * @type {boolean}
-     * @memberof AggregateNetworkPropertiesDTO
      */
     enableBondedAggregateSupport?: boolean;
     /**
      * Maximum lifetime a bonded transaction can have before it expires.
-     * @type {string}
-     * @memberof AggregateNetworkPropertiesDTO
      */
     maxBondedTransactionLifetime?: string;
 }
@@ -56,7 +46,7 @@ export interface AggregateNetworkPropertiesDTO {
 /**
  * Check if a given object implements the AggregateNetworkPropertiesDTO interface.
  */
-export function instanceOfAggregateNetworkPropertiesDTO(value: Record<string, any>): value is AggregateNetworkPropertiesDTO {
+export function instanceOfAggregateNetworkPropertiesDTO(value: object): value is AggregateNetworkPropertiesDTO {
     return true;
 }
 

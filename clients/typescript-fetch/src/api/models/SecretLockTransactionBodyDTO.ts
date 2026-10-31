@@ -32,14 +32,10 @@ export interface SecretLockTransactionBodyDTO {
      * If bit 0 of byte 0 is not set, the value represents a regular address.
      * Otherwise, it represents a namespace ID alias encoded as an unresolved address.
      * 
-     * @type {string}
-     * @memberof SecretLockTransactionBodyDTO
      */
     recipientAddress: string;
     /**
      * 256-bit hash encoded as a 64-character hexadecimal string.
-     * @type {string}
-     * @memberof SecretLockTransactionBodyDTO
      */
     secret: string;
     /**
@@ -47,8 +43,6 @@ export interface SecretLockTransactionBodyDTO {
      * If the most significant bit of byte 0 is set, the value contains a namespace ID alias
      * instead of a concrete mosaic ID.
      * 
-     * @type {string}
-     * @memberof SecretLockTransactionBodyDTO
      */
     mosaicId: string;
     /**
@@ -57,20 +51,14 @@ export interface SecretLockTransactionBodyDTO {
      * `123.456789` whole units. Encoded as a string to preserve precision, since the value
      * is an unsigned 64-bit integer.
      * 
-     * @type {string}
-     * @memberof SecretLockTransactionBodyDTO
      */
     amount: string;
     /**
      * Duration expressed in number of blocks.
-     * @type {string}
-     * @memberof SecretLockTransactionBodyDTO
      */
     duration: string;
     /**
      * 
-     * @type {LockHashAlgorithmEnum}
-     * @memberof SecretLockTransactionBodyDTO
      */
     hashAlgorithm: LockHashAlgorithmEnum;
 }
@@ -80,7 +68,7 @@ export interface SecretLockTransactionBodyDTO {
 /**
  * Check if a given object implements the SecretLockTransactionBodyDTO interface.
  */
-export function instanceOfSecretLockTransactionBodyDTO(value: Record<string, any>): value is SecretLockTransactionBodyDTO {
+export function instanceOfSecretLockTransactionBodyDTO(value: object): value is SecretLockTransactionBodyDTO {
     if (!('recipientAddress' in value) || value['recipientAddress'] === undefined) return false;
     if (!('secret' in value) || value['secret'] === undefined) return false;
     if (!('mosaicId' in value) || value['mosaicId'] === undefined) return false;

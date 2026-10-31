@@ -21,8 +21,6 @@ import { mapValues } from '../runtime';
 export interface TransferNetworkPropertiesDTO {
     /**
      * Maximum transaction message size.
-     * @type {string}
-     * @memberof TransferNetworkPropertiesDTO
      */
     maxMessageSize?: string;
 }
@@ -30,7 +28,7 @@ export interface TransferNetworkPropertiesDTO {
 /**
  * Check if a given object implements the TransferNetworkPropertiesDTO interface.
  */
-export function instanceOfTransferNetworkPropertiesDTO(value: Record<string, any>): value is TransferNetworkPropertiesDTO {
+export function instanceOfTransferNetworkPropertiesDTO(value: object): value is TransferNetworkPropertiesDTO {
     return true;
 }
 

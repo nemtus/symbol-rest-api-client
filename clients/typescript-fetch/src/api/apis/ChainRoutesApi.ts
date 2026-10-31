@@ -12,15 +12,12 @@
  * Do not edit the class manually.
  */
 
-
 import * as runtime from '../runtime';
-import type {
-  ChainInfoDTO,
-} from '../models/index';
 import {
+    type ChainInfoDTO,
     ChainInfoDTOFromJSON,
     ChainInfoDTOToJSON,
-} from '../models/index';
+} from '../models/ChainInfoDTO';
 
 /**
  * 
@@ -28,10 +25,9 @@ import {
 export class ChainRoutesApi extends runtime.BaseAPI {
 
     /**
-     * Returns the current state of the blockchain: chain height, chain score, and the latest finalized block. 
-     * Get chain information
+     * Creates request options for getChainInfo without sending the request
      */
-    async getChainInfoRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ChainInfoDTO>> {
+    async getChainInfoRequestOpts(): Promise<runtime.RequestOpts> {
         const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -39,12 +35,21 @@ export class ChainRoutesApi extends runtime.BaseAPI {
 
         let urlPath = `/chain/info`;
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Returns the current state of the blockchain: chain height, chain score, and the latest finalized block. 
+     * Get chain information
+     */
+    async getChainInfoRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ChainInfoDTO>> {
+        const requestOptions = await this.getChainInfoRequestOpts();
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => ChainInfoDTOFromJSON(jsonValue));
     }

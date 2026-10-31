@@ -21,8 +21,6 @@ import { mapValues } from '../runtime';
 export interface AccountLinkPublicKeyDTO {
     /**
      * 256-bit public key encoded as a hexadecimal string (64 hex characters).
-     * @type {string}
-     * @memberof AccountLinkPublicKeyDTO
      */
     publicKey: string;
 }
@@ -30,7 +28,7 @@ export interface AccountLinkPublicKeyDTO {
 /**
  * Check if a given object implements the AccountLinkPublicKeyDTO interface.
  */
-export function instanceOfAccountLinkPublicKeyDTO(value: Record<string, any>): value is AccountLinkPublicKeyDTO {
+export function instanceOfAccountLinkPublicKeyDTO(value: object): value is AccountLinkPublicKeyDTO {
     if (!('publicKey' in value) || value['publicKey'] === undefined) return false;
     return true;
 }

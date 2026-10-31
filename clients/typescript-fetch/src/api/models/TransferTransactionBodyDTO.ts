@@ -32,21 +32,15 @@ export interface TransferTransactionBodyDTO {
      * If bit 0 of byte 0 is not set, the value represents a regular address.
      * Otherwise, it represents a namespace ID alias encoded as an unresolved address.
      * 
-     * @type {string}
-     * @memberof TransferTransactionBodyDTO
      */
     recipientAddress: string;
     /**
      * Array of mosaics sent to the recipient.
      * 
-     * @type {Array<UnresolvedMosaic>}
-     * @memberof TransferTransactionBodyDTO
      */
     mosaics: Array<UnresolvedMosaic>;
     /**
      * Optional transfer message payload, encoded as a hexadecimal string.
-     * @type {string}
-     * @memberof TransferTransactionBodyDTO
      */
     message?: string;
 }
@@ -54,7 +48,7 @@ export interface TransferTransactionBodyDTO {
 /**
  * Check if a given object implements the TransferTransactionBodyDTO interface.
  */
-export function instanceOfTransferTransactionBodyDTO(value: Record<string, any>): value is TransferTransactionBodyDTO {
+export function instanceOfTransferTransactionBodyDTO(value: object): value is TransferTransactionBodyDTO {
     if (!('recipientAddress' in value) || value['recipientAddress'] === undefined) return false;
     if (!('mosaics' in value) || value['mosaics'] === undefined) return false;
     return true;

@@ -12,56 +12,216 @@
  * Do not edit the class manually.
  */
 
-
 import * as runtime from '../runtime';
-import type {
-  ModelError,
-  Order,
-  ReceiptTypeEnum,
-  ResolutionStatementPage,
-  TransactionStatementPage,
-} from '../models/index';
 import {
+    type ModelError,
     ModelErrorFromJSON,
     ModelErrorToJSON,
+} from '../models/ModelError';
+import {
+    type Order,
     OrderFromJSON,
     OrderToJSON,
+} from '../models/Order';
+import {
+    type ReceiptTypeEnum,
     ReceiptTypeEnumFromJSON,
     ReceiptTypeEnumToJSON,
+} from '../models/ReceiptTypeEnum';
+import {
+    type ResolutionStatementPage,
     ResolutionStatementPageFromJSON,
     ResolutionStatementPageToJSON,
+} from '../models/ResolutionStatementPage';
+import {
+    type TransactionStatementPage,
     TransactionStatementPageFromJSON,
     TransactionStatementPageToJSON,
-} from '../models/index';
+} from '../models/TransactionStatementPage';
 
 export interface SearchAddressResolutionStatementsRequest {
+    /**
+     * Filter by height (include).
+     * The exact meaning depends on the endpoint, for example block height for blocks or inclusion height for
+     * confirmed transactions.
+     * 
+     */
     height?: string;
+    /**
+     * Select the number of entries to return per page.
+     * Values outside the allowed range are clamped to the schema minimum or maximum.
+     * 
+     */
     pageSize?: number;
+    /**
+     * Page number for numbered pagination (1-based).
+     * 
+     * Numbered and cursor pagination can be combined, but this is not recommended because the semantics
+     * are harder to reason about. For cursor-style flows, keep `pageNumber=1` and advance pages by
+     * updating only `offset`. For numbered pagination flows, omit `offset` and advance pages by
+     * incrementing `pageNumber`.
+     * 
+     */
     pageNumber?: number;
+    /**
+     * Cursor for pagination. Provide the value of the sort field (`orderBy`) from the
+     * last entry of the previous page. **The offset type must match `orderBy`:**
+     * - `orderBy=id`: use the entry's `id` (ObjectId, 24-char hex).
+     * - `orderBy=height`: use the block height (string, e.g. `"17592"`).
+     * - `orderBy=balance`: use the mosaic balance amount (string, e.g. `"1000000"`).
+     * 
+     * Allowed `orderBy` values depend on the endpoint. If `orderBy` is omitted, `id` is used by default.
+     * 
+     * Set `offset` to the sort-field value of the last entry from the previous page. Across pages,
+     * this value decreases with `order=desc` and increases with `order=asc`.
+     * 
+     * Numbered and cursor pagination can be combined, but this is not recommended because the semantics
+     * are harder to reason about. For cursor-style flows, keep `pageNumber=1` and advance pages by
+     * updating only `offset`. For numbered pagination flows, omit `offset` and advance pages by
+     * incrementing `pageNumber`.
+     * 
+     */
     offset?: string;
+    /**
+     * Sort responses in ascending or descending order based on the collection property set on the param `orderBy`.
+     * If the request does not specify `orderBy`, REST returns the collection ordered by id.
+     * The default sort direction depends on the endpoint implementation.
+     * 
+     */
     order?: Order;
 }
 
 export interface SearchMosaicResolutionStatementsRequest {
+    /**
+     * Filter by height (include).
+     * The exact meaning depends on the endpoint, for example block height for blocks or inclusion height for
+     * confirmed transactions.
+     * 
+     */
     height?: string;
+    /**
+     * Select the number of entries to return per page.
+     * Values outside the allowed range are clamped to the schema minimum or maximum.
+     * 
+     */
     pageSize?: number;
+    /**
+     * Page number for numbered pagination (1-based).
+     * 
+     * Numbered and cursor pagination can be combined, but this is not recommended because the semantics
+     * are harder to reason about. For cursor-style flows, keep `pageNumber=1` and advance pages by
+     * updating only `offset`. For numbered pagination flows, omit `offset` and advance pages by
+     * incrementing `pageNumber`.
+     * 
+     */
     pageNumber?: number;
+    /**
+     * Cursor for pagination. Provide the value of the sort field (`orderBy`) from the
+     * last entry of the previous page. **The offset type must match `orderBy`:**
+     * - `orderBy=id`: use the entry's `id` (ObjectId, 24-char hex).
+     * - `orderBy=height`: use the block height (string, e.g. `"17592"`).
+     * - `orderBy=balance`: use the mosaic balance amount (string, e.g. `"1000000"`).
+     * 
+     * Allowed `orderBy` values depend on the endpoint. If `orderBy` is omitted, `id` is used by default.
+     * 
+     * Set `offset` to the sort-field value of the last entry from the previous page. Across pages,
+     * this value decreases with `order=desc` and increases with `order=asc`.
+     * 
+     * Numbered and cursor pagination can be combined, but this is not recommended because the semantics
+     * are harder to reason about. For cursor-style flows, keep `pageNumber=1` and advance pages by
+     * updating only `offset`. For numbered pagination flows, omit `offset` and advance pages by
+     * incrementing `pageNumber`.
+     * 
+     */
     offset?: string;
+    /**
+     * Sort responses in ascending or descending order based on the collection property set on the param `orderBy`.
+     * If the request does not specify `orderBy`, REST returns the collection ordered by id.
+     * The default sort direction depends on the endpoint implementation.
+     * 
+     */
     order?: Order;
 }
 
 export interface SearchTransactionStatementsRequest {
+    /**
+     * Filter by height (include).
+     * The exact meaning depends on the endpoint, for example block height for blocks or inclusion height for
+     * confirmed transactions.
+     * 
+     */
     height?: string;
+    /**
+     * Only transactions at or above this block height are returned.
+     */
     fromHeight?: string;
+    /**
+     * Only transactions at or below this block height are returned.
+     */
     toHeight?: string;
+    /**
+     * Filter by receipt type code (include).
+     * To match multiple receipt types, repeat the query parameter, for example: `receiptType=8515&receiptType=20803`.
+     * 
+     */
     receiptType?: Array<ReceiptTypeEnum>;
+    /**
+     * Filter transactions by recipient address in Base32 format (include).
+     */
     recipientAddress?: string;
+    /**
+     * Filter by sender address in Base32 (include).
+     */
     senderAddress?: string;
+    /**
+     * Filter by target address in Base32 (include).
+     */
     targetAddress?: string;
+    /**
+     * Filter by artifact (mosaic or namespace) identifier (include).
+     */
     artifactId?: string;
+    /**
+     * Select the number of entries to return per page.
+     * Values outside the allowed range are clamped to the schema minimum or maximum.
+     * 
+     */
     pageSize?: number;
+    /**
+     * Page number for numbered pagination (1-based).
+     * 
+     * Numbered and cursor pagination can be combined, but this is not recommended because the semantics
+     * are harder to reason about. For cursor-style flows, keep `pageNumber=1` and advance pages by
+     * updating only `offset`. For numbered pagination flows, omit `offset` and advance pages by
+     * incrementing `pageNumber`.
+     * 
+     */
     pageNumber?: number;
+    /**
+     * Cursor for pagination. Provide the value of the sort field (`orderBy`) from the
+     * last entry of the previous page. **The offset type must match `orderBy`:**
+     * - `orderBy=id`: use the entry's `id` (ObjectId, 24-char hex).
+     * - `orderBy=height`: use the block height (string, e.g. `"17592"`).
+     * - `orderBy=balance`: use the mosaic balance amount (string, e.g. `"1000000"`).
+     * 
+     * Allowed `orderBy` values depend on the endpoint. If `orderBy` is omitted, `id` is used by default.
+     * 
+     * Set `offset` to the sort-field value of the last entry from the previous page. Across pages,
+     * this value decreases with `order=desc` and increases with `order=asc`.
+     * 
+     * Numbered and cursor pagination can be combined, but this is not recommended because the semantics
+     * are harder to reason about. For cursor-style flows, keep `pageNumber=1` and advance pages by
+     * updating only `offset`. For numbered pagination flows, omit `offset` and advance pages by
+     * incrementing `pageNumber`.
+     * 
+     */
     offset?: string;
+    /**
+     * Sort responses in ascending or descending order based on the collection property set on the param `orderBy`.
+     * If the request does not specify `orderBy`, REST returns the collection ordered by id.
+     * The default sort direction depends on the endpoint implementation.
+     * 
+     */
     order?: Order;
 }
 
@@ -71,10 +231,9 @@ export interface SearchTransactionStatementsRequest {
 export class ReceiptRoutesApi extends runtime.BaseAPI {
 
     /**
-     * Returns a paginated list of address resolution statements. These statements record how an unresolved address alias used in a transaction was resolved to a concrete address at a given block height. A statement can contain multiple resolution entries because alias resolution may differ by transaction source within the same block. 
-     * Search address resolution statements
+     * Creates request options for searchAddressResolutionStatements without sending the request
      */
-    async searchAddressResolutionStatementsRaw(requestParameters: SearchAddressResolutionStatementsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ResolutionStatementPage>> {
+    async searchAddressResolutionStatementsRequestOpts(requestParameters: SearchAddressResolutionStatementsRequest): Promise<runtime.RequestOpts> {
         const queryParameters: any = {};
 
         if (requestParameters['height'] != null) {
@@ -102,12 +261,21 @@ export class ReceiptRoutesApi extends runtime.BaseAPI {
 
         let urlPath = `/statements/resolutions/address`;
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Returns a paginated list of address resolution statements. These statements record how an unresolved address alias used in a transaction was resolved to a concrete address at a given block height. A statement can contain multiple resolution entries because alias resolution may differ by transaction source within the same block. 
+     * Search address resolution statements
+     */
+    async searchAddressResolutionStatementsRaw(requestParameters: SearchAddressResolutionStatementsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ResolutionStatementPage>> {
+        const requestOptions = await this.searchAddressResolutionStatementsRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => ResolutionStatementPageFromJSON(jsonValue));
     }
@@ -122,10 +290,9 @@ export class ReceiptRoutesApi extends runtime.BaseAPI {
     }
 
     /**
-     * Returns a paginated list of mosaic resolution statements. These statements record how an unresolved mosaic alias used in a transaction was resolved to a concrete mosaic ID at a given block height. A statement can contain multiple resolution entries because alias resolution may differ by transaction source within the same block. 
-     * Search mosaic resolution statements
+     * Creates request options for searchMosaicResolutionStatements without sending the request
      */
-    async searchMosaicResolutionStatementsRaw(requestParameters: SearchMosaicResolutionStatementsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ResolutionStatementPage>> {
+    async searchMosaicResolutionStatementsRequestOpts(requestParameters: SearchMosaicResolutionStatementsRequest): Promise<runtime.RequestOpts> {
         const queryParameters: any = {};
 
         if (requestParameters['height'] != null) {
@@ -153,12 +320,21 @@ export class ReceiptRoutesApi extends runtime.BaseAPI {
 
         let urlPath = `/statements/resolutions/mosaic`;
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Returns a paginated list of mosaic resolution statements. These statements record how an unresolved mosaic alias used in a transaction was resolved to a concrete mosaic ID at a given block height. A statement can contain multiple resolution entries because alias resolution may differ by transaction source within the same block. 
+     * Search mosaic resolution statements
+     */
+    async searchMosaicResolutionStatementsRaw(requestParameters: SearchMosaicResolutionStatementsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ResolutionStatementPage>> {
+        const requestOptions = await this.searchMosaicResolutionStatementsRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => ResolutionStatementPageFromJSON(jsonValue));
     }
@@ -173,10 +349,9 @@ export class ReceiptRoutesApi extends runtime.BaseAPI {
     }
 
     /**
-     * Returns a paginated list of transaction statements generated while confirmed transactions change on-chain state. Each statement is grouped by block height and source and contains the receipts produced by transaction execution, including balance transfers, balance changes, expirations, and inflation. Results can be filtered by block height, receipt type, related addresses, and artifact IDs. 
-     * Search transaction statements
+     * Creates request options for searchTransactionStatements without sending the request
      */
-    async searchTransactionStatementsRaw(requestParameters: SearchTransactionStatementsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<TransactionStatementPage>> {
+    async searchTransactionStatementsRequestOpts(requestParameters: SearchTransactionStatementsRequest): Promise<runtime.RequestOpts> {
         const queryParameters: any = {};
 
         if (requestParameters['height'] != null) {
@@ -232,12 +407,21 @@ export class ReceiptRoutesApi extends runtime.BaseAPI {
 
         let urlPath = `/statements/transaction`;
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Returns a paginated list of transaction statements generated while confirmed transactions change on-chain state. Each statement is grouped by block height and source and contains the receipts produced by transaction execution, including balance transfers, balance changes, expirations, and inflation. Results can be filtered by block height, receipt type, related addresses, and artifact IDs. 
+     * Search transaction statements
+     */
+    async searchTransactionStatementsRaw(requestParameters: SearchTransactionStatementsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<TransactionStatementPage>> {
+        const requestOptions = await this.searchTransactionStatementsRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => TransactionStatementPageFromJSON(jsonValue));
     }

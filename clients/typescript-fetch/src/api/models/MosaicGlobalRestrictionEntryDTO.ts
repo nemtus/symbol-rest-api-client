@@ -31,14 +31,10 @@ export interface MosaicGlobalRestrictionEntryDTO {
      * Creator-defined 64-bit numeric identifier of a mosaic restriction, scoped to a mosaic.
      * It can be derived from a human-readable name by hashing it, and is represented as a decimal string in stored restriction entries.
      * 
-     * @type {string}
-     * @memberof MosaicGlobalRestrictionEntryDTO
      */
     key: string;
     /**
      * 
-     * @type {MosaicGlobalRestrictionEntryRestrictionDTO}
-     * @memberof MosaicGlobalRestrictionEntryDTO
      */
     restriction: MosaicGlobalRestrictionEntryRestrictionDTO;
 }
@@ -46,7 +42,7 @@ export interface MosaicGlobalRestrictionEntryDTO {
 /**
  * Check if a given object implements the MosaicGlobalRestrictionEntryDTO interface.
  */
-export function instanceOfMosaicGlobalRestrictionEntryDTO(value: Record<string, any>): value is MosaicGlobalRestrictionEntryDTO {
+export function instanceOfMosaicGlobalRestrictionEntryDTO(value: object): value is MosaicGlobalRestrictionEntryDTO {
     if (!('key' in value) || value['key'] === undefined) return false;
     if (!('restriction' in value) || value['restriction'] === undefined) return false;
     return true;

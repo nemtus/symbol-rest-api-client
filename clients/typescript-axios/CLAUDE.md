@@ -37,8 +37,12 @@ of CI. See "Security: axios floor & monitoring" below.
    spec. Pinning is now ordinary npm dependency pinning — the package version replaces `SPEC_VERSION` and the
    `package-lock.json` integrity hash replaces `SPEC_SHA256` (verified by `npm ci`). It is a `devDependency`
    (generation-time only) and never ships to consumers.
-2. **OpenAPI Generator** - Uses the typescript-axios generator (no custom templates; `openapi-generator-config.yml`
-   sets `useSingleRequestParameter: true`).
+2. **OpenAPI Generator** - Uses the typescript-axios generator at **7.26.0**, with **no custom templates**:
+   `openapi-generator-config.yml` sets only `useSingleRequestParameter: true`. 7.26.0 ships the explicit
+   `: Promise<R>` return annotation on `createRequestFunction` that axios >= 1.19.0 needs (without it
+   `type:check` fails with TS2527), so the short-lived `custom-templates/common.mustache` backport that
+   carried it on 7.14.0 is gone. Keep it that way: a `templateDir` override freezes that template at the
+   generator version it was copied from and silently withholds every later upstream fix to it.
 3. **Generated API code** (`src/api/`) - Auto-generated, DO NOT edit manually.
 4. **Build outputs** (`dist/`) - Contains CJS, ESM, and CDN bundles. The CDN bundle is self-contained: webpack
    bundles axios into `index.min.js`.
@@ -56,7 +60,7 @@ of CI. See "Security: axios floor & monitoring" below.
 ```bash
 # Generate API client code (run in root directory)
 npm ci                        # Installs @nemtus/symbol-openapi (the spec) + tooling
-npm run openapi:set:version   # Set OpenAPI generator version to 7.14.0
+npm run openapi:set:version   # Set OpenAPI generator version to 7.26.0
 npm run openapi:generate      # Generate TypeScript code from @nemtus/symbol-openapi's openapi3.yml
 npm run build                 # Build CJS, ESM, and CDN bundles
 ```
@@ -79,6 +83,25 @@ cd tests/nodejs-typescript && npm ci && npm test
 cd tests/browser-cdn && npm ci && npx playwright install chromium && npm run test
 ```
 
+The `nodejs-*` suites import the package by its **published name**
+(`@nemtus/symbol-rest-api-client-axios`) to exercise it exactly as a consumer does. The
+built `./dist` is copied into the suite's `node_modules` under that name by
+`scripts/link-dist.mjs`, which each suite's `test` script runs before vitest — so the
+build must exist first, and the copy must be refreshed after every `npm ci` (which
+wipes `node_modules`). Because the copied `dist` declares `axios` as a runtime
+dependency, each `nodejs-*` suite also declares `axios` itself, with **the same range as
+the client's `package.json`** — keep the two in sync when that range changes. It is a
+copy and not a symlink for a reason Node's resolver makes non-negotiable; see
+`tests/CLAUDE.md` before changing it.
+
+**Do not** reintroduce this as a `"@nemtus/symbol-rest-api-client-axios": "../../dist"`
+dependency in a suite's `package.json`. `./dist` is an uncommitted build artifact, so
+Dependabot's file fetcher cannot resolve it and aborts the **entire** update job with
+`path_dependencies_not_reachable` — which, because `.github/dependabot.yml` groups several
+manifests per job via `directories:` globs, silently blocked every npm update in this
+repo (security updates included) from 2026-08 to 2026-10. The linking script exists
+specifically to keep that path dependency out of the manifests.
+
 ### Quality Checks (lint / format / type-check)
 ```bash
 npm run format:check   # Prettier check (code only; src/api & build outputs ignored)
@@ -94,12 +117,15 @@ for Prettier).
 
 ### CI/CD Workflows
 
-The project uses GitHub Actions. Both workflows run on a single unified runtime: **Java 21** and **Node.js 24.x**.
+The project uses GitHub Actions. Both workflows build, lint, publish and run the live-node suites on a
+single runtime: **Java 21** and **Node.js 26.x** (Active LTS since 2026-10-28). The one exception is
+**`test-unit`**, which runs the deterministic suite on **22.x / 24.x / 26.x** to actually exercise the
+`engines.node: ">=22"` floor this package publishes. `.nvmrc` pins local development to 26.
 
-- **CI** (`ci-nodejs.yml`) - On pull requests and pushes to `main`: builds the client, runs all test suites in
+- **CI** (`ci-typescript-axios.yml`) - On pull requests and pushes to `main`: builds the client, runs all test suites in
   parallel (unit, nodejs-javascript, nodejs-typescript, browser-cdn), plus a `dry-run-publish` and a `pinact`
   job that verifies every action is SHA-pinned.
-- **CD** (`cd-publish-to-npm.yml`) - Tag-triggered (`push` of a `v*` tag, created by `npm run release:*`)
+- **CD** (`cd-typescript-axios.yml`) - Tag-triggered (`push` of a `v*` tag, created by `npm run release:*`)
   with a `workflow_dispatch` fallback: builds, tests, then publishes to npm via **OIDC Trusted Publishing**
   (no `NPM_TOKEN`; provenance attached). The whole pipeline is serialized via a `concurrency` group, and the
   `publish` job is gated by the `npm-production` GitHub Environment (manual approval).
@@ -118,13 +144,58 @@ Both workflows:
 4. Pin all third-party actions to full commit SHAs (`pinact` / `.pinact.yaml`); Dependabot updates npm +
    actions daily with a 7-day cooldown.
 
+### Maintenance watchdog (`maintenance-watchdog.yml`)
+
+A repo-root, daily (03:17 UTC) scheduled workflow — the only thing in this repo that runs
+without a push. It exists because `main` has twice sat red for weeks unnoticed
+(2026-06-30 -> 2026-08-13, 2026-08-13 -> 2026-10-31):
+
+1. **`npm audit` on every manifest** (globbed from `clients/**/package-lock.json`, so new
+   clients and new test suites are covered the day they land). CI/CD only run on
+   `pull_request` / `push: main`, but a newly **published** advisory reds `main` with no
+   commit — so without a schedule the breakage is first discovered by whoever opens the
+   next PR and inherits a failure they did not cause.
+2. **Dependabot updater health.** Updater failures gate no status check and appear only
+   under Insights -> Dependency graph -> Dependabot. In 2026-08 they failed on 40+
+   consecutive runs and no npm update of any kind landed for 2.5 months. The job flags only
+   "every one of the last 10 runs failed" — a repo-level misconfiguration — so single
+   transient failures stay quiet. Note that finer-grained `dependabot.yml` entries would NOT
+   prevent this: Dependabot batches security updates across directories regardless.
+
+Either failure files (or refreshes) one tracking issue rather than opening a new one daily.
+
+**When `npm audit` and the cooldown conflict.** The gate fails on *any* severity, including
+dev-only findings, while `.npmrc` `min-release-age=7` refuses versions published in the last
+7 days. These can deadlock — widening an `overrides` entry to the only patched release then
+fails with
+
+```text
+npm error code ETARGET
+npm error notarget No matching version found for minimatch@>=11.0.1 with a date before <date>
+```
+
+Re-run that one command with `NPM_CONFIG_MIN_RELEASE_AGE=0`, and prefer the OLDEST patched
+version that clears the advisory so the bypass stays as narrow as possible. Exempting a
+known CVE — but not a routine bump — from the cooldown is the policy
+`.github/dependabot.yml` already applies to Dependabot itself.
+
+
 ## Security: axios floor & monitoring
 
-- **Single source of truth**: the `axios` range and `overrides` (`form-data >= 4.0.6`,
-  `follow-redirects >= 1.15.6`) in the root `package.json`. The published `package.json` is the hand-managed
-  root one (`bundle.js` copies it into `dist/`), so the axios pin lives there — not in generator output.
-- **Floor**: `axios ^1.17.0` (≥ the known-CVE-free `1.15.1`). The `test-unit` CI job fails if the resolved
-  axios drops below `1.15.1`, proving the `overrides` took effect.
+- **Single source of truth**: the `axios` range and the `overrides` block in the root `package.json`. The
+  published `package.json` is the hand-managed root one (`bundle.js` copies it into `dist/`), so the axios
+  pin lives there — not in generator output. The two `tests/nodejs-*` consumer projects declare `axios`
+  with **the same range**, because they consume a COPIED `dist` that must resolve its own runtime
+  dependency; keep them in sync.
+- **Floor**: `axios ^1.20.0`. 1.20.0 is the first release patching twelve advisories (seven high) covering
+  prototype-pollution gadgets, HTTP/2 DNS/proxy bypass, ReDoS, header injection, and `maxRedirects: 0` not
+  being enforced by the fetch adapter. The floor is enforced by `npm audit --package-lock-only`, which gates
+  every build/lint/test job. (Earlier revisions of this file claimed the `test-unit` job additionally asserts
+  the resolved axios version; no such assertion exists in `src/**.spec.ts` — do not rely on it.)
+- **Never cap axios to dodge a type error.** `>=1.17.0 <1.19.0` was added in 2026-08 to work around TS2527
+  from axios 1.19.0's non-exported `unique symbol`; by 2026-10 that cap was the only thing blocking all
+  twelve advisories above. The fix belonged in the generator template (it is in stock 7.26.0), not in the
+  dependency range.
 - **On every spec/dependency change, re-verify**: `npm audit` (optionally `--omit=dev` just to read the
   prod-only subset locally), the GitHub Advisory Database for `axios` / `form-data` / `follow-redirects`, and
   `npm view axios version`. Update the floor to the latest

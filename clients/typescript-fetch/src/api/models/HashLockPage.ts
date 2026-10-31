@@ -36,14 +36,10 @@ import {
 export interface HashLockPage {
     /**
      * Hash lock entries matching the requested filters.
-     * @type {Array<HashLockInfoDTO>}
-     * @memberof HashLockPage
      */
     data: Array<HashLockInfoDTO>;
     /**
      * 
-     * @type {Pagination}
-     * @memberof HashLockPage
      */
     pagination: Pagination;
 }
@@ -51,7 +47,7 @@ export interface HashLockPage {
 /**
  * Check if a given object implements the HashLockPage interface.
  */
-export function instanceOfHashLockPage(value: Record<string, any>): value is HashLockPage {
+export function instanceOfHashLockPage(value: object): value is HashLockPage {
     if (!('data' in value) || value['data'] === undefined) return false;
     if (!('pagination' in value) || value['pagination'] === undefined) return false;
     return true;

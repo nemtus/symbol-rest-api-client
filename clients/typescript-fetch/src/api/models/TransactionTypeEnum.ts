@@ -68,7 +68,7 @@ export const TransactionTypeEnum = {
     NUMBER_17232: 17232,
     NUMBER_16721: 16721,
     NUMBER_16977: 16977,
-    NUMBER_16724: 16724
+    NUMBER_16724: 16724,
 } as const;
 export type TransactionTypeEnum = typeof TransactionTypeEnum[keyof typeof TransactionTypeEnum];
 

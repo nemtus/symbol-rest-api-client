@@ -21,8 +21,6 @@ import { mapValues } from '../runtime';
 export interface MosaicRestrictionNetworkPropertiesDTO {
     /**
      * Maximum number of mosaic restriction values.
-     * @type {string}
-     * @memberof MosaicRestrictionNetworkPropertiesDTO
      */
     maxMosaicRestrictionValues?: string;
 }
@@ -30,7 +28,7 @@ export interface MosaicRestrictionNetworkPropertiesDTO {
 /**
  * Check if a given object implements the MosaicRestrictionNetworkPropertiesDTO interface.
  */
-export function instanceOfMosaicRestrictionNetworkPropertiesDTO(value: Record<string, any>): value is MosaicRestrictionNetworkPropertiesDTO {
+export function instanceOfMosaicRestrictionNetworkPropertiesDTO(value: object): value is MosaicRestrictionNetworkPropertiesDTO {
     return true;
 }
 

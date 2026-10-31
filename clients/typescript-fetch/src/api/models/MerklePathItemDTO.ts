@@ -31,14 +31,10 @@ import {
 export interface MerklePathItemDTO {
     /**
      * 
-     * @type {PositionEnum}
-     * @memberof MerklePathItemDTO
      */
     position?: PositionEnum;
     /**
-     * 256-bit hash encoded as a 64-character hexadecimal string.
-     * @type {string}
-     * @memberof MerklePathItemDTO
+     * Sibling node hash used when recalculating the Merkle root.
      */
     hash?: string;
 }
@@ -48,7 +44,7 @@ export interface MerklePathItemDTO {
 /**
  * Check if a given object implements the MerklePathItemDTO interface.
  */
-export function instanceOfMerklePathItemDTO(value: Record<string, any>): value is MerklePathItemDTO {
+export function instanceOfMerklePathItemDTO(value: object): value is MerklePathItemDTO {
     return true;
 }
 

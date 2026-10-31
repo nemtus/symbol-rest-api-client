@@ -12,58 +12,172 @@
  * Do not edit the class manually.
  */
 
-
 import * as runtime from '../runtime';
-import type {
-  CompositeHashes,
-  MerkleStateInfoDTO,
-  ModelError,
-  Order,
-  SecretLockInfoDTO,
-  SecretLockPage,
-} from '../models/index';
 import {
+    type CompositeHashes,
     CompositeHashesFromJSON,
     CompositeHashesToJSON,
+} from '../models/CompositeHashes';
+import {
+    type MerkleStateInfoDTO,
     MerkleStateInfoDTOFromJSON,
     MerkleStateInfoDTOToJSON,
+} from '../models/MerkleStateInfoDTO';
+import {
+    type ModelError,
     ModelErrorFromJSON,
     ModelErrorToJSON,
+} from '../models/ModelError';
+import {
+    type Order,
     OrderFromJSON,
     OrderToJSON,
+} from '../models/Order';
+import {
+    type SecretLockInfoDTO,
     SecretLockInfoDTOFromJSON,
     SecretLockInfoDTOToJSON,
+} from '../models/SecretLockInfoDTO';
+import {
+    type SecretLockPage,
     SecretLockPageFromJSON,
     SecretLockPageToJSON,
-} from '../models/index';
+} from '../models/SecretLockPage';
 
 export interface GetSecretLockRequest {
+    /**
+     * Composite hash encoded as a 64-character hexadecimal string.
+     */
     compositeHash: string;
 }
 
 export interface GetSecretLockMerkleRequest {
+    /**
+     * Composite hash encoded as a 64-character hexadecimal string.
+     */
     compositeHash: string;
 }
 
 export interface GetSecretLocksRequest {
+    /**
+     * 
+     */
     compositeHashes: CompositeHashes;
 }
 
 export interface SearchAccountSecretLocksRequest {
+    /**
+     * Account address in Base32-encoded format.
+     */
     address: string;
+    /**
+     * Filter by the 256-bit hashed secret associated with the secret lock (include).
+     */
     secret?: string;
+    /**
+     * Select the number of entries to return per page.
+     * Values outside the allowed range are clamped to the schema minimum or maximum.
+     * 
+     */
     pageSize?: number;
+    /**
+     * Page number for numbered pagination (1-based).
+     * 
+     * Numbered and cursor pagination can be combined, but this is not recommended because the semantics
+     * are harder to reason about. For cursor-style flows, keep `pageNumber=1` and advance pages by
+     * updating only `offset`. For numbered pagination flows, omit `offset` and advance pages by
+     * incrementing `pageNumber`.
+     * 
+     */
     pageNumber?: number;
+    /**
+     * Cursor for pagination. Provide the value of the sort field (`orderBy`) from the
+     * last entry of the previous page. **The offset type must match `orderBy`:**
+     * - `orderBy=id`: use the entry's `id` (ObjectId, 24-char hex).
+     * - `orderBy=height`: use the block height (string, e.g. `"17592"`).
+     * - `orderBy=balance`: use the mosaic balance amount (string, e.g. `"1000000"`).
+     * 
+     * Allowed `orderBy` values depend on the endpoint. If `orderBy` is omitted, `id` is used by default.
+     * 
+     * Set `offset` to the sort-field value of the last entry from the previous page. Across pages,
+     * this value decreases with `order=desc` and increases with `order=asc`.
+     * 
+     * Numbered and cursor pagination can be combined, but this is not recommended because the semantics
+     * are harder to reason about. For cursor-style flows, keep `pageNumber=1` and advance pages by
+     * updating only `offset`. For numbered pagination flows, omit `offset` and advance pages by
+     * incrementing `pageNumber`.
+     * 
+     */
     offset?: string;
+    /**
+     * Sort responses in ascending or descending order based on the collection property set on the param `orderBy`.
+     * If the request does not specify `orderBy`, REST returns the collection ordered by id.
+     * The default sort direction depends on the endpoint implementation.
+     * 
+     */
     order?: Order;
 }
 
 export interface SearchSecretLockRequest {
+    /**
+     * Filter by address (include), in Base32 format.
+     * 
+     * The exact meaning depends on the endpoint:
+     * - transaction search: returns transactions where the address appears as the sender, recipient, or cosigner
+     * - account search: matches the account address
+     * - account restriction search: matches the restricted account address
+     * - hash lock and secret lock search: matches the lock owner address
+     * 
+     * On transaction search endpoints, this filter cannot be combined with `recipientAddress` and
+     * `signerPublicKey`.
+     * 
+     */
     address?: string;
+    /**
+     * Filter by the 256-bit hashed secret associated with the secret lock (include).
+     */
     secret?: string;
+    /**
+     * Select the number of entries to return per page.
+     * Values outside the allowed range are clamped to the schema minimum or maximum.
+     * 
+     */
     pageSize?: number;
+    /**
+     * Page number for numbered pagination (1-based).
+     * 
+     * Numbered and cursor pagination can be combined, but this is not recommended because the semantics
+     * are harder to reason about. For cursor-style flows, keep `pageNumber=1` and advance pages by
+     * updating only `offset`. For numbered pagination flows, omit `offset` and advance pages by
+     * incrementing `pageNumber`.
+     * 
+     */
     pageNumber?: number;
+    /**
+     * Cursor for pagination. Provide the value of the sort field (`orderBy`) from the
+     * last entry of the previous page. **The offset type must match `orderBy`:**
+     * - `orderBy=id`: use the entry's `id` (ObjectId, 24-char hex).
+     * - `orderBy=height`: use the block height (string, e.g. `"17592"`).
+     * - `orderBy=balance`: use the mosaic balance amount (string, e.g. `"1000000"`).
+     * 
+     * Allowed `orderBy` values depend on the endpoint. If `orderBy` is omitted, `id` is used by default.
+     * 
+     * Set `offset` to the sort-field value of the last entry from the previous page. Across pages,
+     * this value decreases with `order=desc` and increases with `order=asc`.
+     * 
+     * Numbered and cursor pagination can be combined, but this is not recommended because the semantics
+     * are harder to reason about. For cursor-style flows, keep `pageNumber=1` and advance pages by
+     * updating only `offset`. For numbered pagination flows, omit `offset` and advance pages by
+     * incrementing `pageNumber`.
+     * 
+     */
     offset?: string;
+    /**
+     * Sort responses in ascending or descending order based on the collection property set on the param `orderBy`.
+     * If the request does not specify `orderBy`, REST returns the collection ordered by id.
+     * The default sort direction depends on the endpoint implementation.
+     * 
+     */
     order?: Order;
 }
 
@@ -73,10 +187,9 @@ export interface SearchSecretLockRequest {
 export class SecretLockRoutesApi extends runtime.BaseAPI {
 
     /**
-     * Returns the secret lock entry associated with the given composite hash.
-     * Get secret lock information
+     * Creates request options for getSecretLock without sending the request
      */
-    async getSecretLockRaw(requestParameters: GetSecretLockRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SecretLockInfoDTO>> {
+    async getSecretLockRequestOpts(requestParameters: GetSecretLockRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['compositeHash'] == null) {
             throw new runtime.RequiredError(
                 'compositeHash',
@@ -90,14 +203,23 @@ export class SecretLockRoutesApi extends runtime.BaseAPI {
 
 
         let urlPath = `/lock/secret/{compositeHash}`;
-        urlPath = urlPath.replace(`{${"compositeHash"}}`, encodeURIComponent(String(requestParameters['compositeHash'])));
+        urlPath = urlPath.replace('{compositeHash}', encodeURIComponent(String(requestParameters['compositeHash'])));
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Returns the secret lock entry associated with the given composite hash.
+     * Get secret lock information
+     */
+    async getSecretLockRaw(requestParameters: GetSecretLockRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SecretLockInfoDTO>> {
+        const requestOptions = await this.getSecretLockRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => SecretLockInfoDTOFromJSON(jsonValue));
     }
@@ -112,10 +234,9 @@ export class SecretLockRoutesApi extends runtime.BaseAPI {
     }
 
     /**
-     * Returns the state Merkle proof for the secret lock entry associated with the given composite hash.
-     * Get secret lock Merkle information
+     * Creates request options for getSecretLockMerkle without sending the request
      */
-    async getSecretLockMerkleRaw(requestParameters: GetSecretLockMerkleRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<MerkleStateInfoDTO>> {
+    async getSecretLockMerkleRequestOpts(requestParameters: GetSecretLockMerkleRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['compositeHash'] == null) {
             throw new runtime.RequiredError(
                 'compositeHash',
@@ -129,14 +250,23 @@ export class SecretLockRoutesApi extends runtime.BaseAPI {
 
 
         let urlPath = `/lock/secret/{compositeHash}/merkle`;
-        urlPath = urlPath.replace(`{${"compositeHash"}}`, encodeURIComponent(String(requestParameters['compositeHash'])));
+        urlPath = urlPath.replace('{compositeHash}', encodeURIComponent(String(requestParameters['compositeHash'])));
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Returns the state Merkle proof for the secret lock entry associated with the given composite hash.
+     * Get secret lock Merkle information
+     */
+    async getSecretLockMerkleRaw(requestParameters: GetSecretLockMerkleRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<MerkleStateInfoDTO>> {
+        const requestOptions = await this.getSecretLockMerkleRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => MerkleStateInfoDTOFromJSON(jsonValue));
     }
@@ -151,10 +281,9 @@ export class SecretLockRoutesApi extends runtime.BaseAPI {
     }
 
     /**
-     * Returns secret lock entries associated with the given composite hashes.
-     * Get secret lock information for an array of composite hashes
+     * Creates request options for getSecretLocks without sending the request
      */
-    async getSecretLocksRaw(requestParameters: GetSecretLocksRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<SecretLockInfoDTO>>> {
+    async getSecretLocksRequestOpts(requestParameters: GetSecretLocksRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['compositeHashes'] == null) {
             throw new runtime.RequiredError(
                 'compositeHashes',
@@ -171,13 +300,22 @@ export class SecretLockRoutesApi extends runtime.BaseAPI {
 
         let urlPath = `/lock/secret`;
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
             body: CompositeHashesToJSON(requestParameters['compositeHashes']),
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Returns secret lock entries associated with the given composite hashes.
+     * Get secret lock information for an array of composite hashes
+     */
+    async getSecretLocksRaw(requestParameters: GetSecretLocksRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<SecretLockInfoDTO>>> {
+        const requestOptions = await this.getSecretLocksRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(SecretLockInfoDTOFromJSON));
     }
@@ -192,10 +330,9 @@ export class SecretLockRoutesApi extends runtime.BaseAPI {
     }
 
     /**
-     * Returns a paginated list of secret lock entries owned by the given account address, optionally filtered by secret.
-     * Search secret lock entries by account
+     * Creates request options for searchAccountSecretLocks without sending the request
      */
-    async searchAccountSecretLocksRaw(requestParameters: SearchAccountSecretLocksRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SecretLockPage>> {
+    async searchAccountSecretLocksRequestOpts(requestParameters: SearchAccountSecretLocksRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['address'] == null) {
             throw new runtime.RequiredError(
                 'address',
@@ -229,14 +366,23 @@ export class SecretLockRoutesApi extends runtime.BaseAPI {
 
 
         let urlPath = `/account/{address}/lock/secret`;
-        urlPath = urlPath.replace(`{${"address"}}`, encodeURIComponent(String(requestParameters['address'])));
+        urlPath = urlPath.replace('{address}', encodeURIComponent(String(requestParameters['address'])));
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Returns a paginated list of secret lock entries owned by the given account address, optionally filtered by secret.
+     * Search secret lock entries by account
+     */
+    async searchAccountSecretLocksRaw(requestParameters: SearchAccountSecretLocksRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SecretLockPage>> {
+        const requestOptions = await this.searchAccountSecretLocksRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => SecretLockPageFromJSON(jsonValue));
     }
@@ -251,10 +397,9 @@ export class SecretLockRoutesApi extends runtime.BaseAPI {
     }
 
     /**
-     * Returns a paginated list of secret lock entries, optionally filtered by owner address and secret.
-     * Search secret lock entries
+     * Creates request options for searchSecretLock without sending the request
      */
-    async searchSecretLockRaw(requestParameters: SearchSecretLockRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SecretLockPage>> {
+    async searchSecretLockRequestOpts(requestParameters: SearchSecretLockRequest): Promise<runtime.RequestOpts> {
         const queryParameters: any = {};
 
         if (requestParameters['address'] != null) {
@@ -286,12 +431,21 @@ export class SecretLockRoutesApi extends runtime.BaseAPI {
 
         let urlPath = `/lock/secret`;
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Returns a paginated list of secret lock entries, optionally filtered by owner address and secret.
+     * Search secret lock entries
+     */
+    async searchSecretLockRaw(requestParameters: SearchSecretLockRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SecretLockPage>> {
+        const requestOptions = await this.searchSecretLockRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => SecretLockPageFromJSON(jsonValue));
     }
