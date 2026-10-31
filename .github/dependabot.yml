@@ -1,14 +1,35 @@
 # Dependabot for the polyglot monorepo.
-# https://docs.github.com/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
+# https://docs.github.com/code-security/dependabot/working-with-dependabot/dependabot-options-reference
 #
-# Each TypeScript client under clients/<generator>/ is its own npm project (root +
+# Each TypeScript client under clients/<generator>/ is its own npm project (its root plus
 # three consumer test suites under tests/), and they are NOT an npm workspace — every
-# manifest needs its own update stream. We use glob `directories` so both current
-# clients (and any future ones) are covered without per-directory duplication.
-# All THREE entries (both npm streams and github-actions): check daily (security updates
-# are exempt from cooldown and surface immediately) with a 7-day cooldown on regular bumps,
-# and group non-major version updates into one PR per stream. Majors are never grouped —
-# each deserves its own review.
+# manifest needs to be in an update stream. Glob `directories` cover both current clients
+# (and any future ones, and any future suite) without per-directory duplication.
+#
+# ONE npm block, and it must stay one. This file previously split npm into two blocks,
+# `/clients/*` and `/clients/*/tests/*`, which made the WHOLE CONFIG INVALID:
+#
+#   Update configs must have a unique combination of 'package-ecosystem', 'directory',
+#   and 'target-branch'. Dependabot cannot determine if 'npm' has overlapping directories.
+#
+# Per the options reference, "if you need to use more than one block in the configuration
+# file to define updates for a single target branch of an ecosystem, you must ensure that
+# all values are unique and there is no overlap in directories defined" — and Dependabot
+# cannot prove two GLOBS do not overlap, even when they provably cannot (`/clients/*`
+# matches exactly one path segment, so it never reaches `tests/`). Listing several globs
+# inside a single block's `directories` list is the supported way to express this and
+# sidesteps the cross-block rule entirely. Do not split this back into two blocks.
+#
+# That misconfiguration silently disabled every VERSION update from the monorepo
+# consolidation (2026-06) until 2026-10: all 58 updater runs and all 4 Dependabot PRs in
+# the repo's history were SECURITY updates, which Dependabot derives from the dependency
+# graph and runs regardless of this file. `cooldown`, `groups` and the github-actions block
+# had therefore never once taken effect. Symptom to watch for: Insights -> Dependency graph
+# -> Dependabot shows a parse error instead of the per-ecosystem "Check for updates" rows.
+#
+# Both blocks: check daily (security updates are exempt from the cooldown and surface
+# immediately) with a 7-day cooldown on regular bumps, and group non-major version updates
+# into one PR per ecosystem. Majors are never grouped — each deserves its own review.
 #
 # Exactly one `ignore` exists in this file: `typescript` semver-MAJOR, which cannot be
 # installed at all right now (typescript-eslint's peer range). It is scoped to majors so
@@ -18,10 +39,19 @@
 
 version: 2
 updates:
-  # ---- each client's own package.json (clients/typescript-fetch, typescript-axios, …) ----
+  # ---- npm: every manifest in every client ----
+  #   /clients/*          -> clients/typescript-fetch, clients/typescript-axios
+  #   /clients/*/tests/*  -> each client's nodejs-javascript | nodejs-typescript | browser-cdn
+  #
+  # `@playwright/test` / `playwright` are deliberately NOT ignored: ignoring them would also
+  # suppress security-update PRs. The npm package is coupled to the Playwright CONTAINER tag
+  # (mcr.microsoft.com/playwright:vX.Y.Z-noble) in each client's ci-/cd-<generator>.yml,
+  # which the `detect-playwright-version` job derives from the locked `playwright` version,
+  # so the container auto-syncs to whatever Dependabot bumps — no manual tag edit.
   - package-ecosystem: 'npm'
     directories:
       - '/clients/*'
+      - '/clients/*/tests/*'
     schedule:
       interval: 'daily'
     cooldown:
@@ -47,42 +77,16 @@ updates:
       #
       # Scoped to semver-major ONLY, deliberately: minor/patch and SECURITY updates for
       # typescript keep flowing. A bare `- dependency-name: typescript` would also
-      # suppress its security PRs, which is exactly the trap this file warns about for
-      # Playwright below.
+      # suppress its security PRs. Applies to the clients and to the two
+      # tests/nodejs-typescript suites alike, which all carry typescript as a devDependency.
       #
       # REMOVE THIS once typescript-eslint widens its peer range past 6.1.0 — check with
       # `npm view typescript-eslint peerDependencies`.
       - dependency-name: 'typescript'
         update-types: ['version-update:semver-major']
 
-  # ---- each client's consumer test suites (tests/nodejs-javascript|typescript|browser-cdn) ----
-  # `@playwright/test` / `playwright` are NOT ignored: ignoring them would also suppress
-  # security-update PRs. The npm package is coupled to the Playwright CONTAINER tag
-  # (mcr.microsoft.com/playwright:vX.Y.Z-noble) in each client's ci-/cd-<generator>.yml,
-  # which the `detect-playwright-version` job derives from the locked `playwright` version
-  # so the container auto-syncs to whatever Dependabot bumps — no manual tag edit.
-  - package-ecosystem: 'npm'
-    directories:
-      - '/clients/*/tests/*'
-    schedule:
-      interval: 'daily'
-    cooldown:
-      default-days: 7
-    groups:
-      npm-minor-and-patch:
-        applies-to: version-updates
-        update-types:
-          - minor
-          - patch
-    ignore:
-      # Same reason as the client entry above — the two `tests/nodejs-typescript` suites
-      # also carry `typescript` as a devDependency. Major only; security updates still
-      # surface. Remove together with the entry above.
-      - dependency-name: 'typescript'
-        update-types: ['version-update:semver-major']
-
   # ---- github actions (root .github/workflows) ----
-  # Grouped like the npm entries, which this previously was not: every action bump opened
+  # Grouped like the npm block, which this previously was not: every action bump would open
   # its own PR, and with 11 pinned actions across 6 workflows that is a lot of noise for
   # changes that are reviewed identically (pinact verifies the SHA/comment pair either
   # way). Majors stay individual — `actions/cache` v5->v6, `setup-java` v5->v6 and
