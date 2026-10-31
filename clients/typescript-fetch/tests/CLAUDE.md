@@ -16,8 +16,21 @@ When adding hand-written logic to the SDK, prefer the mocked-transport layer.
 
 These are **separate npm projects**, not part of the root workspace. Each has its
 own `package.json` / `package-lock.json` / `node_modules` and consumes the built
-SDK from `../../dist` (a `file:` dependency), so the root must be built first
-(`npm run build`) before running them.
+SDK from `../../dist`, so the root must be built first (`npm run build`) before
+running them.
+
+**How `../../dist` is consumed (do not change back to a `file:` dependency).** The
+`nodejs-*` projects import the SDK by its published name
+(`@nemtus/symbol-rest-api-client-fetch`); `scripts/link-dist.mjs` symlinks `../../dist`
+into the project's `node_modules` under that name, and each project's `test` script runs
+it before vitest. It must run after `npm ci` (which wipes `node_modules`) — the `test`
+script ordering guarantees that locally and in CI, so no workflow step is needed.
+This replaced a `"@nemtus/symbol-rest-api-client-fetch": "../../dist"` dependency:
+`dist/` is an uncommitted build artifact, so Dependabot's file fetcher could not resolve
+it and aborted the **entire** update job with `path_dependencies_not_reachable` — which,
+because `.github/dependabot.yml` groups several manifests per job via `directories:`
+globs, silently blocked every npm update in this repo (security updates included) from
+2026-08 to 2026-10.
 
 Subprojects:
 - `nodejs-javascript/` — CommonJS consumer, vitest. Run: `npm ci && npm test`.

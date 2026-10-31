@@ -21,21 +21,33 @@ the request config and returns a canned response (axios still applies its defaul
 
 These are **separate npm projects**, not part of the root workspace. Each has its
 own `package.json` / `package-lock.json` / `node_modules` and consumes the built
-SDK from `../../dist` (a `file:` dependency), so the root must be built first
-(`npm run build`) before running them. axios works natively in Node, so the consumer
-tests need no `node-fetch` injection; they read the DTO from `response.data`.
+SDK from `../../dist`, so the root must be built first (`npm run build`) before
+running them. axios works natively in Node, so the consumer tests need no `node-fetch`
+injection; they read the DTO from `response.data`.
 
-**`install-links=true` (nodejs projects):** the SDK ships `axios` as a runtime
-dependency. npm symlinks directory `file:` deps (like `npm link`) and does NOT install
-their dependencies, so a plain install would leave the consumer without `axios` and the
-SDK could not `require('axios')` in CI (locally it only "worked" by falling back to the
-repo-root `node_modules`, which the CI test jobs don't have). The `.npmrc` in
-`nodejs-javascript/` and `nodejs-typescript/` therefore sets `install-links=true`, which
-installs the `file:` dep like a real registry package (copied, with its deps) so `axios`
-lands in the project tree and is pinned in `package-lock.json`. The `browser-cdn` project
-loads the CDN bundle over `file://` and has no SDK package dependency, so it doesn't need
-it. **Regenerate a lockfile after a build with:** `npm install --package-lock-only`.
-The fetch variant needs none of this (it has no runtime dependencies).
+**How `../../dist` is consumed (do not change back to a `file:` dependency).** The
+`nodejs-*` projects import the SDK by its published name
+(`@nemtus/symbol-rest-api-client-axios`); `scripts/link-dist.mjs` symlinks `../../dist`
+into the project's `node_modules` under that name, and each project's `test` script runs
+it before vitest. It must run after `npm ci` (which wipes `node_modules`) — the `test`
+script ordering guarantees that locally and in CI, so no workflow step is needed.
+This replaced a `"@nemtus/symbol-rest-api-client-axios": "../../dist"` dependency:
+`dist/` is an uncommitted build artifact, so Dependabot's file fetcher could not resolve
+it and aborted the **entire** update job with `path_dependencies_not_reachable` — which,
+because `.github/dependabot.yml` groups several manifests per job via `directories:`
+globs, silently blocked every npm update in this repo (security updates included) from
+2026-08 to 2026-10.
+
+**`axios` is declared by the nodejs projects themselves.** The SDK ships `axios` as a
+runtime dependency, and a symlinked `dist` cannot resolve it from the project tree on its
+own. Each `nodejs-*` project therefore lists `axios` in its own `package.json`, with **the
+same range as the client's `package.json`** — keep the two in sync when that range
+changes. This also keeps `axios` lockfile-pinned, under the `npm audit --package-lock-only`
+gate, and visible to Dependabot, none of which held when it arrived only as a transitive
+of the path dependency. (This supersedes the old `install-links=true` setting in those
+projects' `.npmrc`, which only mattered for `file:` deps.) The `browser-cdn` project loads
+the CDN bundle over `file://` and has no SDK package dependency, so it needs none of this.
+The fetch variant needs none of it either (it has no runtime dependencies).
 
 Subprojects:
 - `nodejs-javascript/` — CommonJS consumer, vitest. Run: `npm ci && npm test`.

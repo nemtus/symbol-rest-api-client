@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "vitest run"
+    "test": "node ../../../../scripts/link-dist.mjs && vitest run"
   },
   "keywords": [],
   "author": "yasunori-matsuoka <yasunori.matsuoka@gmail.com>",
@@ -15,7 +15,7 @@
     "vitest": "^4.1.8"
   },
   "dependencies": {
-    "@nemtus/symbol-rest-api-client-axios": "../../dist"
+    "axios": ">=1.17.0 <1.19.0"
   },
   "overrides": {
     "form-data": ">=4.0.6",

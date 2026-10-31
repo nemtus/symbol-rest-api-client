@@ -4,13 +4,13 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "vitest run"
+    "test": "node ../../../../scripts/link-dist.mjs && vitest run"
   },
   "keywords": [],
   "author": "yasunori-matsuoka <yasunori.matsuoka@gmail.com>",
   "license": "ISC",
   "dependencies": {
-    "@nemtus/symbol-rest-api-client-axios": "../../dist"
+    "axios": ">=1.17.0 <1.19.0"
   },
   "devDependencies": {
     "vitest": "^4.1.8"
