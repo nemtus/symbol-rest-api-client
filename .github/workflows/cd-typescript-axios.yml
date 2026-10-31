@@ -2,10 +2,12 @@ name: CD typescript-axios
 
 # Monorepo client: clients/typescript-axios (@nemtus/symbol-rest-api-client-axios).
 on:
-  # Automated release: pushing a `typescript-axios-vX.Y.Z` tag (created by
-  # `npm run release:*` in clients/typescript-axios, whose .npmrc sets the matching
-  # tag-version-prefix) triggers the pipeline. The `publish` job still waits on the
-  # `npm-production` Environment approval gate before anything is published.
+  # Automated release: pushing a `typescript-axios-vX.Y.Z` tag triggers the pipeline. The tag is
+  # created by `npm run release:*` in clients/typescript-axios -> scripts/release.mjs,
+  # which owns the tag name (`npm version` cannot tag from a monorepo subdirectory,
+  # so no `tag-version-prefix` is set in that client's .npmrc). The `publish` job
+  # still waits on the `npm-production` Environment approval gate before anything is
+  # published, and the `release` job then opens a GitHub Release for the same tag.
   push:
     tags:
       - 'typescript-axios-v*'
@@ -346,3 +348,83 @@ jobs:
       # publish credential. --provenance attaches a verifiable build provenance attestation.
       - run: npm publish --access=public --provenance
         working-directory: clients/typescript-axios/dist
+
+  # Record-keeping GitHub Release for the version just published to npm, with
+  # auto-generated notes (the same content as the web "Generate release notes" button)
+  # scoped to the previous release OF THIS CLIENT. Mirrors the `release` job in
+  # nemtus/symbol-product's publish-shoestring.yaml and the `tag` job in nemtus/symbol's
+  # publish workflows; here the tag already exists — it is what triggered the run — so
+  # this only creates the Release for it, it never creates or moves a tag.
+  #
+  # SECURITY: `contents: write` is isolated to THIS job, which runs no build and no
+  # third-party code — only the `gh` CLI against the GitHub API. There is deliberately no
+  # checkout step, so nothing from the repo tree executes here either. `build` and the
+  # other jobs stay at `contents: read`, and `publish` adds only `id-token: write`, so a
+  # supply-chain compromise anywhere in the npm build can never reach this write token.
+  release:
+    needs: publish # runs only after the npm-production approval AND a successful publish
+    # A manual workflow_dispatch from a branch has no version tag to release. Dispatching
+    # on a tag ref does produce one, and the step below is idempotent, so that still works.
+    if: github.ref_type == 'tag'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Create GitHub Release for the published tag
+        # This job does not checkout, so override the workflow-default working-directory
+        # (clients/typescript-axios), which would not exist here.
+        working-directory: ${{ github.workspace }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ github.ref_name }}
+          # Tag shape is `<generator>-vX.Y.Z` (owned by scripts/release.mjs). Grouping on
+          # this exact prefix is also what keeps `typescript-axios-legacy-v*` — the
+          # pre-monorepo v0.x history — out of the "previous release" lookup.
+          TAG_PREFIX: typescript-axios-v
+          PKG: '@nemtus/symbol-rest-api-client-axios'
+        run: |
+          set -euo pipefail
+          version="${TAG#"${TAG_PREFIX}"}"
+          if [ "${version}" = "${TAG}" ]; then
+            echo "::error::tag '${TAG}' does not start with '${TAG_PREFIX}'; refusing to guess a version." >&2
+            exit 1
+          fi
+
+          # Idempotent: re-running a published tag (or dispatching on one) must not fail.
+          if gh release view "${TAG}" --repo "${GITHUB_REPOSITORY}" >/dev/null 2>&1; then
+            echo "release ${TAG} already exists; nothing to do."
+            exit 0
+          fi
+
+          # Previous release of THIS client only. Both clients live in one repo and are
+          # released on independent PATCH lanes, so the newest release overall is often
+          # the other one — which would produce a changelog spanning the wrong package.
+          prev="$(gh release list --repo "${GITHUB_REPOSITORY}" -L 200 --json tagName -q '.[].tagName' \
+            | grep -F "${TAG_PREFIX}" | grep -vxF "${TAG}" | head -n1 || true)"
+          echo "previous ${PKG} release: ${prev:-<none>}"
+
+          # The spec version this client targets, read through the API at the released
+          # tag. Deliberately not via checkout: this job stays code-free. Best-effort —
+          # a missing or unreadable field just drops the clause.
+          spec="$(gh api "repos/${GITHUB_REPOSITORY}/contents/clients/typescript-axios/package.json?ref=${TAG}" \
+            --jq '.content' 2>/dev/null | base64 -d 2>/dev/null \
+            | jq -r '.symbolOpenapiVersion // empty' 2>/dev/null || true)"
+
+          provenance="Published [\`${PKG}\` ${version}](https://www.npmjs.com/package/${PKG}/v/${version}) to npm via OIDC Trusted Publishing (provenance attached)."
+          if [ -n "${spec}" ]; then
+            provenance="${provenance} Generated from the [\`@nemtus/symbol-openapi\`](https://www.npmjs.com/package/@nemtus/symbol-openapi) spec ${spec}."
+          fi
+
+          if notes="$(gh api "repos/${GITHUB_REPOSITORY}/releases/generate-notes" \
+              -f tag_name="${TAG}" -f target_commitish="${GITHUB_SHA}" \
+              ${prev:+-f previous_tag_name="${prev}"} -q '.body' 2>/dev/null)" && [ -n "${notes}" ]; then
+            body="$(printf '%s\n\n%s\n' "${provenance}" "${notes}")"
+          else
+            echo "note: could not generate release notes; publishing the provenance line only."
+            body="${provenance}"
+          fi
+
+          gh release create "${TAG}" \
+            --repo "${GITHUB_REPOSITORY}" \
+            --title "${PKG} v${version} · npm" \
+            --notes "${body}"
