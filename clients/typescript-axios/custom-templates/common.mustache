@@ -1,0 +1,167 @@
+{{!
+  Verbatim copy of the typescript-axios `common.mustache` from OpenAPI Generator v7.14.0
+  (the version pinned by `openapi:set:version`), with ONE change, backported from
+  upstream v7.26.0: `createRequestFunction`'s returned arrow gets an explicit
+  `: Promise<R>` annotation and an `as Promise<R>` cast.
+
+  Without it, `npm run type:check` / `build` fail against axios >= 1.19.0 with
+
+    src/api/common.ts: error TS2527: The inferred type of 'createRequestFunction'
+    references an inaccessible 'unique symbol' type. A type annotation is necessary.
+
+  axios 1.19.0 changed `AxiosInstance.request` to default `R = AxiosResponseDefault`
+  (`typeof axiosResponseDefault`, a NON-exported `unique symbol`) and to return
+  `Promise<AxiosResponseResult<T, R, D, P>>`. Inside this generic arrow both `T` and `R`
+  are still type parameters, so that conditional type stays deferred and tsc cannot emit
+  a declaration for it without naming the inaccessible symbol. Annotating the return type
+  removes the need to infer it.
+
+  This replaces the earlier stopgap of capping the dependency at `axios < 1.19.0`, which
+  had become a block on 7 high-severity axios advisories all first patched in 1.20.0.
+
+  DELETE THIS TEMPLATE (and `templateDir` from openapi-generator-config.yml, if nothing
+  else lives here) once `openapi:set:version` moves to >= 7.26.0, which ships the same
+  fix — keeping the override would then silently pin common.ts to the 7.14.0 shape.
+}}
+/* tslint:disable */
+/* eslint-disable */
+{{>licenseInfo}}
+
+import type { Configuration } from "./configuration{{importFileExtension}}";
+import type { RequestArgs } from "./base{{importFileExtension}}";
+import type { AxiosInstance, AxiosResponse } from 'axios';
+import { RequiredError } from "./base{{importFileExtension}}";
+{{#withNodeImports}}
+import { URL, URLSearchParams } from 'url';
+{{/withNodeImports}}
+
+/**
+ *
+ * @export
+ */
+export const DUMMY_BASE_URL = 'https://example.com'
+
+/**
+ *
+ * @throws {RequiredError}
+ * @export
+ */
+export const assertParamExists = function (functionName: string, paramName: string, paramValue: unknown) {
+    if (paramValue === null || paramValue === undefined) {
+        throw new RequiredError(paramName, `Required parameter ${paramName} was null or undefined when calling ${functionName}.`);
+    }
+}
+
+/**
+ *
+ * @export
+ */
+export const setApiKeyToObject = async function (object: any, keyParamName: string, configuration?: Configuration) {
+    if (configuration && configuration.apiKey) {
+        const localVarApiKeyValue = typeof configuration.apiKey === 'function'
+            ? await configuration.apiKey(keyParamName)
+            : await configuration.apiKey;
+        object[keyParamName] = localVarApiKeyValue;
+    }
+}
+
+/**
+ *
+ * @export
+ */
+export const setBasicAuthToObject = function (object: any, configuration?: Configuration) {
+    if (configuration && (configuration.username || configuration.password)) {
+        object["auth"] = { username: configuration.username, password: configuration.password };
+    }
+}
+
+/**
+ *
+ * @export
+ */
+export const setBearerAuthToObject = async function (object: any, configuration?: Configuration) {
+    if (configuration && configuration.accessToken) {
+        const accessToken = typeof configuration.accessToken === 'function'
+            ? await configuration.accessToken()
+            : await configuration.accessToken;
+        object["Authorization"] = "Bearer " + accessToken;
+    }
+}
+
+/**
+ *
+ * @export
+ */
+export const setOAuthToObject = async function (object: any, name: string, scopes: string[], configuration?: Configuration) {
+    if (configuration && configuration.accessToken) {
+        const localVarAccessTokenValue = typeof configuration.accessToken === 'function'
+            ? await configuration.accessToken(name, scopes)
+            : await configuration.accessToken;
+        object["Authorization"] = "Bearer " + localVarAccessTokenValue;
+    }
+}
+
+function setFlattenedQueryParams(urlSearchParams: URLSearchParams, parameter: any, key: string = ""): void {
+    if (parameter == null) return;
+    if (typeof parameter === "object") {
+        if (Array.isArray(parameter)) {
+            (parameter as any[]).forEach(item => setFlattenedQueryParams(urlSearchParams, item, key));
+        }
+        else {
+            Object.keys(parameter).forEach(currentKey =>
+                setFlattenedQueryParams(urlSearchParams, parameter[currentKey], `${key}${key !== '' ? '.' : ''}${currentKey}`)
+            );
+        }
+    }
+    else {
+        if (urlSearchParams.has(key)) {
+            urlSearchParams.append(key, parameter);
+        }
+        else {
+            urlSearchParams.set(key, parameter);
+        }
+    }
+}
+
+/**
+ *
+ * @export
+ */
+export const setSearchParams = function (url: URL, ...objects: any[]) {
+    const searchParams = new URLSearchParams(url.search);
+    setFlattenedQueryParams(searchParams, objects);
+    url.search = searchParams.toString();
+}
+
+/**
+ *
+ * @export
+ */
+export const serializeDataIfNeeded = function (value: any, requestOptions: any, configuration?: Configuration) {
+    const nonString = typeof value !== 'string';
+    const needsSerialization = nonString && configuration && configuration.isJsonMime
+        ? configuration.isJsonMime(requestOptions.headers['Content-Type'])
+        : nonString;
+    return needsSerialization
+        ? JSON.stringify(value !== undefined ? value : {})
+        : (value || "");
+}
+
+/**
+ *
+ * @export
+ */
+export const toPathString = function (url: URL) {
+    return url.pathname + url.search + url.hash
+}
+
+/**
+ *
+ * @export
+ */
+export const createRequestFunction = function (axiosArgs: RequestArgs, globalAxios: AxiosInstance, BASE_PATH: string, configuration?: Configuration) {
+    return <T = unknown, R = AxiosResponse<T>>(axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH): Promise<R> => {
+        const axiosRequestArgs = {...axiosArgs.options, url: (axios.defaults.baseURL ? '' : configuration?.basePath ?? basePath) + axiosArgs.url};
+        return axios.request<T, R>(axiosRequestArgs) as Promise<R>;
+    };
+}

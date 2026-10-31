@@ -37,8 +37,14 @@ of CI. See "Security: axios floor & monitoring" below.
    spec. Pinning is now ordinary npm dependency pinning — the package version replaces `SPEC_VERSION` and the
    `package-lock.json` integrity hash replaces `SPEC_SHA256` (verified by `npm ci`). It is a `devDependency`
    (generation-time only) and never ships to consumers.
-2. **OpenAPI Generator** - Uses the typescript-axios generator (no custom templates; `openapi-generator-config.yml`
-   sets `useSingleRequestParameter: true`).
+2. **OpenAPI Generator** - Uses the typescript-axios generator. `openapi-generator-config.yml` sets
+   `useSingleRequestParameter: true` and `templateDir: ./custom-templates`, which holds exactly **one**
+   override: `common.mustache`. `templateDir` falls back to the generator's built-in resources for every
+   template it does not contain, so adding that one file changes only `src/api/common.ts` (verified: a
+   regeneration diff of 2 lines). The override is a verbatim v7.14.0 copy carrying one backported v7.26.0
+   fix — an explicit `: Promise<R>` return annotation on `createRequestFunction`, without which
+   `type:check` fails with TS2527 against axios >= 1.19.0. The template header documents the mechanism and
+   says to delete it once `openapi:set:version` reaches >= 7.26.0.
 3. **Generated API code** (`src/api/`) - Auto-generated, DO NOT edit manually.
 4. **Build outputs** (`dist/`) - Contains CJS, ESM, and CDN bundles. The CDN bundle is self-contained: webpack
    bundles axios into `index.min.js`.
@@ -48,6 +54,8 @@ of CI. See "Security: axios floor & monitoring" below.
 - **Runtime base** (`src/api/base.ts`, `common.ts`, `configuration.ts`) - `BaseAPI`, `Configuration`, the
   request builder, and `RequiredError`. The barrel (`src/api/index.ts`) re-exports `./api` + `./configuration`
   (the low-level `base.ts` internals are intentionally not re-exported).
+- **Custom Templates** (`custom-templates/`) - A single `common.mustache` override; see the pipeline note
+  above before touching or removing it.
 - **Test Suites** (`tests/`) - Separate npm projects for Node.js JavaScript, TypeScript, and browser CDN.
 
 ## Development Commands
@@ -137,11 +145,20 @@ Both workflows:
 
 ## Security: axios floor & monitoring
 
-- **Single source of truth**: the `axios` range and `overrides` (`form-data >= 4.0.6`,
-  `follow-redirects >= 1.15.6`) in the root `package.json`. The published `package.json` is the hand-managed
-  root one (`bundle.js` copies it into `dist/`), so the axios pin lives there — not in generator output.
-- **Floor**: `axios ^1.17.0` (≥ the known-CVE-free `1.15.1`). The `test-unit` CI job fails if the resolved
-  axios drops below `1.15.1`, proving the `overrides` took effect.
+- **Single source of truth**: the `axios` range and the `overrides` block in the root `package.json`. The
+  published `package.json` is the hand-managed root one (`bundle.js` copies it into `dist/`), so the axios
+  pin lives there — not in generator output. The two `tests/nodejs-*` consumer projects declare `axios`
+  with **the same range**, because they consume a symlinked `dist` that cannot resolve its own runtime
+  dependency; keep them in sync.
+- **Floor**: `axios ^1.20.0`. 1.20.0 is the first release patching twelve advisories (seven high) covering
+  prototype-pollution gadgets, HTTP/2 DNS/proxy bypass, ReDoS, header injection, and `maxRedirects: 0` not
+  being enforced by the fetch adapter. The floor is enforced by `npm audit --package-lock-only`, which gates
+  every build/lint/test job. (Earlier revisions of this file claimed the `test-unit` job additionally asserts
+  the resolved axios version; no such assertion exists in `src/**.spec.ts` — do not rely on it.)
+- **Never cap axios to dodge a type error.** `>=1.17.0 <1.19.0` was added in 2026-08 to work around TS2527
+  from axios 1.19.0's non-exported `unique symbol`; by 2026-10 that cap was the only thing blocking all
+  twelve advisories above. The fix belongs in `custom-templates/common.mustache` (see below), not in the
+  dependency range.
 - **On every spec/dependency change, re-verify**: `npm audit` (optionally `--omit=dev` just to read the
   prod-only subset locally), the GitHub Advisory Database for `axios` / `form-data` / `follow-redirects`, and
   `npm view axios version`. Update the floor to the latest
