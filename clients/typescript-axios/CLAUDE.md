@@ -120,10 +120,10 @@ single runtime: **Java 21** and **Node.js 26.x** (Active LTS since 2026-10-28). 
 **`test-unit`**, which runs the deterministic suite on **22.x / 24.x / 26.x** to actually exercise the
 `engines.node: ">=22"` floor this package publishes. `.nvmrc` pins local development to 26.
 
-- **CI** (`ci-nodejs.yml`) - On pull requests and pushes to `main`: builds the client, runs all test suites in
+- **CI** (`ci-typescript-axios.yml`) - On pull requests and pushes to `main`: builds the client, runs all test suites in
   parallel (unit, nodejs-javascript, nodejs-typescript, browser-cdn), plus a `dry-run-publish` and a `pinact`
   job that verifies every action is SHA-pinned.
-- **CD** (`cd-publish-to-npm.yml`) - Tag-triggered (`push` of a `v*` tag, created by `npm run release:*`)
+- **CD** (`cd-typescript-axios.yml`) - Tag-triggered (`push` of a `v*` tag, created by `npm run release:*`)
   with a `workflow_dispatch` fallback: builds, tests, then publishes to npm via **OIDC Trusted Publishing**
   (no `NPM_TOKEN`; provenance attached). The whole pipeline is serialized via a `concurrency` group, and the
   `publish` job is gated by the `npm-production` GitHub Environment (manual approval).

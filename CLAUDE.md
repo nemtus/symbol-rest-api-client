@@ -35,7 +35,7 @@ See `docs/ADDING_A_NEW_CLIENT.md`.
   `socket.yml`, `.gitignore`, `.claude/` (settings + hooks), `.gemini/`, `.vscode/`,
   and this `CLAUDE.md`.
 - **Per-client (`clients/<generator>/`):** everything tied to that package's build/lint —
-  `package.json` / lockfile, `.npmrc`, `tsconfig.json`, `vitest.config.ts`,
+  `package.json` / lockfile, `.npmrc`, `tsconfig.json`, `vitest.config.mts`,
   `webpack.config.js`, `eslint.config.js`, `.prettierignore`, build scripts, `src/`,
   `tests/`, and a client-specific `CLAUDE.md`. **Read the per-client `CLAUDE.md` for the
   details of the client you are working on.**

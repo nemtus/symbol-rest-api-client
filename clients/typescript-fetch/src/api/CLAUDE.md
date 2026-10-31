@@ -12,6 +12,6 @@ templates — this client no longer carries a `custom-templates/` override.
   - the generator version: the `openapi:set:version` script in `package.json`
 - Regenerate with: `npm ci && npm run openapi:set:version && npm run openapi:generate`
 - This directory is intentionally excluded from ESLint, Prettier and test coverage
-  (see `.eslintignore`, `.prettierignore`, `vitest.config.ts`). `type:check` still
+  (see `.eslintignore`, `.prettierignore`, `vitest.config.mts`). `type:check` still
   compiles it via `tsconfig.json`.
 - `.openapi-generator-ignore` keeps this `CLAUDE.md` from being removed on regeneration.
