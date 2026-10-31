@@ -36,6 +36,9 @@
   ],
   "author": "nemtus",
   "license": "MIT",
+  "engines": {
+    "node": ">=22"
+  },
   "bugs": {
     "url": "https://github.com/nemtus/symbol-rest-api-client/issues"
   },

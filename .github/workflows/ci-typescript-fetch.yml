@@ -39,7 +39,7 @@ jobs:
       fail-fast: false
       matrix:
         java-version: [21]
-        node-version: [24.x]
+        node-version: [26.x]
 
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
@@ -84,19 +84,27 @@ jobs:
       - run: npm run build
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: dist-fetch-${{ github.run_id }}-${{ github.run_attempt }}-${{ matrix.java-version }}-${{ matrix.node-version }}
+          name: dist-fetch-${{ github.run_id }}-${{ github.run_attempt }}
           path: clients/typescript-fetch/dist/
           retention-days: 1
 
   test-unit:
     needs: build
     runs-on: ubuntu-latest
+    # The ONLY multi-Node job. `engines.node` in this client's package.json declares
+    # `>=22`, so this runs the deterministic unit suite on every Node line that claim
+    # covers: 22.x and 24.x (Maintenance LTS) and 26.x (Active LTS). Without it the floor
+    # would be asserted but never exercised. Everything else — build, lint, the live-node
+    # suites, publish — runs on 26.x alone, since one runtime is enough to produce and
+    # validate the artifact. This is also why the `dist-*` artifact name does NOT include
+    # the node version: `build` publishes one artifact on 26.x that all three lanes here
+    # download.
 
     strategy:
       fail-fast: false
       matrix:
         java-version: [21]
-        node-version: [24.x]
+        node-version: [22.x, 24.x, 26.x]
 
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
@@ -107,7 +115,7 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
-          name: dist-fetch-${{ github.run_id }}-${{ github.run_attempt }}-${{ matrix.java-version }}-${{ matrix.node-version }}
+          name: dist-fetch-${{ github.run_id }}-${{ github.run_attempt }}
           path: clients/typescript-fetch/dist/
       - uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
         id: cache-root-test
@@ -135,7 +143,7 @@ jobs:
       fail-fast: false
       matrix:
         java-version: [21]
-        node-version: [24.x]
+        node-version: [26.x]
 
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
@@ -146,7 +154,7 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
-          name: dist-fetch-${{ github.run_id }}-${{ github.run_attempt }}-${{ matrix.java-version }}-${{ matrix.node-version }}
+          name: dist-fetch-${{ github.run_id }}-${{ github.run_attempt }}
           path: clients/typescript-fetch/dist/
       - uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
         id: cache-nodejs-javascript
@@ -177,7 +185,7 @@ jobs:
       fail-fast: false
       matrix:
         java-version: [21]
-        node-version: [24.x]
+        node-version: [26.x]
 
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
@@ -188,7 +196,7 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
-          name: dist-fetch-${{ github.run_id }}-${{ github.run_attempt }}-${{ matrix.java-version }}-${{ matrix.node-version }}
+          name: dist-fetch-${{ github.run_id }}-${{ github.run_attempt }}
           path: clients/typescript-fetch/dist/
       - uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
         id: cache-nodejs-typescript
@@ -243,7 +251,7 @@ jobs:
       fail-fast: false
       matrix:
         java-version: [21]
-        node-version: [24.x]
+        node-version: [26.x]
 
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
@@ -254,7 +262,7 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
-          name: dist-fetch-${{ github.run_id }}-${{ github.run_attempt }}-${{ matrix.java-version }}-${{ matrix.node-version }}
+          name: dist-fetch-${{ github.run_id }}-${{ github.run_attempt }}
           path: clients/typescript-fetch/dist/
       - uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
         id: cache-browser-cdn
@@ -288,7 +296,7 @@ jobs:
     strategy:
       matrix:
         java-version: [21]
-        node-version: [24.x]
+        node-version: [26.x]
 
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
@@ -299,7 +307,7 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
-          name: dist-fetch-${{ github.run_id }}-${{ github.run_attempt }}-${{ matrix.java-version }}-${{ matrix.node-version }}
+          name: dist-fetch-${{ github.run_id }}-${{ github.run_attempt }}
           path: clients/typescript-fetch/dist/
       # Validate the SAME tree CD publishes (./dist) by packing it. We use `npm pack`,
       # not `npm publish --dry-run`: the latter contacts the registry and fails with
@@ -317,14 +325,14 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
         with:
-          node-version: 24.x
+          node-version: 26.x
       - uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
         id: cache-lint
         with:
           path: ${{ github.workspace }}/.npm
-          key: ${{ runner.os }}-node-24.x-fetch-root-${{ hashFiles('clients/typescript-fetch/package-lock.json') }}
+          key: ${{ runner.os }}-node-26.x-fetch-root-${{ hashFiles('clients/typescript-fetch/package-lock.json') }}
           restore-keys: |
-            ${{ runner.os }}-node-24.x-fetch-root-
+            ${{ runner.os }}-node-26.x-fetch-root-
       - run: npm audit --package-lock-only
       # Block malicious installs (Socket Firewall Free) — see the build job for rationale.
       - uses: SocketDev/action@ba6de6cc0565af1f42295590380973573297e31f # v1.3.2

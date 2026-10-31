@@ -112,13 +112,16 @@ checks run on Stop.
 
 ### CI/CD Workflows
 
-The project uses GitHub Actions. Both workflows run on a single unified runtime: **Java 21** and **Node.js 24.x**.
+The project uses GitHub Actions. Both workflows build, lint, publish and run the live-node suites on a
+single runtime: **Java 21** and **Node.js 26.x** (Active LTS since 2026-10-28). The one exception is
+**`test-unit`**, which runs the deterministic suite on **22.x / 24.x / 26.x** to actually exercise the
+`engines.node: ">=22"` floor this package publishes. `.nvmrc` pins local development to 26.
 
 - **CI** (`ci-nodejs.yml`) - On pull requests and pushes to `main`: builds the client, runs all test suites in parallel (unit, nodejs-javascript, nodejs-typescript, browser-cdn), plus a `dry-run-publish` and a `pinact` job that verifies every action is SHA-pinned. **Every** `npm ci` (in both CI and CD, all jobs including the privileged `publish` job) is wrapped with **Socket Firewall Free** (`sfw`, `SocketDev/action` in `firewall-free` mode — no account/token, SHA-pinned) to block confirmed-malicious packages, including transitive deps, at install time — coverage `npm audit` (known CVEs only) does not provide. Each install is a code-execution surface, so all are firewalled, not just the build gate.
 - **CD** (`cd-publish-to-npm.yml`) - Triggered by pushing a `vX.Y.Z` tag (use `npm run release:patch|minor|major`, which runs `npm version` + `git push --follow-tags`); also runnable manually via `workflow_dispatch`. Builds, tests, then publishes to npm via **OIDC Trusted Publishing** (no `NPM_TOKEN`; provenance attached). The `publish` job is gated by the `npm-production` GitHub Environment (manual approval), so a tag push starts the pipeline but still waits for approval before publishing.
 
 Both workflows:
-1. Build once and share `dist/` via a uniquely-named artifact (`dist-{run_id}-{run_attempt}-{java_version}-{node_version}`); test jobs download it instead of rebuilding.
+1. Build once and share `dist/` via a uniquely-named artifact (`dist-fetch-{run_id}-{run_attempt}`); test jobs download it instead of rebuilding. The name deliberately omits the Java/Node versions: `build` runs on 26.x only, while `test-unit` fans out over 22.x/24.x/26.x, so a version-qualified name could not be matched by every downloading job.
 2. Run tests in parallel (unit, nodejs-javascript, nodejs-typescript, browser-cdn).
 3. Use `npm ci` for reproducible installs, gated by `npm audit` (fails on any vulnerability). `npm ci` installs lockfile-pinned versions regardless of age, so the `.npmrc` cooldown (`min-release-age`) does not gate it; npm's download cache (`~/.npm`) is cached instead of `node_modules`.
 4. Pin all third-party actions to full commit SHAs (managed by `pinact` / `.pinact.yaml`); Dependabot updates npm + actions daily with a 7-day cooldown.

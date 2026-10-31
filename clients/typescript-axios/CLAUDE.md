@@ -119,7 +119,10 @@ for Prettier).
 
 ### CI/CD Workflows
 
-The project uses GitHub Actions. Both workflows run on a single unified runtime: **Java 21** and **Node.js 24.x**.
+The project uses GitHub Actions. Both workflows build, lint, publish and run the live-node suites on a
+single runtime: **Java 21** and **Node.js 26.x** (Active LTS since 2026-10-28). The one exception is
+**`test-unit`**, which runs the deterministic suite on **22.x / 24.x / 26.x** to actually exercise the
+`engines.node: ">=22"` floor this package publishes. `.nvmrc` pins local development to 26.
 
 - **CI** (`ci-nodejs.yml`) - On pull requests and pushes to `main`: builds the client, runs all test suites in
   parallel (unit, nodejs-javascript, nodejs-typescript, browser-cdn), plus a `dry-run-publish` and a `pinact`
