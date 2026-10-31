@@ -58,6 +58,15 @@ does not create the commit/tag from a monorepo subdirectory). Each client has it
 `ci-<generator>.yml` / `cd-<generator>.yml` workflow; publishing uses npm OIDC Trusted
 Publishing (no token), gated by the `npm-production` environment.
 
+## Repo-wide workflows
+
+Besides the per-client `ci-`/`cd-` pairs, two workflows cover the whole monorepo:
+`codeql-analysis.yml` (JS/TS analysis over the entire checkout) and
+`maintenance-watchdog.yml` — a daily scheduled job that runs `npm audit` across every
+`clients/**/package-lock.json` and checks that Dependabot's updater is still succeeding.
+It is the only scheduled signal for rot that no push would reveal; see either client's
+`CLAUDE.md` for what it watches and why.
+
 ## AI assistant configuration
 
 Coding agents share one set of project instructions, single-sourced in `CLAUDE.md` files;

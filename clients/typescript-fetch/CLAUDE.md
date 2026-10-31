@@ -130,6 +130,41 @@ Both workflows:
 3. Use `npm ci` for reproducible installs, gated by `npm audit` (fails on any vulnerability). `npm ci` installs lockfile-pinned versions regardless of age, so the `.npmrc` cooldown (`min-release-age`) does not gate it; npm's download cache (`~/.npm`) is cached instead of `node_modules`.
 4. Pin all third-party actions to full commit SHAs (managed by `pinact` / `.pinact.yaml`); Dependabot updates npm + actions daily with a 7-day cooldown.
 
+### Maintenance watchdog (`maintenance-watchdog.yml`)
+
+A repo-root, daily (03:17 UTC) scheduled workflow — the only thing in this repo that runs
+without a push. It exists because `main` has twice sat red for weeks unnoticed
+(2026-06-30 -> 2026-08-13, 2026-08-13 -> 2026-10-31):
+
+1. **`npm audit` on every manifest** (globbed from `clients/**/package-lock.json`, so new
+   clients and new test suites are covered the day they land). CI/CD only run on
+   `pull_request` / `push: main`, but a newly **published** advisory reds `main` with no
+   commit — so without a schedule the breakage is first discovered by whoever opens the
+   next PR and inherits a failure they did not cause.
+2. **Dependabot updater health.** Updater failures gate no status check and appear only
+   under Insights -> Dependency graph -> Dependabot. In 2026-08 they failed on 40+
+   consecutive runs and no npm update of any kind landed for 2.5 months. The job flags only
+   "every one of the last 10 runs failed" — a repo-level misconfiguration — so single
+   transient failures stay quiet. Note that finer-grained `dependabot.yml` entries would NOT
+   prevent this: Dependabot batches security updates across directories regardless.
+
+Either failure files (or refreshes) one tracking issue rather than opening a new one daily.
+
+**When `npm audit` and the cooldown conflict.** The gate fails on *any* severity, including
+dev-only findings, while `.npmrc` `min-release-age=7` refuses versions published in the last
+7 days. These can deadlock — widening an `overrides` entry to the only patched release then
+fails with
+
+```text
+npm error code ETARGET
+npm error notarget No matching version found for minimatch@>=11.0.1 with a date before <date>
+```
+
+Re-run that one command with `NPM_CONFIG_MIN_RELEASE_AGE=0`, and prefer the OLDEST patched
+version that clears the advisory so the bypass stays as narrow as possible. Exempting a
+known CVE — but not a routine bump — from the cooldown is the policy
+`.github/dependabot.yml` already applies to Dependabot itself.
+
 ### Releasing
 
 One action publishes a new version. From a clean tree on the release branch (usually `main`):

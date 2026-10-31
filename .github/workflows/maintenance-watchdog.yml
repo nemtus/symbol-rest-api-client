@@ -1,0 +1,214 @@
+# Daily watchdog for the two ways this repo has silently rotted before.
+#
+# Why this exists. Twice in four months (2026-06-30 -> 2026-08-13, 2026-08-13 -> 2026-10-31)
+# `main` sat red for weeks without anyone noticing, because neither failure mode produces a
+# signal anybody sees:
+#
+#   1. `npm audit --package-lock-only` gates every build/lint/test job in ci-/cd-*.yml, but
+#      those workflows only run on `pull_request` / `push: main` / `workflow_dispatch`. A
+#      newly PUBLISHED advisory turns `main` red without any commit, so with no pushes there
+#      is no run, no failure, and no notification — the breakage is only discovered the next
+#      time someone opens a PR, which then inherits a failure it did not cause.
+#   2. Dependabot's own updater job failed on EVERY run from 2026-08-13 to 2026-10-31 — 40+
+#      consecutive jobs — with `path_dependencies_not_reachable`. Updater failures are not
+#      part of CI, do not touch any required status check, and are only visible on the
+#      repo's Insights -> Dependency graph -> Dependabot tab. Nobody looked, so no npm
+#      update of any kind (security updates included) landed for 2.5 months.
+#
+# Both jobs below are deliberately cheap: no `npm ci`, no Java, no build. Job 1 is lockfile
+# arithmetic; job 2 is one API query.
+#
+# NOTE on job 2 and dependabot.yml: splitting the `updates:` entries more finely would NOT
+# have prevented (2). Dependabot batches SECURITY updates across directories regardless of
+# how the version-update entries are grouped — the failing job spanned all six npm manifests
+# in one run. There is no config-level isolation to buy here, which is exactly why detection
+# is the mitigation.
+name: Maintenance watchdog
+
+on:
+  schedule:
+    # 03:17 UTC daily. Offset from the hour: GitHub delays cron runs that land on
+    # high-load boundaries, and scheduled runs can be dropped entirely at :00.
+    - cron: '17 3 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: maintenance-watchdog
+  cancel-in-progress: false
+
+jobs:
+  audit:
+    name: npm audit (every manifest)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write # files/updates the single tracking issue on failure
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version: 26.x
+      # Discover manifests by glob rather than listing them, so a new
+      # clients/<generator>/ (or a new test suite inside one) is covered the day it lands —
+      # the same reason .github/dependabot.yml uses `directories:` globs.
+      - id: audit
+        run: |
+          set -uo pipefail
+          status=0
+          : > /tmp/audit-report.md
+          # Exclude node_modules and dist: `bundle.js` copies package-lock.json into each
+          # client's dist/ as part of the published tarball, so a built tree would otherwise
+          # be audited twice (and reported under a path nobody can fix).
+          find clients -name package-lock.json \
+            -not -path '*/node_modules/*' -not -path '*/dist/*' | sort > /tmp/locks.txt
+          count="$(wc -l < /tmp/locks.txt | tr -d ' ')"
+          if [ "${count}" -eq 0 ]; then
+            echo "::error::No package-lock.json found under clients/ — the repo layout changed and this watchdog is now blind." >&2
+            exit 1
+          fi
+          echo "checking ${count} manifests"
+          # Redirected `while`, not a pipe: a piped loop runs in a subshell and `status`
+          # would never escape it. No `mapfile` either — keeps this runnable on bash 3.2.
+          while IFS= read -r lock; do
+            dir="$(dirname "${lock}")"
+            if out="$(cd "${dir}" && npm audit --package-lock-only 2>&1)"; then
+              echo "OK    ${dir}"
+            else
+              status=1
+              echo "FAIL  ${dir}"
+              { echo; echo "### \`${dir}\`"; echo; echo '```'; echo "${out}"; echo '```'; } >> /tmp/audit-report.md
+            fi
+          done < /tmp/locks.txt
+          exit "${status}"
+      # Only runs when the audit step failed. A single, reused issue (found by title) keeps
+      # a long-lived advisory from opening a new issue every morning; the body is refreshed
+      # so it always shows the current findings.
+      - if: failure() && steps.audit.outcome == 'failure'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TITLE: 'npm audit is failing on main'
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          set -euo pipefail
+          {
+            echo "\`npm audit --package-lock-only\` — the gate on every CI/CD job — is failing on \`main\`."
+            echo "Every pull request will inherit this failure until it is fixed."
+            echo
+            echo "Watchdog run: ${RUN_URL}"
+            echo
+            echo "<!-- Refreshed by .github/workflows/maintenance-watchdog.yml on each failing run. -->"
+            cat /tmp/audit-report.md
+            echo
+            echo '---'
+            echo
+            echo 'Fixing: widen `overrides` in the affected `package.json` to the minimum patched version, then'
+            echo '`npm install --package-lock-only`. If the only patched release is newer than the 7-day'
+            echo '`min-release-age` cooldown in `.npmrc`, npm fails with `ETARGET ... with a date before <date>`;'
+            echo 're-run that one command with `NPM_CONFIG_MIN_RELEASE_AGE=0`. Bypassing the cooldown for a known'
+            echo 'CVE — but not for routine bumps — is the same policy `.github/dependabot.yml` already applies.'
+          } > /tmp/issue-body.md
+          existing="$(gh issue list --state open --search "\"${TITLE}\" in:title" --json number,title \
+            --jq "[.[] | select(.title == \"${TITLE}\")] | first | .number // empty")"
+          if [ -n "${existing}" ]; then
+            gh issue edit "${existing}" --body-file /tmp/issue-body.md
+            gh issue comment "${existing}" --body "Still failing as of ${RUN_URL}"
+            echo "updated issue #${existing}"
+          else
+            gh issue create --title "${TITLE}" --body-file /tmp/issue-body.md
+          fi
+
+  dependabot-updater:
+    name: Dependabot updater health
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read # list the GitHub-managed "Dependabot Updates" workflow runs
+      issues: write
+    steps:
+      - env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          TITLE: 'Dependabot updater jobs are failing'
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          set -euo pipefail
+          # "Dependabot Updates" is GitHub-managed — there is no workflow file for it and no
+          # public REST endpoint for updater job status, but its runs do appear in the Actions
+          # run list. Match on `path`, NOT on `name`: for these runs `name` is the per-run
+          # display title ("npm_and_yarn in /clients/... for axios, axios, ..."), so the
+          # workflow name "Dependabot Updates" that `gh run list` shows never appears there.
+          # `path` is the stable identifier.
+          #
+          # Treat "no runs at all" as inconclusive rather than broken, so a quiet period or an
+          # upstream rename cannot raise a false alarm.
+          #
+          # One jq pass over a file straight to TSV, deliberately. Piping the filtered JSON out
+          # of `gh --jq` and re-reading it with a second `jq` fails on these runs:
+          #   jq: parse error: Invalid string: control characters ... must be escaped
+          # `@tsv` already escapes tab/newline/CR itself, so flattening in the single pass is
+          # both safe and avoids the re-parse. (Do not "sanitise" with a `\uXXXX` character
+          # class — Oniguruma, jq's regex engine, does not understand `\u`, so
+          # `gsub("[\\u0000-\\u001f]"; " ")` silently shreds ordinary ASCII instead.)
+          gh api "repos/${REPO}/actions/runs?per_page=100" > /tmp/runs.json
+          jq -r '
+            [.workflow_runs[] | select(.path == "dynamic/dependabot/dependabot-updates")]
+            | .[0:10] | .[]
+            | [ .created_at,
+                (.conclusion // "in_progress"),
+                (.display_title | .[0:100]) ]
+            | @tsv' /tmp/runs.json > /tmp/dependabot-runs.tsv
+          total="$(wc -l < /tmp/dependabot-runs.tsv | tr -d ' ')"
+          if [ "${total}" -eq 0 ]; then
+            echo "No Dependabot updater runs in the last 100 Actions runs — nothing to judge."
+            exit 0
+          fi
+          failed="$(awk -F'\t' '$2 == "failure"' /tmp/dependabot-runs.tsv | wc -l | tr -d ' ')"
+          echo "last ${total} Dependabot updater runs: ${failed} failed"
+          sed 's/^/  /' /tmp/dependabot-runs.tsv
+          # One failure is normal noise (a transient registry blip, a conflicting branch).
+          # Every single recent run failing is the 2026-08 signature: a repo-level
+          # misconfiguration that silently stops ALL updates.
+          if [ "${failed}" -lt "${total}" ]; then
+            echo "At least one recent updater run succeeded — healthy."
+            exit 0
+          fi
+          {
+            echo "All of the last ${total} \`Dependabot Updates\` runs failed."
+            echo
+            echo "Dependabot updater failures are invisible to CI: they gate no status check and"
+            echo "appear only under Insights -> Dependency graph -> Dependabot. When they fail"
+            echo "repo-wide, **no npm update lands at all — security updates included**."
+            echo
+            echo "Watchdog run: ${RUN_URL}"
+            echo
+            echo "<!-- Refreshed by .github/workflows/maintenance-watchdog.yml on each failing run. -->"
+            echo
+            echo "Recent runs:"
+            echo
+            echo '```'
+            cat /tmp/dependabot-runs.tsv
+            echo '```'
+            echo
+            echo "Read the real error with:"
+            echo
+            echo '```'
+            echo "gh run view \$(gh run list --workflow 'Dependabot Updates' --limit 1 --json databaseId --jq '.[0].databaseId') --log-failed | tail -40"
+            echo '```'
+            echo
+            echo "The 2026-08 occurrence was \`path_dependencies_not_reachable\`: a test suite declared"
+            echo "the uncommitted \`../../dist\` build output as a dependency, which Dependabot's file"
+            echo "fetcher cannot resolve, aborting the whole job. See \`scripts/link-dist.mjs\`."
+          } > /tmp/issue-body.md
+          existing="$(gh issue list --state open --search "\"${TITLE}\" in:title" --json number,title \
+            --jq "[.[] | select(.title == \"${TITLE}\")] | first | .number // empty")"
+          if [ -n "${existing}" ]; then
+            gh issue edit "${existing}" --body-file /tmp/issue-body.md
+            echo "updated issue #${existing}"
+          else
+            gh issue create --title "${TITLE}" --body-file /tmp/issue-body.md
+          fi
+          exit 1
