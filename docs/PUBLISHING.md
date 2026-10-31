@@ -140,6 +140,39 @@ approval** in the `npm-production` environment:
 On approval, npm exchanges the GitHub OIDC token for a short-lived credential and publishes
 with `--provenance` (no `NPM_TOKEN`).
 
+### The GitHub Release
+
+A `release` job then opens a **GitHub Release** on the tag that triggered the run — no
+manual step, and nothing to do differently when releasing. It mirrors the `release` job in
+[`nemtus/symbol-product`](https://github.com/nemtus/symbol-product)'s
+`publish-shoestring.yaml` and the `tag` job in
+[`nemtus/symbol`](https://github.com/nemtus/symbol)'s publish workflows:
+
+- **Only after a successful publish** (`needs: publish`), so an approval that fails to
+  publish leaves no Release behind. Skipped entirely for a `workflow_dispatch` from a
+  branch, which has no version tag (`if: github.ref_type == 'tag'`).
+- **Notes** are GitHub's own auto-generated notes — the same content as the web
+  "Generate release notes" button — prefixed with a provenance line linking the published
+  npm version and naming the `@nemtus/symbol-openapi` spec version the client was
+  generated from (read from `package.json` at the released tag).
+- **Scoped to this client.** `previous_tag_name` is the previous Release whose tag starts
+  with `<generator>-v`, so the changelog never spans the sibling package (the two release
+  on independent PATCH lanes, so the newest Release overall is often the other one) and
+  never reaches back into the pre-monorepo `*-legacy-v*` tags.
+- **Idempotent.** Re-running a CD run whose Release already exists is a no-op, so a
+  re-approval or a dispatch on an already-released tag will not fail.
+- It **never creates or moves a tag** — `scripts/release.mjs` already pushed it. The
+  Release is attached to that existing tag.
+
+Security note: `contents: write` is granted to this one job only. It runs no build and no
+third-party code — just the `gh` CLI against the GitHub API, with deliberately **no
+checkout step**, so nothing from the repo tree executes there. `build` and the test jobs
+stay at `contents: read`, and `publish` adds only `id-token: write`. A supply-chain
+compromise in the npm build therefore cannot reach the write token.
+
+Releases before this was wired up (`typescript-fetch-v1.0.1`, `typescript-axios-v1.0.1`)
+exist as git tags only; they were not backfilled.
+
 Spec-version bumps: when `@nemtus/symbol-openapi` moves to a new MAJOR.MINOR, bump the
 devDependency, regenerate, and use `release:minor` / `release:major` so the client version
 resets its PATCH at the new MAJOR.MINOR.
@@ -173,5 +206,5 @@ first):
 2. ☐ Configure the npm Trusted Publisher for both packages (workflow filename differs; Environment = `npm-production`)
 3. ☐ Create the `npm-production` GitHub Environment with required reviewers
 4. ☐ Rulesets: `main protection` (require `ci-fetch-gate` / `ci-axios-gate`), `release tags`, `legacy tags (frozen)`
-5. ☐ `npm run release:patch` → approve the CD run → confirm `1.0.1` published with provenance
+5. ☐ `npm run release:patch` → approve the CD run → confirm the version published with provenance **and** that a GitHub Release was created for the tag
 6. ☐ `npm deprecate` both old packages → archive both old repos
