@@ -19,9 +19,9 @@
     "format": "prettier --write \"**/*.{ts,mts,cts,js,cjs,mjs}\"",
     "format:check": "prettier --check \"**/*.{ts,mts,cts,js,cjs,mjs}\"",
     "type:check": "tsc --noEmit",
-    "release:patch": "npm version patch --no-git-tag-version && node ../../scripts/release.mjs",
-    "release:minor": "npm version minor --no-git-tag-version && node ../../scripts/release.mjs",
-    "release:major": "npm version major --no-git-tag-version && node ../../scripts/release.mjs"
+    "release:patch": "node ../../scripts/release.mjs patch",
+    "release:minor": "node ../../scripts/release.mjs minor",
+    "release:major": "node ../../scripts/release.mjs major"
   },
   "repository": {
     "type": "git",

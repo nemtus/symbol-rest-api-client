@@ -51,16 +51,19 @@ independently per language. The exact spec version a client targets is pinned vi
 
 ## Releasing
 
-Per-client, via tag prefixes: `typescript-fetch-v*` / `typescript-axios-v*`. Run
-`npm run release:*` inside a client: it bumps with `npm version --no-git-tag-version`, then
-`scripts/release.mjs` commits, tags `<generator>-vX.Y.Z`, and pushes (plain `npm version`
-does not create the commit/tag from a monorepo subdirectory). Each client has its own
-`ci-<generator>.yml` / `cd-<generator>.yml` workflow; publishing uses npm OIDC Trusted
-Publishing (no token), gated by the `npm-production` environment.
+Per-client, via tag prefixes: `typescript-fetch-v*` / `typescript-axios-v*`, and always
+through a PR — nothing is pushed to `main` directly and no one pushes tags by hand. Run
+`npm run release:*` on a clean, up-to-date `main` inside a client: `scripts/release.mjs`
+bumps with `npm version --no-git-tag-version`, commits on a `release/<generator>-vX.Y.Z`
+branch, pushes it, and opens a PR. Merging the PR releases: once CI passes on the merge
+commit, `release-tag.yml` creates the `<generator>-vX.Y.Z` tag on it and dispatches that
+client's `cd-<generator>.yml`. Publishing uses npm OIDC Trusted Publishing (no token),
+gated by the `npm-production` environment approval.
 
 ## Repo-wide workflows
 
-Besides the per-client `ci-`/`cd-` pairs, two workflows cover the whole monorepo:
+Besides the per-client `ci-`/`cd-` pairs, three workflows cover the whole monorepo:
+`release-tag.yml` (turns a merged release PR into a tag plus a CD dispatch; see Releasing),
 `codeql-analysis.yml` (JS/TS analysis over the entire checkout) and
 `maintenance-watchdog.yml` — a daily scheduled job that runs `npm audit` across every
 `clients/**/package-lock.json` and checks that Dependabot's updater is still succeeding.

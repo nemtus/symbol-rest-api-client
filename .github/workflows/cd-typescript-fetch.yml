@@ -2,16 +2,17 @@ name: CD typescript-fetch
 
 # Monorepo client: clients/typescript-fetch (@nemtus/symbol-rest-api-client-fetch).
 on:
-  # Automated release: pushing a `typescript-fetch-vX.Y.Z` tag triggers the pipeline. The tag is
-  # created by `npm run release:*` in clients/typescript-fetch -> scripts/release.mjs,
-  # which owns the tag name (`npm version` cannot tag from a monorepo subdirectory,
-  # so no `tag-version-prefix` is set in that client's .npmrc). The `publish` job
+  # Automated release: a `typescript-fetch-vX.Y.Z` tag starts the pipeline. The tag is created by
+  # .github/workflows/release-tag.yml once a release PR (opened by `npm run release:*` ->
+  # scripts/release.mjs) is merged and CI passes. A tag created with GITHUB_TOKEN does not
+  # fire `push: tags`, so release-tag.yml dispatches this workflow on the tag ref instead
+  # (workflow_dispatch below); a tag pushed by hand still triggers it here. The `publish` job
   # still waits on the `npm-production` Environment approval gate before anything is
   # published, and the `release` job then opens a GitHub Release for the same tag.
   push:
     tags:
       - 'typescript-fetch-v*'
-  # Manual fallback.
+  # Dispatched on the tag ref by release-tag.yml; also the manual fallback.
   workflow_dispatch:
 
 permissions:
@@ -369,7 +370,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAG: ${{ github.ref_name }}
-          # Tag shape is `<generator>-vX.Y.Z` (owned by scripts/release.mjs). Grouping on
+          # Tag shape is `<generator>-vX.Y.Z` (owned by release-tag.yml). Grouping on
           # this exact prefix is also what keeps `typescript-fetch-legacy-v*` — the
           # pre-monorepo v0.x history — out of the "previous release" lookup.
           TAG_PREFIX: typescript-fetch-v
@@ -393,7 +394,7 @@ jobs:
           # Both clients live in one repo and advance on independent PATCH lanes, so the
           # newest release overall is often the OTHER one; scoping per client is the whole
           # point of this block. Tags are the authoritative coordinate for that:
-          # scripts/release.mjs pushes them, and Releases only started existing at 1.0.2.
+          # release-tag.yml creates them, and Releases only started existing at 1.0.2.
           # Scoping on Releases therefore came up EMPTY on its first ever run, which
           # silently handed the choice back to GitHub — and GitHub defaults to the
           # chronologically previous tag. That is exactly how typescript-axios-v1.0.2's

@@ -235,8 +235,9 @@ Do not edit `src/api` manually.
 
 ### 3. Release
 
-Releasing is a single action — bump the version, create the `vX.Y.Z` tag, and push it, which triggers the
-tag-driven CD workflow (npm publish via OIDC Trusted Publishing, gated by the `npm-production` Environment):
+Releasing goes through a PR. On a clean, up-to-date `main`, the script below bumps the version on a
+`release/typescript-axios-vX.Y.Z` branch and opens a PR. Merging it creates the `typescript-axios-vX.Y.Z` tag
+and starts the CD workflow (npm publish via OIDC Trusted Publishing, gated by the `npm-production` Environment):
 
 ```bash
 npm run release:minor   # or release:patch / release:major

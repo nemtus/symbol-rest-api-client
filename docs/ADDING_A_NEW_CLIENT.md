@@ -38,7 +38,9 @@ Track the `@nemtus/symbol-openapi` spec at **MAJOR.MINOR**; use **PATCH** as thi
 
 ## 3. Release tagging
 
-Wire the client's `release:*` scripts to `npm version <type> --no-git-tag-version && node ../../scripts/release.mjs`. The shared `scripts/release.mjs` commits the bump, creates the **prefixed tag** `<generator>-vX.Y.Z` (derived from the client directory name), and pushes — which is what the client's CD workflow triggers on, and keeps tags from colliding across clients. (Plain `npm version` does **not** create the git commit/tag when run from a monorepo subdirectory, so don't rely on `.npmrc` `tag-version-prefix`.)
+Wire the client's `release:*` scripts to `node ../../scripts/release.mjs <patch|minor|major>`. The shared `scripts/release.mjs` bumps the version and opens a release PR from a `release/<generator>-vX.Y.Z` branch. After the PR is merged and CI passes, `.github/workflows/release-tag.yml` creates the **prefixed tag** `<generator>-vX.Y.Z` (derived from the client directory name) and dispatches the client's CD workflow on it. The prefix keeps tags from colliding across clients. (Don't rely on `.npmrc` `tag-version-prefix`: plain `npm version` does **not** create the git commit/tag when run from a monorepo subdirectory.)
+
+For a new client, also update `release-tag.yml`: add the client's CI workflow `name:` to its `workflow_run.workflows` list, its directory name to `CLIENTS`, and its gate job to `GATES`. The CD workflow must accept `workflow_dispatch`, because a tag created with `GITHUB_TOKEN` does not trigger `push: tags`.
 
 ## 4. CI/CD workflows
 

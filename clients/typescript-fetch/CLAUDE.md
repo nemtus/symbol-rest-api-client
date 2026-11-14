@@ -122,7 +122,7 @@ single runtime: **Java 21** and **Node.js 26.x** (Active LTS since 2026-10-28). 
 `engines.node: ">=22"` floor this package publishes. `.nvmrc` pins local development to 26.
 
 - **CI** (`ci-typescript-fetch.yml`) - On pull requests and pushes to `main`: builds the client, runs all test suites in parallel (unit, nodejs-javascript, nodejs-typescript, browser-cdn), plus a `dry-run-publish` and a `pinact` job that verifies every action is SHA-pinned. **Every** `npm ci` (in both CI and CD, all jobs including the privileged `publish` job) is wrapped with **Socket Firewall Free** (`sfw`, `SocketDev/action` in `firewall-free` mode — no account/token, SHA-pinned) to block confirmed-malicious packages, including transitive deps, at install time — coverage `npm audit` (known CVEs only) does not provide. Each install is a code-execution surface, so all are firewalled, not just the build gate.
-- **CD** (`cd-typescript-fetch.yml`) - Triggered by pushing a `vX.Y.Z` tag (use `npm run release:patch|minor|major`, which runs `npm version` + `git push --follow-tags`); also runnable manually via `workflow_dispatch`. Builds, tests, then publishes to npm via **OIDC Trusted Publishing** (no `NPM_TOKEN`; provenance attached). The `publish` job is gated by the `npm-production` GitHub Environment (manual approval), so a tag push starts the pipeline but still waits for approval before publishing.
+- **CD** (`cd-typescript-fetch.yml`) - Runs on a `typescript-fetch-vX.Y.Z` tag: dispatched by the repo-wide `release-tag.yml` after a release PR (from `npm run release:patch|minor|major`) is merged; a tag pushed by hand also triggers it. Builds, tests, then publishes to npm via **OIDC Trusted Publishing** (no `NPM_TOKEN`; provenance attached). The `publish` job is gated by the `npm-production` GitHub Environment (manual approval), so a tag push starts the pipeline but still waits for approval before publishing.
 
 Both workflows:
 1. Build once and share `dist/` via a uniquely-named artifact (`dist-fetch-{run_id}-{run_attempt}`); test jobs download it instead of rebuilding. The name deliberately omits the Java/Node versions: `build` runs on 26.x only, while `test-unit` fans out over 22.x/24.x/26.x, so a version-qualified name could not be matched by every downloading job.
@@ -167,19 +167,21 @@ known CVE — but not a routine bump — from the cooldown is the policy
 
 ### Releasing
 
-One action publishes a new version. From a clean tree on the release branch (usually `main`):
+Releases go through a PR. From a clean, up-to-date `main`:
 
 ```bash
-npm run release:patch   # 0.2.1 -> 0.2.2   (bug fixes)
-npm run release:minor   # 0.2.1 -> 0.3.0   (backward-compatible features)
-npm run release:major   # 0.2.1 -> 1.0.0   (breaking changes)
+npm run release:patch   # 1.0.3 -> 1.0.4   (toolchain bumps, fixes)
+npm run release:minor   # 1.0.3 -> 1.1.0   (new spec MAJOR.MINOR)
+npm run release:major   # 1.0.3 -> 2.0.0   (breaking changes)
 ```
 
-Each script runs `npm version <type>` (bumps `package.json` + `package-lock.json`,
-commits, and creates a `vX.Y.Z` tag) then `git push --follow-tags`. The pushed tag
-triggers the CD workflow (`on: push: tags: ['v*']`), which builds, tests, and then
-waits on the `npm-production` Environment approval before publishing. `npm version`
-requires a clean working tree, so commit or stash first.
+Each script runs `../../scripts/release.mjs <type>`, which bumps `package.json` +
+`package-lock.json` with `npm version --no-git-tag-version`, commits on a
+`release/typescript-fetch-vX.Y.Z` branch, pushes it, and opens a PR (`gh` must be logged
+in). Merging the PR releases: once CI passes on the merge commit, the repo-wide
+`release-tag.yml` creates the `typescript-fetch-vX.Y.Z` tag on it and dispatches
+`cd-typescript-fetch.yml`, which builds, tests, and then waits on the `npm-production`
+Environment approval before publishing.
 
 ## Important Notes
 
