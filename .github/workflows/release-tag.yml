@@ -1,0 +1,136 @@
+name: Release tag
+
+# Turns a merged release PR into a release tag, then starts that client's CD.
+#
+# `npm run release:*` (scripts/release.mjs) opens a PR that bumps a client's
+# package.json version. Once that PR is merged and CI has passed on the resulting main
+# commit, this workflow sees a version with no `<generator>-vX.Y.Z` tag yet, creates the
+# tag on that exact commit, and dispatches `cd-<generator>.yml` on the tag. Publishing
+# still waits for the `npm-production` approval, so a tag created here can never
+# publish anything without a human approving it.
+#
+# Why `workflow_run` and not `push`: the `release tags` ruleset requires
+# `ci-fetch-gate` and `ci-axios-gate` to have passed on the tagged commit, so the tag
+# can only be created after both CI workflows finish. Each CI completion triggers one
+# run here. A run whose sibling gate is still pending exits quietly and the sibling's
+# completion re-evaluates the commit, so the tag is created exactly once, by the last
+# run to see both gates green.
+#
+# Why the explicit dispatch: a tag pushed with GITHUB_TOKEN does not trigger other
+# workflows (GitHub's anti-recursion rule), so the `push: tags` trigger in
+# cd-<generator>.yml will not fire. `workflow_dispatch` is the documented exception, and
+# the CD workflows already handle a dispatch on a tag ref (their `release` job runs when
+# `github.ref_type == 'tag'`, and `npm-production` only deploys from release-tag refs).
+#
+# SECURITY: this workflow runs no repository code. There is no checkout and no
+# third-party action; it only calls the GitHub API through the `gh` CLI. It acts only on
+# `push` runs of CI from this repository, so a pull request (including one from a fork)
+# can never reach the write token. The token can create tags and dispatch workflows, but
+# tags are immutable under the `release tags` ruleset, and CD publishes only after the
+# `npm-production` approval.
+#
+# Adding a client: add its CI workflow `name:` to `workflows:` below and its
+# `<generator>`/gate pair to CLIENTS.
+
+on:
+  workflow_run:
+    workflows: [CI typescript-fetch, CI typescript-axios]
+    types: [completed]
+    branches: [main]
+
+permissions: {}
+
+# Serialize the (at most two) runs for one commit, so the run that sees both gates
+# green is never racing its sibling. Keyed on the commit, so runs for a newer main
+# commit are never queued behind or dropped in favour of an older one.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.workflow_run.head_sha }}
+  cancel-in-progress: false
+
+jobs:
+  tag:
+    if: >-
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'push' &&
+      github.event.workflow_run.head_repository.full_name == github.repository
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # create the annotated tag object and its ref
+      actions: write # dispatch cd-<generator>.yml on the new tag
+      checks: read # read the ci-*-gate results for the commit
+    steps:
+      - name: Tag unreleased client versions and dispatch CD
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          SHA: ${{ github.event.workflow_run.head_sha }}
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+          # Every client's gate is required by the `release tags` ruleset, so a tag for ANY
+          # client needs ALL of these green on the commit.
+          GATES: ci-fetch-gate ci-axios-gate
+          CLIENTS: typescript-fetch typescript-axios
+          # GitHub Actions' app id: the integration the rulesets' required checks name.
+          # Only check runs from this app count, so another app cannot fake a gate.
+          ACTIONS_APP_ID: '15368'
+        run: |
+          set -euo pipefail
+          summary() { echo "$*" | tee -a "${GITHUB_STEP_SUMMARY}"; }
+
+          # The commit must still be on the default branch.
+          status="$(gh api "repos/${REPO}/compare/${SHA}...${DEFAULT_BRANCH}" --jq '.status')"
+          case "${status}" in
+            ahead | identical) ;;
+            *)
+              summary "${SHA} is not on ${DEFAULT_BRANCH} (compare status: ${status}); nothing to do."
+              exit 0
+              ;;
+          esac
+
+          for gate in ${GATES}; do
+            result="$(gh api "repos/${REPO}/commits/${SHA}/check-runs?check_name=${gate}&filter=latest" \
+              --jq "[.check_runs[] | select(.app.id == ${ACTIONS_APP_ID})] | sort_by(.started_at) | last | \"\(.status // \"missing\")/\(.conclusion // \"\")\"")"
+            if [ "${result}" != "completed/success" ]; then
+              summary "${gate} on ${SHA} is ${result}; the sibling CI run will re-check this commit when it finishes."
+              exit 0
+            fi
+          done
+
+          for client in ${CLIENTS}; do
+            version="$(gh api "repos/${REPO}/contents/clients/${client}/package.json?ref=${SHA}" --jq '.content' \
+              | base64 -d | jq -r '.version')"
+            if ! [[ "${version}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+              echo "::warning::${client}: version '${version}' is not X.Y.Z; not tagging."
+              continue
+            fi
+            tag="${client}-v${version}"
+
+            if gh api "repos/${REPO}/git/ref/tags/${tag}" >/dev/null 2>&1; then
+              echo "${client}: ${tag} already exists."
+              continue
+            fi
+
+            # Never tag a version lower than one already released (e.g. a revert of a bump).
+            # `^<client>-v<digit>` keeps the pre-monorepo `*-legacy-v*` tags out.
+            latest="$(gh api "repos/${REPO}/git/matching-refs/tags/${client}-v" --paginate --jq '.[].ref' \
+              | sed 's|^refs/tags/||' | grep -E "^${client}-v[0-9]+\.[0-9]+\.[0-9]+$" \
+              | sed "s|^${client}-v||" | sort -V | tail -n1 || true)"
+            if [ -n "${latest}" ] && [ "$(printf '%s\n%s\n' "${latest}" "${version}" | sort -V | tail -n1)" != "${version}" ]; then
+              echo "::warning::${client}: package.json says ${version}, below the latest release ${latest}; not tagging."
+              continue
+            fi
+
+            tag_object="$(gh api "repos/${REPO}/git/tags" \
+              -f tag="${tag}" -f message="${client} ${version}" -f object="${SHA}" -f type=commit --jq '.sha')"
+            if ! gh api "repos/${REPO}/git/refs" -f ref="refs/tags/${tag}" -f sha="${tag_object}" >/dev/null; then
+              # A run for a newer commit may have created the same tag first; it owns the dispatch.
+              if gh api "repos/${REPO}/git/ref/tags/${tag}" >/dev/null 2>&1; then
+                echo "${client}: ${tag} was created concurrently by another run."
+                continue
+              fi
+              echo "::error::${client}: could not create ${tag} on ${SHA}." >&2
+              exit 1
+            fi
+
+            gh workflow run "cd-${client}.yml" --repo "${REPO}" --ref "${tag}"
+            summary "${client}: created ${tag} on ${SHA} and dispatched cd-${client}.yml (waits for npm-production approval)."
+          done

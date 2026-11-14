@@ -46,7 +46,7 @@ Per client, from inside `clients/<generator>/`:
 npm run release:patch   # or :minor / :major
 ```
 
-This bumps the version and pushes a per-client tag (`typescript-fetch-vX.Y.Z` / `typescript-axios-vX.Y.Z`), which triggers that client's `cd-<generator>.yml` workflow. Publishing uses npm [OIDC Trusted Publishing](https://docs.npmjs.com/trusted-publishers) (no token) and is gated by the `npm-production` GitHub Environment.
+Run it on a clean, up-to-date `main`. It bumps the version on a `release/<generator>-vX.Y.Z` branch and opens a PR. Merging that PR releases: once CI passes on the merge commit, `release-tag.yml` creates the per-client tag (`typescript-fetch-vX.Y.Z` / `typescript-axios-vX.Y.Z`) and dispatches that client's `cd-<generator>.yml` workflow. Publishing uses npm [OIDC Trusted Publishing](https://docs.npmjs.com/trusted-publishers) (no token) and is gated by the `npm-production` GitHub Environment.
 
 See [docs/PUBLISHING.md](docs/PUBLISHING.md) for the full runbook, including the one-time bootstrap publish a brand-new package needs before OIDC can take over, the Trusted Publisher / `npm-production` environment setup, and the deprecate/archive cutover.
 

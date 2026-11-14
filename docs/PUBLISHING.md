@@ -109,7 +109,8 @@ pipeline (immutable release tags) and keep `main` reviewed/tested.
 **`release tags`** (tag ruleset) — makes published release tags immutable:
 
 - Target tags (Include by pattern): `typescript-fetch-v*`, `typescript-axios-v*`
-- Restrict updates ✅, Restrict deletions ✅ (Restrict creations left off so `npm run release:*` can push the tag; if you turn it on, add the release maintainers to the bypass list).
+- Restrict updates ✅, Restrict deletions ✅ (Restrict creations left off so `release-tag.yml` can create the tag with `GITHUB_TOKEN`)
+- Require status checks to pass ✅ → **`ci-fetch-gate`** and **`ci-axios-gate`**: a release tag can only land on a commit whose CI passed. `release-tag.yml` waits for both gates before tagging, so no bypass is needed.
 
 **`legacy tags (frozen)`** (tag ruleset) — freezes the imported pre-migration history markers:
 
@@ -121,19 +122,26 @@ pipeline (immutable release tags) and keep `main` reviewed/tested.
 
 ## Step 4 — Releases (CD / OIDC, with provenance)
 
-After Step 1 published `1.0.0`, the next release is `1.0.1`. From the client directory:
+Every release goes through a PR; nothing is pushed to `main` directly and no tag is pushed
+by hand. From a clean, up-to-date `main` (`gh` logged in), in the client directory:
 
 ```bash
 cd clients/typescript-fetch     # or clients/typescript-axios
 npm run release:patch           # or release:minor / release:major
 ```
 
-`release:patch` bumps the version with `npm version patch --no-git-tag-version`, then the
-shared `scripts/release.mjs` commits the bump, creates the tag `typescript-fetch-vX.Y.Z`,
-and pushes (plain `npm version` does **not** create the commit/tag when run from a monorepo
-subdirectory, so the script does it from the repo root). The pushed tag triggers
-`cd-typescript-fetch.yml`; the pipeline builds and tests, then the `publish` job **waits for
-approval** in the `npm-production` environment:
+1. **Release PR.** `scripts/release.mjs` bumps the version with
+   `npm version patch --no-git-tag-version`, commits the bump on a
+   `release/typescript-fetch-vX.Y.Z` branch, pushes it, and opens a PR. Review and merge it
+   like any other PR (code-owner approval and the CI gates are required).
+2. **Tag.** On the merge commit, `release-tag.yml` runs after each CI workflow finishes. When
+   both `ci-fetch-gate` and `ci-axios-gate` have passed, it finds the client version that has
+   no tag yet, creates `typescript-fetch-vX.Y.Z` on that commit, and dispatches
+   `cd-typescript-fetch.yml` on the tag. A tag created with `GITHUB_TOKEN` does not fire
+   `push: tags`, which is why it dispatches explicitly. It never tags an existing version, a
+   version below the latest release, or a commit that is no longer on `main`.
+3. **Publish.** The CD pipeline builds and tests, then the `publish` job **waits for
+   approval** in the `npm-production` environment:
 
 - GitHub → **Actions** → the CD run → **Review deployments** → select `npm-production` → **Approve and deploy**.
 
@@ -161,7 +169,7 @@ manual step, and nothing to do differently when releasing. It mirrors the `relea
   never reaches back into the pre-monorepo `*-legacy-v*` tags.
 - **Idempotent.** Re-running a CD run whose Release already exists is a no-op, so a
   re-approval or a dispatch on an already-released tag will not fail.
-- It **never creates or moves a tag** — `scripts/release.mjs` already pushed it. The
+- It **never creates or moves a tag** — `release-tag.yml` already created it. The
   Release is attached to that existing tag.
 
 Security note: `contents: write` is granted to this one job only. It runs no build and no
@@ -206,5 +214,5 @@ first):
 2. ☐ Configure the npm Trusted Publisher for both packages (workflow filename differs; Environment = `npm-production`)
 3. ☐ Create the `npm-production` GitHub Environment with required reviewers
 4. ☐ Rulesets: `main protection` (require `ci-fetch-gate` / `ci-axios-gate`), `release tags`, `legacy tags (frozen)`
-5. ☐ `npm run release:patch` → approve the CD run → confirm the version published with provenance **and** that a GitHub Release was created for the tag
+5. ☐ `npm run release:patch` → merge the release PR → approve the CD run → confirm the version published with provenance **and** that a GitHub Release was created for the tag
 6. ☐ `npm deprecate` both old packages → archive both old repos

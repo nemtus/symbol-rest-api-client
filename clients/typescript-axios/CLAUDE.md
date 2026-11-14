@@ -125,13 +125,15 @@ single runtime: **Java 21** and **Node.js 26.x** (Active LTS since 2026-10-28). 
 - **CI** (`ci-typescript-axios.yml`) - On pull requests and pushes to `main`: builds the client, runs all test suites in
   parallel (unit, nodejs-javascript, nodejs-typescript, browser-cdn), plus a `dry-run-publish` and a `pinact`
   job that verifies every action is SHA-pinned.
-- **CD** (`cd-typescript-axios.yml`) - Tag-triggered (`push` of a `v*` tag, created by `npm run release:*`)
-  with a `workflow_dispatch` fallback: builds, tests, then publishes to npm via **OIDC Trusted Publishing**
+- **CD** (`cd-typescript-axios.yml`) - Runs on a `typescript-axios-vX.Y.Z` tag: dispatched by the repo-wide
+  `release-tag.yml` after a release PR is merged (a tag pushed by hand also triggers it). Builds, tests, then publishes to npm via **OIDC Trusted Publishing**
   (no `NPM_TOKEN`; provenance attached). The whole pipeline is serialized via a `concurrency` group, and the
   `publish` job is gated by the `npm-production` GitHub Environment (manual approval).
 
-Releasing is one action: `npm run release:minor` (or `:patch` / `:major`) bumps the version, creates the
-`vX.Y.Z` tag, and pushes it — which triggers CD.
+Releasing goes through a PR: on a clean, up-to-date `main`, `npm run release:minor` (or `:patch` / `:major`)
+bumps the version on a `release/typescript-axios-vX.Y.Z` branch and opens a PR. Merging it releases: once CI
+passes on the merge commit, `release-tag.yml` creates the `typescript-axios-vX.Y.Z` tag and dispatches CD,
+which then waits for the `npm-production` approval.
 
 Both workflows:
 1. Build once and share `dist/` via a uniquely-named artifact; test jobs download it instead of rebuilding.
